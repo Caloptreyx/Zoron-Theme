@@ -1,6 +1,6 @@
 # Working on this theme
 
-Zoron is a Calagopus Panel extension (`dev.caloptreyx.zoron`, panel **1.2.0 or newer**): a Rust crate that stores
+Zoron is a Calagopus Panel extension (`dev.caloptreyx.zoron`, panel **1.2.2 or newer**): a Rust crate that stores
 the theme, and a TypeScript frontend the panel compiles into itself.
 
 ## Layout

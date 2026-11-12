@@ -10,7 +10,7 @@
 A theme for [Calagopus Panel](https://calagopus.com): an icon rail with your servers and folders, a full height
 console workspace, a server page of its own, and **Zoron Studio**, a live theme editor.
 
-[![Calagopus 1.2.0+](https://img.shields.io/badge/Calagopus-1.2.0%2B-3b6cde)](https://calagopus.com)
+[![Calagopus 1.2.2+](https://img.shields.io/badge/Calagopus-1.2.2%2B-3b6cde)](https://calagopus.com)
 [![Latest release](https://img.shields.io/github/v/release/Caloptreyx/Zoron-Theme?label=release)](https://github.com/Caloptreyx/Zoron-Theme/releases/latest)
 [![License: MIT](https://img.shields.io/github/license/Caloptreyx/Zoron-Theme)](LICENSE)
 [![Discord](https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/4qjMWU7S8x)
@@ -116,7 +116,7 @@ turned off there, and the demo resets every hour.
 ## Install
 
 > [!NOTE]
-> Requires Calagopus Panel **1.2.0** or newer.
+> Requires Calagopus Panel **1.2.2** or newer.
 
 1. Download `dev_caloptreyx_zoron.c7s.zip` from the [latest release](https://github.com/Caloptreyx/Zoron-Theme/releases/latest).
 2. In the panel, open **Admin → Extensions** and install the file.

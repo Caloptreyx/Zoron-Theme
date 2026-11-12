@@ -26,6 +26,7 @@ import {
   Tooltip,
   useAuth,
   useBulkPowerActions,
+  useRedactedAddress,
 } from '../../lib/core.ts';
 import type { HomeLayout } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
@@ -69,6 +70,7 @@ export default function ServerCard({
   const phase: Phase = phaseOf(server, usage);
   const tile = useServerTile(server);
   const address = addressOf(server);
+  const displayAddress = useRedactedAddress(address);
   const permissions = new Set([...server.permissions, ...(user?.role?.serverPermissions ?? [])]);
   const may = (permission: string) => permissions.has('*') || permissions.has(permission);
   // as core: no power while installing, restoring, transferring, suspended, or the node is in maintenance
@@ -172,7 +174,7 @@ export default function ServerCard({
   const addressPill = address ? (
     <CopyOnClick content={address} className='zoron-home-address zoron-home-raise'>
       <FontAwesomeIcon icon={faCopy} className='opacity-60' />
-      <span className='truncate'>{address}</span>
+      <span className='truncate'>{displayAddress}</span>
     </CopyOnClick>
   ) : (
     <span className='zoron-home-address' data-empty>

@@ -15,6 +15,7 @@ import {
   queryKeys,
   ServerContentContainer,
   ServerPowerControls,
+  useRedactedAddress,
   useServerCan,
   useServerStore,
 } from '../../lib/core.ts';
@@ -127,6 +128,7 @@ function Overview() {
   const live = phase === 'running' || phase === 'starting';
   const ago = (date: Date) => timeAgo(date, now, language);
   const address = addressOf(server);
+  const displayAddress = useRedactedAddress(address);
   const banner = theme.overviewHeader === 'banner';
   const tile = useServerTile(server);
 
@@ -265,7 +267,7 @@ function Overview() {
               to={`${base}/network`}
               label={t('overview.addresses', {})}
               value={countOf(allocations.data?.total ?? 0, server.featureLimits.allocations)}
-              detail={address ?? t('overview.noAddress', {})}
+              detail={address ? displayAddress : t('overview.noAddress', {})}
             />
           )}
         </div>

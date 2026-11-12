@@ -1,7 +1,16 @@
 import { faArrowUpRightFromSquare, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ReactNode } from 'react';
-import { bytesToString, Card, CopyOnClick, mbToBytes, useAuth, useServerStore } from '../../lib/core.ts';
+import {
+  bytesToString,
+  Card,
+  CopyOnClick,
+  mbToBytes,
+  useAuth,
+  useRedactAddresses,
+  useRedactedAddress,
+  useServerStore,
+} from '../../lib/core.ts';
 import type { OverviewUsage } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { NETWORK_FLOOR, useTelemetry } from '../console/Telemetry.tsx';
@@ -36,12 +45,13 @@ export function Section({ title, action, children }: { title: string; action?: R
 }
 
 /** A labelled value people copy (address, SFTP host, username, ID); a click copies it. */
-function CopyRow({ label, value }: { label: string; value: string }) {
+function CopyRow({ label, value, redact = false }: { label: string; value: string; redact?: boolean }) {
+  const displayValue = useRedactedAddress(value);
   return (
     <div className='zoron-ov-row'>
       <span className='text-xs text-(--mantine-color-dimmed)'>{label}</span>
       <CopyOnClick content={value} className='zoron-ov-copy'>
-        <span className='truncate'>{value}</span>
+        <span className='truncate'>{redact ? displayValue : value}</span>
         <FontAwesomeIcon icon={faCopy} className='shrink-0 opacity-50' />
       </CopyOnClick>
     </div>
@@ -53,23 +63,24 @@ export function ConnectDetails() {
   const { t } = useExtTranslations();
   const { user } = useAuth();
   const server = useServerStore((state) => state.server);
+  const [redactAddresses] = useRedactAddresses();
   const address = addressOf(server);
   const sftpUser = user ? `${user.username}.${server.uuidShort}` : null;
 
   return (
     <div className='flex flex-col gap-3'>
       {address ? (
-        <CopyRow label={t('overview.address', {})} value={address} />
+        <CopyRow label={t('overview.address', {})} value={address} redact />
       ) : (
         <div className='zoron-ov-row'>
           <span className='text-xs text-(--mantine-color-dimmed)'>{t('overview.address', {})}</span>
           <span className='text-sm text-(--mantine-color-dimmed)'>{t('overview.noAddress', {})}</span>
         </div>
       )}
-      <CopyRow label={t('overview.sftp', {})} value={`${server.sftpHost}:${server.sftpPort}`} />
+      <CopyRow label={t('overview.sftp', {})} value={`${server.sftpHost}:${server.sftpPort}`} redact />
       {sftpUser && <CopyRow label={t('overview.username', {})} value={sftpUser} />}
       <CopyRow label={t('overview.serverId', {})} value={server.uuidShort} />
-      {sftpUser && (
+      {sftpUser && !redactAddresses && (
         <a
           href={`sftp://${sftpUser}@${server.sftpHost}:${server.sftpPort}`}
           className='zoron-ov-link inline-flex items-center gap-1.5'

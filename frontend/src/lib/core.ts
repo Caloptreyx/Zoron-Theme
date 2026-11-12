@@ -1,6 +1,6 @@
 /**
  * Every core (`@/`) import Zoron uses, so a core module move is a one-file edit here. Each path exists since panel
- * 1.2.0, the floor in Metadata.toml (check with `git show release-1.2.0:<path>` in a panel checkout).
+ * 1.2.2, the floor in Metadata.toml (check with `git show release-1.2.2:<path>` in a panel checkout).
  */
 
 import type { z } from 'zod';
@@ -57,6 +57,7 @@ export { default as BulkActionBar } from '@/pages/dashboard/home/BulkActionBar.t
 export { default as ServerAddGroupModal } from '@/pages/dashboard/home/modals/ServerAddGroupModal.tsx';
 export { default as ServerPowerControls } from '@/pages/server/console/stats/ServerPowerControls.tsx';
 export { default as CoreTerminal } from '@/pages/server/console/terminal/Console.tsx';
+export { useRedactAddresses, useRedactedAddress } from '@/plugins/privacy/useRedactAddresses.ts';
 export { useKeyboardShortcuts } from '@/plugins/quick-actions/useKeyboardShortcuts.ts';
 export { useBulkPowerActions } from '@/plugins/server/useBulkPowerActions.ts';
 export { useServerListShowOthers } from '@/plugins/server/useServerListShowOthers.ts';
