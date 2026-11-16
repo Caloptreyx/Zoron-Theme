@@ -1,6 +1,6 @@
+import type { MouseEvent } from 'react';
 import { faDownload, faEraser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { MouseEvent } from 'react';
 import { ActionIcon, downloadTextFile, Tooltip, useServerStore } from '../../lib/core.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { type BufferLine, bufferText, logFileName } from './console.ts';

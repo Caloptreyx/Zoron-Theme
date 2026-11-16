@@ -32,6 +32,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { type CSSProperties, createContext, type ReactNode, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router';
+import type { Area } from './nav.ts';
 import {
   Avatar,
   Button,
@@ -75,7 +76,6 @@ import {
   type RailGroup,
   type RailServer,
 } from './folders.ts';
-import type { Area } from './nav.ts';
 
 /** The fields of core's server list entries the rail reads. */
 type Server = RailServer & { uuidShort: string; isSuspended: boolean };

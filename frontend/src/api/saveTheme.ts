@@ -1,5 +1,5 @@
-import { axiosInstance } from '../lib/core.ts';
 import type { ZoronTheme } from '../lib/theme.ts';
+import { axiosInstance } from '../lib/core.ts';
 
 /**
  * Stores the site theme (`null` goes back to the default look). With `base`, the backend refuses (409) when the stored

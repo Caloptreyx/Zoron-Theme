@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import {
   faAnchor,
   faBolt,
@@ -46,7 +47,6 @@ import {
   type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { CSSProperties } from 'react';
 import type { Tile, TileIcon } from '../../lib/tiles.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { useServerTile } from './useTiles.ts';

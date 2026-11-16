@@ -4,8 +4,8 @@
  * and the visitor's own terminal look included), and the highlighting of uncoloured warning and error lines.
  */
 
-import { FitAddon } from '@xterm/addon-fit';
 import type { ITerminalInitOnlyOptions, ITerminalOptions, ITheme, Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
 import { currentTheme, subscribeTheme } from '../../lib/store.ts';
 import { highlightChunk } from '../../lib/terminal.ts';
 import { ANSI_NAMES, MONO_STACKS, terminalPalette } from '../../lib/theme.ts';

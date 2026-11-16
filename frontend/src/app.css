@@ -5,157 +5,157 @@
  */
 
 @font-face {
-  font-family: "Inter Variable";
+  font-family: 'Inter Variable';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/inter-latin-ext.woff2") format("woff2");
+  src: url('./fonts/inter-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Inter Variable";
+  font-family: 'Inter Variable';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/inter-latin.woff2") format("woff2");
+  src: url('./fonts/inter-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Plus Jakarta Sans";
+  font-family: 'Plus Jakarta Sans';
   font-style: normal;
   font-weight: 200 800;
   font-display: swap;
-  src: url("./fonts/plus-jakarta-sans-latin-ext.woff2") format("woff2");
+  src: url('./fonts/plus-jakarta-sans-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Plus Jakarta Sans";
+  font-family: 'Plus Jakarta Sans';
   font-style: normal;
   font-weight: 200 800;
   font-display: swap;
-  src: url("./fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+  src: url('./fonts/plus-jakarta-sans-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Space Grotesk";
+  font-family: 'Space Grotesk';
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url("./fonts/space-grotesk-latin-ext.woff2") format("woff2");
+  src: url('./fonts/space-grotesk-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Space Grotesk";
+  font-family: 'Space Grotesk';
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url("./fonts/space-grotesk-latin.woff2") format("woff2");
+  src: url('./fonts/space-grotesk-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Outfit";
+  font-family: 'Outfit';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/outfit-latin-ext.woff2") format("woff2");
+  src: url('./fonts/outfit-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Outfit";
+  font-family: 'Outfit';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/outfit-latin.woff2") format("woff2");
+  src: url('./fonts/outfit-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "JetBrains Mono";
+  font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 100 800;
   font-display: swap;
-  src: url("./fonts/jetbrains-mono-latin-ext.woff2") format("woff2");
+  src: url('./fonts/jetbrains-mono-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "JetBrains Mono";
+  font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 100 800;
   font-display: swap;
-  src: url("./fonts/jetbrains-mono-latin.woff2") format("woff2");
+  src: url('./fonts/jetbrains-mono-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Geist Variable";
+  font-family: 'Geist Variable';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/geist-latin-ext.woff2") format("woff2");
+  src: url('./fonts/geist-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Geist Variable";
+  font-family: 'Geist Variable';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/geist-latin.woff2") format("woff2");
+  src: url('./fonts/geist-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Geist Mono Variable";
+  font-family: 'Geist Mono Variable';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/geist-mono-latin-ext.woff2") format("woff2");
+  src: url('./fonts/geist-mono-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
-    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Geist Mono Variable";
+  font-family: 'Geist Mono Variable';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("./fonts/geist-mono-latin.woff2") format("woff2");
+  src: url('./fonts/geist-mono-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* ---------- page, backdrop and texture ---------- */
@@ -185,7 +185,7 @@ html[data-zoron] body {
 
 html[data-zoron]::before,
 html[data-zoron]::after {
-  content: "";
+  content: '';
   position: fixed;
   z-index: -1;
   pointer-events: none;
@@ -204,20 +204,20 @@ html[data-zoron]::before {
   filter: blur(40px);
 }
 
-html[data-zoron-backdrop="aurora"]::before {
+html[data-zoron-backdrop='aurora']::before {
   background:
     radial-gradient(44vmax 34vmax at 30% 22%, var(--zoron-field-1), transparent 70%),
     radial-gradient(38vmax 30vmax at 80% 24%, var(--zoron-field-2), transparent 70%),
     radial-gradient(50vmax 34vmax at 58% 86%, var(--zoron-field-3), transparent 70%);
 }
 
-html[data-zoron-backdrop="spotlight"]::before {
+html[data-zoron-backdrop='spotlight']::before {
   background:
     radial-gradient(60vmax 36vmax at 55% 12%, var(--zoron-field-1), transparent 72%),
     radial-gradient(32vmax 22vmax at 66% 14%, var(--zoron-field-2), transparent 70%);
 }
 
-html[data-zoron-backdrop="mesh"]::before {
+html[data-zoron-backdrop='mesh']::before {
   background:
     radial-gradient(40vmax 32vmax at 20% 18%, var(--zoron-field-1), transparent 70%),
     radial-gradient(40vmax 32vmax at 84% 20%, var(--zoron-field-2), transparent 70%),
@@ -227,7 +227,7 @@ html[data-zoron-backdrop="mesh"]::before {
 
 /* only transform moves, so the drift stays on the compositor */
 @media (prefers-reduced-motion: no-preference) {
-  html[data-zoron-animate="on"]::before {
+  html[data-zoron-animate='on']::before {
     animation: zoron-drift 36s ease-in-out infinite alternate;
     will-change: transform;
   }
@@ -245,7 +245,7 @@ html[data-zoron-backdrop="mesh"]::before {
   }
 }
 
-html[data-zoron-pattern="grid"]::after {
+html[data-zoron-pattern='grid']::after {
   background-image:
     linear-gradient(var(--zoron-pattern-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--zoron-pattern-color) 1px, transparent 1px);
@@ -253,13 +253,13 @@ html[data-zoron-pattern="grid"]::after {
   mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 100%);
 }
 
-html[data-zoron-pattern="dots"]::after {
+html[data-zoron-pattern='dots']::after {
   background-image: radial-gradient(var(--zoron-pattern-color) 1.2px, transparent 1.6px);
   background-size: 22px 22px;
   mask-image: radial-gradient(ellipse 90% 75% at 50% 0%, #000 40%, transparent 100%);
 }
 
-html[data-zoron-pattern="noise"]::after {
+html[data-zoron-pattern='noise']::after {
   opacity: var(--zoron-noise-opacity);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -285,19 +285,19 @@ html[data-zoron] ::-webkit-scrollbar-track {
 }
 
 /* core resets the outline on buttons and inputs; keyboard focus gets a visible accent ring back */
-html[data-zoron] :is(a, button, [role="button"], [role="tab"], [role="switch"]):focus-visible {
+html[data-zoron] :is(a, button, [role='button'], [role='tab'], [role='switch']):focus-visible {
   outline: 2px solid color-mix(in srgb, var(--zoron-accent) 75%, transparent);
   outline-offset: 2px;
 }
 
 /* ---------- shadows ---------- */
 
-html[data-zoron-shadow="none"] {
+html[data-zoron-shadow='none'] {
   --zoron-shadow: 0 0 #0000;
   --zoron-shadow-hover: 0 0 #0000;
 }
 
-html[data-zoron-shadow="soft"] {
+html[data-zoron-shadow='soft'] {
   --zoron-shadow:
     0 1px 2px color-mix(in srgb, var(--zoron-shadow-color) 45%, transparent),
     0 12px 32px -16px var(--zoron-shadow-color);
@@ -306,7 +306,7 @@ html[data-zoron-shadow="soft"] {
     0 20px 44px -18px var(--zoron-shadow-color);
 }
 
-html[data-zoron-shadow="deep"] {
+html[data-zoron-shadow='deep'] {
   --zoron-shadow:
     0 2px 6px color-mix(in srgb, var(--zoron-shadow-color) 60%, transparent),
     0 26px 60px -22px var(--zoron-shadow-color);
@@ -345,13 +345,13 @@ html[data-zoron] .mantine-Card-root .mantine-Card-root {
 }
 
 /* blur only the outermost glass blocks: nested backdrop filters cost a lot and add nothing */
-html[data-zoron-surface="glass"] .mantine-Card-root:not(.fixed > *, .mantine-Card-root .mantine-Card-root) {
+html[data-zoron-surface='glass'] .mantine-Card-root:not(.fixed > *, .mantine-Card-root .mantine-Card-root) {
   -webkit-backdrop-filter: blur(var(--zoron-blur)) saturate(150%);
   backdrop-filter: blur(var(--zoron-blur)) saturate(150%);
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  html[data-zoron-lift="on"] :is(a > .mantine-Card-root, .mantine-Card-root.cursor-pointer):hover {
+  html[data-zoron-lift='on'] :is(a > .mantine-Card-root, .mantine-Card-root.cursor-pointer):hover {
     transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--zoron-accent) 35%, var(--zoron-hairline));
     box-shadow:
@@ -362,7 +362,7 @@ html[data-zoron-surface="glass"] .mantine-Card-root:not(.fixed > *, .mantine-Car
 }
 
 /* core's sticky page headers (a server's name and power buttons) paint the page colour, a dark band over the backdrop */
-html[data-zoron] .sticky.top-0[class~="bg-(--mantine-color-body)"] {
+html[data-zoron] .sticky.top-0[class~='bg-(--mantine-color-body)'] {
   background-color: color-mix(in srgb, var(--mantine-color-body) 62%, transparent);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   backdrop-filter: blur(16px) saturate(150%);
@@ -370,14 +370,14 @@ html[data-zoron] .sticky.top-0[class~="bg-(--mantine-color-body)"] {
 
 /* ---------- sidebar ---------- */
 
-html[data-zoron-sidebar="floating"] #sidebar-desktop {
+html[data-zoron-sidebar='floating'] #sidebar-desktop {
   margin: 12px 0 12px 12px;
   top: 12px;
   height: calc(100vh - 24px);
   border-radius: calc(var(--zoron-radius) + 4px);
 }
 
-html[data-zoron-sidebar="docked"] #sidebar-desktop {
+html[data-zoron-sidebar='docked'] #sidebar-desktop {
   margin: 0;
   top: 0;
   height: 100vh;
@@ -429,7 +429,7 @@ html[data-zoron] #sidebar-content a > .mantine-Button-root svg {
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  html[data-zoron]:not([data-zoron-motion="none"]) #sidebar-content a > .mantine-Button-root:not(.active):hover svg {
+  html[data-zoron]:not([data-zoron-motion='none']) #sidebar-content a > .mantine-Button-root:not(.active):hover svg {
     transform: translateX(2px);
   }
 }
@@ -438,7 +438,7 @@ html[data-zoron] #sidebar-content a > .mantine-Button-root.active svg {
   opacity: 1;
 }
 
-html[data-zoron-nav="pill"] #sidebar-content a > .mantine-Button-root.active {
+html[data-zoron-nav='pill'] #sidebar-content a > .mantine-Button-root.active {
   background: var(--zoron-gradient);
   color: var(--zoron-accent-ink);
   box-shadow:
@@ -446,7 +446,7 @@ html[data-zoron-nav="pill"] #sidebar-content a > .mantine-Button-root.active {
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-html[data-zoron-nav="glow"] #sidebar-content a > .mantine-Button-root.active {
+html[data-zoron-nav='glow'] #sidebar-content a > .mantine-Button-root.active {
   background: var(--mantine-color-blue-light);
   color: var(--mantine-color-blue-light-color);
   box-shadow:
@@ -454,13 +454,13 @@ html[data-zoron-nav="glow"] #sidebar-content a > .mantine-Button-root.active {
     0 0 26px -6px var(--zoron-glow-color);
 }
 
-html[data-zoron-nav="bar"] #sidebar-content a > .mantine-Button-root.active {
+html[data-zoron-nav='bar'] #sidebar-content a > .mantine-Button-root.active {
   background: color-mix(in srgb, var(--mantine-color-text) 7%, transparent);
   color: var(--mantine-color-bright);
   box-shadow: inset 3px 0 0 var(--zoron-accent);
 }
 
-html[data-zoron-nav="subtle"] #sidebar-content a > .mantine-Button-root.active {
+html[data-zoron-nav='subtle'] #sidebar-content a > .mantine-Button-root.active {
   background: color-mix(in srgb, var(--mantine-color-text) 8%, transparent);
   color: var(--mantine-color-bright);
 }
@@ -552,13 +552,13 @@ html[data-zoron] .zoron-panel-scroll {
  * driven, so where it isn't supported (or nothing scrolls, which leaves the timeline inactive) nothing fades.
  */
 @property --zoron-fade-top {
-  syntax: "<length>";
+  syntax: '<length>';
   inherits: false;
   initial-value: 0px;
 }
 
 @property --zoron-fade-bottom {
-  syntax: "<length>";
+  syntax: '<length>';
   inherits: false;
   initial-value: 0px;
 }
@@ -631,7 +631,7 @@ html[data-zoron] .zoron-rail-btn {
 }
 
 html[data-zoron] .zoron-rail-btn::before {
-  content: "";
+  content: '';
   position: absolute;
   left: -14px;
   top: 50%;
@@ -734,7 +734,7 @@ html[data-zoron] .zoron-rail-folder-head {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html[data-zoron]:not([data-zoron-motion="none"]) .zoron-rail-folder-open {
+  html[data-zoron]:not([data-zoron-motion='none']) .zoron-rail-folder-open {
     animation: zoron-folder-open 200ms var(--zoron-ease);
   }
 }
@@ -762,7 +762,7 @@ html[data-zoron] .zoron-rail-drag[data-dragging] {
   opacity: 0.35;
 }
 
-html[data-zoron] .zoron-rail-drag[data-drop="onto"] .zoron-rail-btn {
+html[data-zoron] .zoron-rail-drag[data-drop='onto'] .zoron-rail-btn {
   border-radius: 14px;
   box-shadow:
     0 0 0 2px var(--mantine-color-body),
@@ -774,14 +774,14 @@ html[data-zoron] .zoron-rail-folder-open {
   position: relative;
 }
 
-html[data-zoron] .zoron-rail-folder-open[data-drop="onto"] {
+html[data-zoron] .zoron-rail-folder-open[data-drop='onto'] {
   background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
   box-shadow: inset 0 0 0 2px var(--zoron-accent);
 }
 
 /* the bar sits in the 8px gap above or below the target */
-html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open):is([data-drop="before"], [data-drop="after"])::after {
-  content: "";
+html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open):is([data-drop='before'], [data-drop='after'])::after {
+  content: '';
   position: absolute;
   left: 0;
   right: 0;
@@ -792,15 +792,15 @@ html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open):is([data-drop="b
   pointer-events: none;
 }
 
-html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open)[data-drop="before"]::after {
+html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open)[data-drop='before']::after {
   top: -5.5px;
 }
 
-html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open)[data-drop="after"]::after {
+html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open)[data-drop='after']::after {
   bottom: -5.5px;
 }
 
-html[data-zoron] .zoron-rail-servers[data-drop="onto"] {
+html[data-zoron] .zoron-rail-servers[data-drop='onto'] {
   border-radius: 16px;
   background-color: color-mix(in srgb, var(--zoron-accent) 8%, transparent);
 }
@@ -824,7 +824,7 @@ html[data-zoron] .zoron-rail-avatar[data-active] .mantine-Avatar-root {
 /* ---------- page chrome ---------- */
 
 /* sub pages (core's SubNavigation and other tab rows) as a segmented pill bar instead of underlined tabs */
-html[data-zoron] :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-list:not([data-orientation="vertical"]) {
+html[data-zoron] :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-list:not([data-orientation='vertical']) {
   width: fit-content;
   max-width: 100%;
   flex-wrap: nowrap;
@@ -838,13 +838,13 @@ html[data-zoron] :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-l
 
 html[data-zoron]
   :is(#dashboard-root, #server-root, #admin-root)
-  .mantine-Tabs-list:not([data-orientation="vertical"])::before {
+  .mantine-Tabs-list:not([data-orientation='vertical'])::before {
   display: none;
 }
 
 html[data-zoron]
   :is(#dashboard-root, #server-root, #admin-root)
-  .mantine-Tabs-list:not([data-orientation="vertical"])
+  .mantine-Tabs-list:not([data-orientation='vertical'])
   .mantine-Tabs-tab {
   margin: 0;
   border: 0;
@@ -855,7 +855,7 @@ html[data-zoron]
 
 html[data-zoron]
   :is(#dashboard-root, #server-root, #admin-root)
-  .mantine-Tabs-list:not([data-orientation="vertical"])
+  .mantine-Tabs-list:not([data-orientation='vertical'])
   .mantine-Tabs-tab[data-active] {
   background-color: var(--zoron-card-solid);
   color: var(--mantine-color-text);
@@ -877,17 +877,17 @@ html[data-zoron] :is(.mantine-Button-root, .mantine-ActionIcon-root) {
 
 /* Mantine nudges pressed buttons 1px down; Zoron gives them a short squeeze instead */
 @media (prefers-reduced-motion: no-preference) {
-  html[data-zoron]:not([data-zoron-motion="none"]) .mantine-active:active:not(fieldset:disabled *) {
+  html[data-zoron]:not([data-zoron-motion='none']) .mantine-active:active:not(fieldset:disabled *) {
     transform: scale(0.97);
   }
 }
 
 /* `--button-bg` is the per colour fill Mantine sets inline, so red and green buttons keep their own colour */
-html[data-zoron-buttons="gradient"]
-.mantine-Button-root[data-variant="filled"][style*="--button-bg: var(--mantine-color-blue-filled)"]:not(
-  :disabled,
-  [data-disabled]
-) {
+html[data-zoron-buttons='gradient']
+  .mantine-Button-root[data-variant='filled'][style*='--button-bg: var(--mantine-color-blue-filled)']:not(
+    :disabled,
+    [data-disabled]
+  ) {
   background-image: var(--zoron-gradient);
   border-color: transparent;
   box-shadow:
@@ -895,27 +895,27 @@ html[data-zoron-buttons="gradient"]
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-html[data-zoron-buttons="gradient"] .mantine-Button-root[data-variant="filled"]:not(:disabled, [data-disabled]):hover {
+html[data-zoron-buttons='gradient'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]):hover {
   filter: brightness(1.08) saturate(1.05);
 }
 
-html[data-zoron-buttons="soft"] .mantine-Button-root[data-variant="filled"]:not(:disabled, [data-disabled]) {
+html[data-zoron-buttons='soft'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]) {
   background-color: color-mix(in srgb, var(--button-bg) 20%, transparent);
   border-color: color-mix(in srgb, var(--button-bg) 34%, transparent);
   color: color-mix(in srgb, var(--button-bg) 45%, var(--zoron-ink));
 }
 
-html[data-zoron-buttons="soft"] .mantine-Button-root[data-variant="filled"]:not(:disabled, [data-disabled]):hover {
+html[data-zoron-buttons='soft'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]):hover {
   background-color: color-mix(in srgb, var(--button-bg) 30%, transparent);
 }
 
-html[data-zoron-buttons="outline"] .mantine-Button-root[data-variant="filled"]:not(:disabled, [data-disabled]) {
+html[data-zoron-buttons='outline'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]) {
   background-color: transparent;
   border-color: color-mix(in srgb, var(--button-bg) 70%, transparent);
   color: color-mix(in srgb, var(--button-bg) 50%, var(--zoron-ink));
 }
 
-html[data-zoron-buttons="outline"] .mantine-Button-root[data-variant="filled"]:not(:disabled, [data-disabled]):hover {
+html[data-zoron-buttons='outline'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]):hover {
   background-color: color-mix(in srgb, var(--button-bg) 14%, transparent);
 }
 
@@ -938,14 +938,14 @@ html[data-zoron] .mantine-Input-input[data-expanded] {
 /* ---------- overlays: menus, popovers, dropdowns, modals, drawers, tooltips ---------- */
 
 html[data-zoron]
-:is(
-  .mantine-Menu-dropdown,
-  .mantine-Popover-dropdown,
-  .mantine-Combobox-dropdown,
-  .mantine-HoverCard-dropdown,
-  .mantine-Modal-content,
-  .mantine-Drawer-content
-) {
+  :is(
+    .mantine-Menu-dropdown,
+    .mantine-Popover-dropdown,
+    .mantine-Combobox-dropdown,
+    .mantine-HoverCard-dropdown,
+    .mantine-Modal-content,
+    .mantine-Drawer-content
+  ) {
   background-color: var(--zoron-overlay);
   border: 1px solid var(--zoron-hairline);
   box-shadow:
@@ -953,7 +953,7 @@ html[data-zoron]
     inset 0 1px 0 var(--zoron-sheen);
 }
 
-html[data-zoron-surface="glass"]
+html[data-zoron-surface='glass']
   :is(
     .mantine-Menu-dropdown,
     .mantine-Popover-dropdown,
@@ -1003,11 +1003,11 @@ html[data-zoron] .mantine-Title-root {
   letter-spacing: -0.015em;
 }
 
-html[data-zoron] .mantine-Title-root:is([data-order="1"], [data-order="2"]) {
+html[data-zoron] .mantine-Title-root:is([data-order='1'], [data-order='2']) {
   letter-spacing: -0.025em;
 }
 
-html[data-zoron-titles="gradient"] :is(#dashboard-root, #server-root, #admin-root) .mantine-Title-root[data-order="1"] {
+html[data-zoron-titles='gradient'] :is(#dashboard-root, #server-root, #admin-root) .mantine-Title-root[data-order='1'] {
   width: fit-content;
   background: var(--zoron-gradient);
   -webkit-background-clip: text;
@@ -1023,7 +1023,7 @@ html[data-zoron-titles="gradient"] :is(#dashboard-root, #server-root, #admin-roo
  * outlives it, and the editor (a fixed full screen page) is left out: a transform would pin it to the column.
  */
 @media (prefers-reduced-motion: no-preference) {
-  html[data-zoron-transition="rise"]
+  html[data-zoron-transition='rise']
     :is(#dashboard-root, #server-root, #admin-root)
     > div
     > div:first-child
@@ -1031,7 +1031,7 @@ html[data-zoron-titles="gradient"] :is(#dashboard-root, #server-root, #admin-roo
     animation: zoron-rise 480ms var(--zoron-ease);
   }
 
-  html[data-zoron-transition="fade"]
+  html[data-zoron-transition='fade']
     :is(#dashboard-root, #server-root, #admin-root)
     > div
     > div:first-child
@@ -1039,7 +1039,7 @@ html[data-zoron-titles="gradient"] :is(#dashboard-root, #server-root, #admin-roo
     animation: zoron-fade 320ms ease-out;
   }
 
-  html[data-zoron-transition="zoom"]
+  html[data-zoron-transition='zoom']
     :is(#dashboard-root, #server-root, #admin-root)
     > div
     > div:first-child
@@ -1071,7 +1071,7 @@ html[data-zoron-titles="gradient"] :is(#dashboard-root, #server-root, #admin-roo
 /* ---------- Zoron's own pieces ---------- */
 
 /* the greeting takes the gradient only with "Gradient page titles" on, like the page titles */
-html[data-zoron-titles="gradient"] .zoron-greeting-title {
+html[data-zoron-titles='gradient'] .zoron-greeting-title {
   background: var(--zoron-gradient);
   -webkit-background-clip: text;
   background-clip: text;
@@ -1235,11 +1235,11 @@ html[data-zoron] .zoron-meter-fill {
   transition: width 600ms var(--zoron-ease);
 }
 
-html[data-zoron] .zoron-meter[data-level="warn"] .zoron-meter-fill {
+html[data-zoron] .zoron-meter[data-level='warn'] .zoron-meter-fill {
   background: var(--mantine-color-yellow-filled);
 }
 
-html[data-zoron] .zoron-meter[data-level="danger"] .zoron-meter-fill {
+html[data-zoron] .zoron-meter[data-level='danger'] .zoron-meter-fill {
   background: var(--mantine-color-red-filled);
 }
 
@@ -1286,7 +1286,7 @@ html[data-zoron] .mantine-Card-root.zoron-ov-banner {
   );
 }
 
-html[data-zoron-buttons="gradient"] .mantine-Card-root.zoron-ov-banner {
+html[data-zoron-buttons='gradient'] .mantine-Card-root.zoron-ov-banner {
   background-image: linear-gradient(
     120deg,
     color-mix(in srgb, var(--zoron-accent) 14%, transparent),
@@ -1295,13 +1295,13 @@ html[data-zoron-buttons="gradient"] .mantine-Card-root.zoron-ov-banner {
 }
 
 /* the 'numbers' usage style: no bars, so the figures carry the card */
-html[data-zoron] .zoron-stats[data-usage="numbers"] .zoron-stat-value {
+html[data-zoron] .zoron-stats[data-usage='numbers'] .zoron-stat-value {
   font-size: 1.5rem;
   line-height: 2rem;
 }
 
 @container page (width >= 40rem) {
-  html[data-zoron] .zoron-stats[data-usage="numbers"] .zoron-stat-value {
+  html[data-zoron] .zoron-stats[data-usage='numbers'] .zoron-stat-value {
     font-size: 1.875rem;
     line-height: 2.25rem;
   }
@@ -1426,7 +1426,7 @@ html[data-zoron] .zoron-ov-copy:active {
 
 /* the card holding a terminal (core's console, the popout) in the theme's terminal scheme; core's xterm.css keeps
    xterm's own layers transparent over it. On Zoron's page that card dissolves into the workspace, which paints it */
-html[data-zoron-terminal="custom"] .mantine-Card-root:has(.xterm) {
+html[data-zoron-terminal='custom'] .mantine-Card-root:has(.xterm) {
   background: var(--zoron-term-bg);
   color: var(--zoron-term-fg);
 }
@@ -1470,7 +1470,7 @@ html[data-zoron] .zoron-con {
   container: zoron-con / inline-size;
 }
 
-html[data-zoron] .zoron-con[data-density="compact"] {
+html[data-zoron] .zoron-con[data-density='compact'] {
   --zoron-con-edge: 12px;
   --zoron-con-bar-y: 6px;
   --zoron-con-gap: 14px;
@@ -1481,7 +1481,7 @@ html[data-zoron] .zoron-con[data-density="compact"] {
   --zoron-con-prompt: 2.25rem;
 }
 
-html[data-zoron] .zoron-con[data-density="spacious"] {
+html[data-zoron] .zoron-con[data-density='spacious'] {
   --zoron-con-edge: 24px;
   --zoron-con-bar-y: 14px;
   --zoron-con-gap: 28px;
@@ -1498,7 +1498,7 @@ html[data-zoron] .zoron-con[data-keyboard] {
 
 /* a named scheme's text and lines for what core and Mantine draw on it (inputs, subtle buttons, dimmed text), so a
    dark scheme in light mode, or a light one in dark mode, still reads; overlays are portalled out and keep the page's */
-html[data-zoron-terminal="custom"] .zoron-con {
+html[data-zoron-terminal='custom'] .zoron-con {
   --mantine-color-text: var(--zoron-term-fg);
   --mantine-color-dimmed: color-mix(in srgb, var(--zoron-term-fg) 60%, var(--zoron-term-bg));
   --mantine-color-placeholder: color-mix(in srgb, var(--zoron-term-fg) 45%, var(--zoron-term-bg));
@@ -1526,7 +1526,7 @@ html[data-zoron] .zoron-con-bar {
 }
 
 /* the bar under the terminal draws its hairline on top */
-html[data-zoron] .zoron-con-bar[data-place="bottom"] {
+html[data-zoron] .zoron-con-bar[data-place='bottom'] {
   border-top: 1px solid var(--zoron-con-line);
   border-bottom: 0;
 }
@@ -1600,8 +1600,8 @@ html[data-zoron] .zoron-con-meter {
   display: grid;
   grid-template-columns: max-content minmax(1rem, 3.25rem);
   grid-template-areas:
-    "label spark"
-    "value spark";
+    'label spark'
+    'value spark';
   align-items: center;
   column-gap: 8px;
   min-width: 0;
@@ -1652,11 +1652,11 @@ html[data-zoron] .zoron-con-spark-bars {
 }
 
 /* the 'none' style: the label over the value, nothing beside them (more specific than the phone's columns) */
-html[data-zoron] .zoron-con .zoron-con-meters[data-graph="none"] > .zoron-con-meter {
+html[data-zoron] .zoron-con .zoron-con-meters[data-graph='none'] > .zoron-con-meter {
   grid-template-columns: max-content;
   grid-template-areas:
-    "label"
-    "value";
+    'label'
+    'value';
 }
 
 /* a stopped server: the figures dimmed over a flat, muted line */
@@ -1695,11 +1695,11 @@ html[data-zoron] .zoron-con-power .mantine-Button-root {
   font-size: 0.8125rem;
 }
 
-html[data-zoron] .zoron-con-power .mantine-Button-root[style*="--mantine-color-green-filled"] {
+html[data-zoron] .zoron-con-power .mantine-Button-root[style*='--mantine-color-green-filled'] {
   --zoron-con-tone: var(--mantine-color-green-filled);
 }
 
-html[data-zoron] .zoron-con-power .mantine-Button-root[style*="--mantine-color-red-filled"] {
+html[data-zoron] .zoron-con-power .mantine-Button-root[style*='--mantine-color-red-filled'] {
   --zoron-con-tone: var(--mantine-color-red-filled);
 }
 
@@ -1797,16 +1797,16 @@ html[data-zoron] .zoron-con-term > .mantine-Card-root > span {
 }
 
 /* core's jump to the bottom, clear of the prompt, and of the chips while they sit above it */
-html[data-zoron] .zoron-con-term > .mantine-Card-root > [class~="z-90"] {
+html[data-zoron] .zoron-con-term > .mantine-Card-root > [class~='z-90'] {
   right: 1.25rem;
   bottom: calc(var(--zoron-con-prompt) + 1.25rem);
 }
 
 html[data-zoron]
-  .zoron-con[data-chips="prompt"]
+  .zoron-con[data-chips='prompt']
   .zoron-con-term:has(> .zoron-con-chips)
   > .mantine-Card-root
-  > [class~="z-90"] {
+  > [class~='z-90'] {
   bottom: calc(var(--zoron-con-prompt) + var(--zoron-con-chip) + 2 * var(--zoron-con-chips-y) + 1.25rem);
 }
 
@@ -1827,7 +1827,7 @@ html[data-zoron] .zoron-con-term > .mantine-Card-root > :last-child {
 }
 
 html[data-zoron] .zoron-con-term > .mantine-Card-root > :last-child::before {
-  content: "›";
+  content: '›';
   flex-shrink: 0;
   color: var(--zoron-accent);
   font-size: 1.125rem;
@@ -1885,17 +1885,17 @@ html[data-zoron] .zoron-con-chips {
 }
 
 /* 'toolbar': the row straight under the terminal's toolbar, both ordered before the output, which closes up to it */
-html[data-zoron] .zoron-con[data-chips="toolbar"] .zoron-con-term > .mantine-Card-root > :first-child {
+html[data-zoron] .zoron-con[data-chips='toolbar'] .zoron-con-term > .mantine-Card-root > :first-child {
   order: -2;
 }
 
-html[data-zoron] .zoron-con[data-chips="toolbar"] .zoron-con-chips {
+html[data-zoron] .zoron-con[data-chips='toolbar'] .zoron-con-chips {
   order: -1;
   padding-top: calc(var(--zoron-con-chips-y) + 2px);
 }
 
 html[data-zoron]
-  .zoron-con[data-chips="toolbar"]
+  .zoron-con[data-chips='toolbar']
   .zoron-con-term:has(> .zoron-con-chips)
   > .mantine-Card-root
   > .flex-1 {
@@ -1975,28 +1975,28 @@ html[data-zoron] .zoron-con-aside {
   background: var(--zoron-con-step);
 }
 
-html[data-zoron] .zoron-con[data-side="left"] .zoron-con-aside {
+html[data-zoron] .zoron-con[data-side='left'] .zoron-con-aside {
   order: -1;
   border-right: 1px solid var(--zoron-con-line);
   border-left: 0;
 }
 
-html[data-zoron] .zoron-con[data-inspector="docked"] .zoron-con-main:has(> .zoron-con-aside[data-open]) {
+html[data-zoron] .zoron-con[data-inspector='docked'] .zoron-con-main:has(> .zoron-con-aside[data-open]) {
   grid-template-columns: minmax(0, 1fr) 20rem;
 }
 
 html[data-zoron]
-  .zoron-con[data-inspector="docked"][data-side="left"]
+  .zoron-con[data-inspector='docked'][data-side='left']
   .zoron-con-main:has(> .zoron-con-aside[data-open]) {
   grid-template-columns: 20rem minmax(0, 1fr);
 }
 
-html[data-zoron] .zoron-con[data-inspector="docked"] .zoron-con-aside[data-open] {
+html[data-zoron] .zoron-con[data-inspector='docked'] .zoron-con-aside[data-open] {
   display: flex;
 }
 
 /* narrower, it slides over the terminal from the workspace's edge on its side, opaque, and slides back out */
-html[data-zoron] .zoron-con[data-inspector="over"] .zoron-con-aside {
+html[data-zoron] .zoron-con[data-inspector='over'] .zoron-con-aside {
   position: absolute;
   inset: 0 0 0 auto;
   z-index: 20;
@@ -2013,20 +2013,20 @@ html[data-zoron] .zoron-con[data-inspector="over"] .zoron-con-aside {
     visibility 0s linear 240ms;
 }
 
-html[data-zoron] .zoron-con[data-inspector="over"][data-side="left"] .zoron-con-aside {
+html[data-zoron] .zoron-con[data-inspector='over'][data-side='left'] .zoron-con-aside {
   inset: 0 auto 0 0;
   box-shadow: 16px 0 32px -20px rgba(0, 0, 0, 0.5);
   transform: translateX(-1.5rem);
 }
 
-html[data-zoron] .zoron-con[data-inspector="over"] .zoron-con-aside[data-open] {
+html[data-zoron] .zoron-con[data-inspector='over'] .zoron-con-aside[data-open] {
   opacity: 1;
   transform: none;
   visibility: visible;
   transition-delay: 0s;
 }
 
-html[data-zoron][data-zoron-motion="none"] .zoron-con-aside {
+html[data-zoron][data-zoron-motion='none'] .zoron-con-aside {
   transition: none;
 }
 
@@ -2082,7 +2082,7 @@ html[data-zoron] .zoron-con-tab {
   }
 }
 
-html[data-zoron] .zoron-con-tab[aria-selected="true"] {
+html[data-zoron] .zoron-con-tab[aria-selected='true'] {
   background-color: color-mix(in srgb, var(--mantine-color-text) 8%, transparent);
   color: var(--mantine-color-text);
 }
@@ -2194,12 +2194,12 @@ html[data-zoron] .zoron-con[data-phone] .zoron-con-bar {
 }
 
 /* a bar under the terminal is the workspace's bottom edge: it keeps clear of the home indicator, not the prompt */
-html[data-zoron] .zoron-con[data-phone] .zoron-con-bar[data-place="bottom"] {
+html[data-zoron] .zoron-con[data-phone] .zoron-con-bar[data-place='bottom'] {
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
 html[data-zoron]
-  .zoron-con[data-phone]:has(> .zoron-con-bar[data-place="bottom"])
+  .zoron-con[data-phone]:has(> .zoron-con-bar[data-place='bottom'])
   .zoron-con-term
   > .mantine-Card-root
   > :last-child {
@@ -2275,15 +2275,15 @@ html[data-zoron] .zoron-con[data-phone] .zoron-con-term > .mantine-Card-root > .
   margin: 8px 4px 4px 16px;
 }
 
-html[data-zoron] .zoron-con[data-phone] .zoron-con-term > .mantine-Card-root > [class~="z-90"] {
+html[data-zoron] .zoron-con[data-phone] .zoron-con-term > .mantine-Card-root > [class~='z-90'] {
   bottom: 4.25rem;
 }
 
 html[data-zoron]
-  .zoron-con[data-phone][data-chips="prompt"]
+  .zoron-con[data-phone][data-chips='prompt']
   .zoron-con-term:has(> .zoron-con-chips)
   > .mantine-Card-root
-  > [class~="z-90"] {
+  > [class~='z-90'] {
   bottom: 7.5rem;
 }
 
@@ -2369,13 +2369,13 @@ html[data-zoron] .zoron-sheet .zoron-con-commands .mantine-ActionIcon-root {
 
 /* window: a title bar of three muted dots over a hairline; core's header (the card's first child) moves down for it,
    since core's own padding is a layered !important no unlayered rule can change */
-html[data-zoron][data-zoron-term-skin="window"] .mantine-Card-root:has(.xterm):not(.zoron-con-term > *) > :first-child {
+html[data-zoron][data-zoron-term-skin='window'] .mantine-Card-root:has(.xterm):not(.zoron-con-term > *) > :first-child {
   margin-top: 1.75rem;
 }
 
-html[data-zoron][data-zoron-term-skin="window"] .mantine-Card-root:has(.xterm):not(.zoron-con-term > *)::before {
+html[data-zoron][data-zoron-term-skin='window'] .mantine-Card-root:has(.xterm):not(.zoron-con-term > *)::before {
   --zoron-term-dot: color-mix(in srgb, currentColor 26%, transparent);
-  content: "";
+  content: '';
   position: absolute;
   inset: 0 0 auto;
   height: 1.75rem;
@@ -2391,27 +2391,27 @@ html[data-zoron][data-zoron-term-skin="window"] .mantine-Card-root:has(.xterm):n
 /* the workspace's window: the top bar is the title bar, a shade stronger, the dots at its start whatever piece comes
    first: a column of their own in its grid (barLayout()'s `dots` variant), which the other rows stretch across. With
    no top bar there are none */
-html[data-zoron][data-zoron-term-skin="window"] .zoron-con-bar[data-place="top"] {
+html[data-zoron][data-zoron-term-skin='window'] .zoron-con-bar[data-place='top'] {
   grid-template-columns: var(--zoron-bar-cols-dots);
   grid-template-areas: var(--zoron-bar-areas-dots);
   background: color-mix(in srgb, var(--zoron-con-fg) 6%, transparent);
 }
 
 @container zoron-con (width < 60rem) {
-  html[data-zoron][data-zoron-term-skin="window"] .zoron-con-bar[data-place="top"] {
+  html[data-zoron][data-zoron-term-skin='window'] .zoron-con-bar[data-place='top'] {
     grid-template-columns: var(--zoron-bar-cols-narrow-dots);
     grid-template-areas: var(--zoron-bar-areas-narrow-dots);
   }
 }
 
-html[data-zoron][data-zoron-term-skin="window"] .zoron-con[data-phone] .zoron-con-bar[data-place="top"] {
+html[data-zoron][data-zoron-term-skin='window'] .zoron-con[data-phone] .zoron-con-bar[data-place='top'] {
   grid-template-columns: var(--zoron-bar-cols-phone-dots);
   grid-template-areas: var(--zoron-bar-areas-phone-dots);
 }
 
-html[data-zoron][data-zoron-term-skin="window"] .zoron-con-bar[data-place="top"]::before {
+html[data-zoron][data-zoron-term-skin='window'] .zoron-con-bar[data-place='top']::before {
   --zoron-term-dot: color-mix(in srgb, currentColor 26%, transparent);
-  content: "";
+  content: '';
   grid-area: dots;
   align-self: center;
   width: 42px;
@@ -2423,7 +2423,7 @@ html[data-zoron][data-zoron-term-skin="window"] .zoron-con-bar[data-place="top"]
 }
 
 /* flush: no card at all; 'theme' and 'panel' sit on the canvas, a named scheme keeps its background as a plain block */
-html[data-zoron][data-zoron-term-skin="flush"] :is(.mantine-Card-root:has(.xterm), .zoron-con) {
+html[data-zoron][data-zoron-term-skin='flush'] :is(.mantine-Card-root:has(.xterm), .zoron-con) {
   border-color: transparent;
   border-radius: 0;
   background: var(--zoron-term-flush, transparent);
@@ -2433,7 +2433,7 @@ html[data-zoron][data-zoron-term-skin="flush"] :is(.mantine-Card-root:has(.xterm
 }
 
 /* glass: the scheme's background, translucent and blurred over the backdrop as much as the theme's glass is */
-html[data-zoron][data-zoron-term-skin="glass"] :is(.mantine-Card-root:has(.xterm), .zoron-con) {
+html[data-zoron][data-zoron-term-skin='glass'] :is(.mantine-Card-root:has(.xterm), .zoron-con) {
   border-color: color-mix(in srgb, currentColor 14%, transparent);
   background: color-mix(in srgb, var(--zoron-term-bg, var(--zoron-card-solid)) 72%, transparent);
   box-shadow:
@@ -2446,7 +2446,7 @@ html[data-zoron][data-zoron-term-skin="glass"] :is(.mantine-Card-root:has(.xterm
 /* crt: rounder glass, scanlines and a vignette over the whole screen (on the workspace, its terminal area; clicks
    pass through), text glowing in its own colour; all of it still, no flicker. The strengths (buildCss) are faint on
    a light screen. A phone's workspace keeps its square edges */
-html[data-zoron][data-zoron-term-skin="crt"] :is(.mantine-Card-root:has(.xterm), .zoron-con:not([data-phone])) {
+html[data-zoron][data-zoron-term-skin='crt'] :is(.mantine-Card-root:has(.xterm), .zoron-con:not([data-phone])) {
   border-color: color-mix(in srgb, currentColor 10%, transparent);
   border-radius: calc(var(--zoron-radius) + 10px);
   box-shadow:
@@ -2454,9 +2454,9 @@ html[data-zoron][data-zoron-term-skin="crt"] :is(.mantine-Card-root:has(.xterm),
     0 0 0 3px color-mix(in srgb, var(--zoron-term-bg, var(--zoron-card-solid)) 70%, #000000);
 }
 
-html[data-zoron][data-zoron-term-skin="crt"]
+html[data-zoron][data-zoron-term-skin='crt']
   :is(.mantine-Card-root:has(.xterm):not(.zoron-con-term > *), .zoron-con-term)::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   z-index: 10;
@@ -2467,12 +2467,12 @@ html[data-zoron][data-zoron-term-skin="crt"]
 }
 
 /* xterm's DOM renderer draws each row as spans; set on each, currentColor is that run's own colour */
-html[data-zoron][data-zoron-term-skin="crt"] .mantine-Card-root .xterm-rows :is(div, span) {
+html[data-zoron][data-zoron-term-skin='crt'] .mantine-Card-root .xterm-rows :is(div, span) {
   text-shadow: var(--zoron-term-glow);
 }
 
 /* neon: an accent outline with a soft accent glow, around the workspace's edge on Zoron's page */
-html[data-zoron][data-zoron-term-skin="neon"] :is(.mantine-Card-root:has(.xterm), .zoron-con) {
+html[data-zoron][data-zoron-term-skin='neon'] :is(.mantine-Card-root:has(.xterm), .zoron-con) {
   border-color: color-mix(in srgb, var(--zoron-accent) 85%, transparent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--zoron-accent) 30%, transparent),
@@ -2480,7 +2480,7 @@ html[data-zoron][data-zoron-term-skin="neon"] :is(.mantine-Card-root:has(.xterm)
     inset 0 0 28px -14px color-mix(in srgb, var(--zoron-accent) 45%, transparent);
 }
 
-html[data-zoron][data-zoron-term-skin="neon"][data-mantine-color-scheme="light"]
+html[data-zoron][data-zoron-term-skin='neon'][data-mantine-color-scheme='light']
   :is(.mantine-Card-root:has(.xterm), .zoron-con) {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--zoron-accent) 22%, transparent),
@@ -2544,7 +2544,7 @@ html[data-zoron] .zoron-look-option[data-frame] {
   }
 }
 
-html[data-zoron] .zoron-look-option[aria-checked="true"] {
+html[data-zoron] .zoron-look-option[aria-checked='true'] {
   border-color: var(--zoron-accent);
   background-color: color-mix(in srgb, var(--zoron-accent) 10%, transparent);
 }
@@ -2662,7 +2662,7 @@ html[data-zoron] .zoron-home-grid {
 }
 
 /* the compact layout: a denser grid of small cards */
-html[data-zoron] .zoron-home-grid[data-layout="compact"] {
+html[data-zoron] .zoron-home-grid[data-layout='compact'] {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   gap: 10px;
 }
@@ -2684,14 +2684,14 @@ html[data-zoron] .zoron-home-card[data-selected] {
 }
 
 /* a compact card: the tile, the name over the game and the state, the menu (which holds the power actions) */
-html[data-zoron] .zoron-home-card[data-layout="compact"] {
+html[data-zoron] .zoron-home-card[data-layout='compact'] {
   flex-direction: row;
   align-items: flex-start;
   gap: 10px;
   padding: 12px;
 }
 
-html[data-zoron] .zoron-home-card[data-layout="compact"] .zoron-home-card-link {
+html[data-zoron] .zoron-home-card[data-layout='compact'] .zoron-home-card-link {
   font-size: 0.9375rem;
 }
 
@@ -2700,7 +2700,7 @@ html[data-zoron] .zoron-home-card[data-skeleton] {
   height: 168px;
 }
 
-html[data-zoron] .zoron-home-card[data-skeleton][data-layout="compact"] {
+html[data-zoron] .zoron-home-card[data-skeleton][data-layout='compact'] {
   height: 82px;
 }
 
@@ -2715,7 +2715,7 @@ html[data-zoron] .zoron-home-card-link {
 }
 
 html[data-zoron] .zoron-home-card-link::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -2777,14 +2777,14 @@ html[data-zoron] .zoron-home-tile:is([data-selecting], :focus-visible) .zoron-ho
   }
 }
 
-html[data-zoron] .zoron-home-tile[aria-pressed="true"] .zoron-home-tile-check {
+html[data-zoron] .zoron-home-tile[aria-pressed='true'] .zoron-home-tile-check {
   opacity: 1;
   background: var(--zoron-gradient);
   color: var(--zoron-accent-ink);
 }
 
 /* the smaller tile of a compact card and a list row */
-html[data-zoron] :is(.zoron-home-card[data-layout="compact"], .zoron-home-row) .zoron-home-tile {
+html[data-zoron] :is(.zoron-home-card[data-layout='compact'], .zoron-home-row) .zoron-home-tile {
   width: 34px;
   height: 34px;
   border-radius: 10px;
@@ -2935,7 +2935,7 @@ html[data-zoron] .zoron-home-view {
   }
 }
 
-html[data-zoron] .zoron-home-view[aria-pressed="true"] {
+html[data-zoron] .zoron-home-view[aria-pressed='true'] {
   background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
   color: color-mix(in srgb, var(--zoron-accent) 70%, var(--mantine-color-text));
 }
@@ -3010,7 +3010,7 @@ html[data-zoron] .zoron-server-tile-pick {
   }
 }
 
-html[data-zoron] .zoron-server-tile-pick[aria-pressed="true"] {
+html[data-zoron] .zoron-server-tile-pick[aria-pressed='true'] {
   border-color: var(--zoron-accent);
   background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
 }
@@ -3023,7 +3023,7 @@ html[data-zoron] .zoron-server-tile-swatch {
   cursor: pointer;
 }
 
-html[data-zoron] .zoron-server-tile-swatch[aria-pressed="true"] {
+html[data-zoron] .zoron-server-tile-swatch[aria-pressed='true'] {
   box-shadow:
     0 0 0 2px var(--mantine-color-body),
     0 0 0 4px var(--zoron-accent);
@@ -3050,28 +3050,28 @@ html[data-zoron] .zoron-status {
   white-space: nowrap;
 }
 
-html[data-zoron] :is(.zoron-status, .zoron-con-state)[data-phase="running"] {
+html[data-zoron] :is(.zoron-status, .zoron-con-state)[data-phase='running'] {
   --zoron-status: var(--color-server-status-running, var(--mantine-color-green-filled));
 }
 
-html[data-zoron] :is(.zoron-status, .zoron-con-state):is([data-phase="starting"], [data-phase="stopping"]) {
+html[data-zoron] :is(.zoron-status, .zoron-con-state):is([data-phase='starting'], [data-phase='stopping']) {
   --zoron-status: var(--color-server-status-starting, var(--mantine-color-yellow-filled));
 }
 
 html[data-zoron]
   :is(.zoron-status, .zoron-con-state):is(
-    [data-phase="installing"],
-    [data-phase="restoring"],
-    [data-phase="transferring"]
+    [data-phase='installing'],
+    [data-phase='restoring'],
+    [data-phase='transferring']
   ) {
   --zoron-status: var(--mantine-color-blue-filled);
 }
 
-html[data-zoron] :is(.zoron-status, .zoron-con-state):is([data-phase="failed"], [data-phase="suspended"]) {
+html[data-zoron] :is(.zoron-status, .zoron-con-state):is([data-phase='failed'], [data-phase='suspended']) {
   --zoron-status: var(--mantine-color-red-filled);
 }
 
-html[data-zoron] :is(.zoron-status, .zoron-con-state)[data-phase="offline"] {
+html[data-zoron] :is(.zoron-status, .zoron-con-state)[data-phase='offline'] {
   --zoron-status: var(--mantine-color-dimmed);
 }
 
@@ -3091,7 +3091,7 @@ html[data-zoron] .zoron-status[data-bare] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html[data-zoron]:not([data-zoron-motion="none"]) .zoron-skeleton {
+  html[data-zoron]:not([data-zoron-motion='none']) .zoron-skeleton {
     animation: zoron-shimmer 1.4s ease-in-out infinite;
   }
 }

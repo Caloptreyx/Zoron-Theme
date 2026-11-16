@@ -1,8 +1,8 @@
 import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faBook, faEnvelope, faHeartPulse, faLink, type IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useZoronTheme } from '../lib/store.ts';
 import type { LoginLinkIcon } from '../lib/theme.ts';
+import { useZoronTheme } from '../lib/store.ts';
 import { useExtTranslations } from '../translations.ts';
 
 /** Also drawn beside the icon picker in Studio. */

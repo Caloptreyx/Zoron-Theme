@@ -685,7 +685,7 @@ export const MAX_PRESET_NAME = 32;
 /** A name as shown: control characters dropped, trimmed; null when nothing or too much is left. */
 export function presetName(v: unknown): string | null {
   if (typeof v !== 'string') return null;
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are what it removes
+  // oxlint-disable-next-line no-control-regex -- control characters are what it removes
   const name = v.replace(/[\u0000-\u001f\u007f]/g, '').trim();
   return name.length > 0 && name.length <= MAX_PRESET_NAME ? name : null;
 }
@@ -696,7 +696,7 @@ export const pickLook = (t: ZoronTheme): PresetLook =>
 /** A site command as shown and sent: control characters dropped, trimmed; null when nothing or too much is left. */
 export function siteCommand(v: unknown): string | null {
   if (typeof v !== 'string') return null;
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are what it removes
+  // oxlint-disable-next-line no-control-regex -- control characters are what it removes
   const command = v.replace(/[\u0000-\u001f\u007f]/g, '').trim();
   return command.length > 0 && command.length <= MAX_SITE_COMMAND ? command : null;
 }
@@ -722,7 +722,7 @@ function loginLinks(v: unknown, fallback: LoginLink[]): LoginLink[] {
     // by code points, so a cut never splits an emoji into a lone surrogate
     const label =
       typeof r?.label === 'string'
-        ? // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are what it removes
+        ? // oxlint-disable-next-line no-control-regex -- control characters are what it removes
           [...r.label.replace(/[\u0000-\u001f\u007f]/g, '').trim()].slice(0, MAX_LOGIN_LINK_LABEL).join('')
         : '';
     const url = typeof r?.url === 'string' && r.url.length <= MAX_URL && SAFE_URL.test(r.url) ? r.url : '';

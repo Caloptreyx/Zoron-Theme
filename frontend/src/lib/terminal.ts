@@ -7,11 +7,11 @@
 
 import { TERMINAL_SCHEMES, TERMINAL_SKINS, type TerminalScheme, type TerminalSkin, type ZoronTheme } from './theme.ts';
 
-// biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escapes are what these match
+// oxlint-disable-next-line no-control-regex -- ANSI escapes are what these match
 const SGR = /\x1b\[([0-9;]*)m/g;
-// biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escapes are what these match
+// oxlint-disable-next-line no-control-regex -- ANSI escapes are what these match
 const ESCAPE = /\x1b\[[0-?]*[ -/]*[@-~]/g;
-// biome-ignore lint/suspicious/noControlCharactersInRegex: a reset, `ESC[m` or `ESC[0m`
+// oxlint-disable-next-line no-control-regex -- a reset, `ESC[m` or `ESC[0m`
 const RESET = /\x1b\[0?m/g;
 
 /**

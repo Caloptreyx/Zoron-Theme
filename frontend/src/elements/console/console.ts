@@ -14,7 +14,7 @@ export const MAX_COMMAND = 200;
 export function commandOf(input: unknown): string | null {
   if (typeof input !== 'string') return null;
   const command = input.trim();
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: a command is one line of printable text
+  // oxlint-disable-next-line no-control-regex -- a command is one line of printable text
   if (!command || command.length > MAX_COMMAND || /[\u0000-\u001f\u007f]/.test(command)) return null;
   return command;
 }
@@ -50,7 +50,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 export function logFileName(serverName: string, date: Date): string {
   const name =
     serverName
-      // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are what it removes
+      // oxlint-disable-next-line no-control-regex -- control characters are what it removes
       .replace(/[\u0000-\u001f\u007f<>:"/\\|?*]+/g, ' ')
       .trim()
       .replace(/\s+/g, '-')

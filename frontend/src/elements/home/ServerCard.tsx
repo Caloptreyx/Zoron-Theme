@@ -13,6 +13,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type MouseEvent, useState } from 'react';
 import { Link } from 'react-router';
+import type { HomeLayout } from '../../lib/theme.ts';
 import {
   ActionIcon,
   Card,
@@ -28,7 +29,6 @@ import {
   useBulkPowerActions,
   useRedactedAddress,
 } from '../../lib/core.ts';
-import type { HomeLayout } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { TileEditor } from '../tiles/TileEditor.tsx';
 import { TileGlyph } from '../tiles/TileFace.tsx';

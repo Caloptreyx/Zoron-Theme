@@ -1,5 +1,5 @@
-import { sameTheme, type ZoronTheme } from '../../lib/theme.ts';
 import type { ExtTranslationKey } from '../../translations.ts';
+import { sameTheme, type ZoronTheme } from '../../lib/theme.ts';
 
 /** Studio's tabs, in the order the section nav lists them. */
 export const SECTION_IDS = [

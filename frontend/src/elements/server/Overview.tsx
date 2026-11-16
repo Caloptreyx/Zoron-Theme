@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import { type CSSProperties, type FC, type ReactNode, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import type { OverviewSection } from '../../lib/theme.ts';
 import {
   Avatar,
   Button,
@@ -21,7 +22,6 @@ import {
 } from '../../lib/core.ts';
 import { sortGrid } from '../../lib/grid.ts';
 import { useZoronTheme } from '../../lib/store.ts';
-import type { OverviewSection } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { addressOf, phaseOf } from '../home/home.ts';
 import { TileButton } from '../tiles/TileEditor.tsx';

@@ -1,7 +1,7 @@
+import type { ReactNode } from 'react';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Chip, ColorInput, Slider } from '@mantine/core';
-import type { ReactNode } from 'react';
 import { HEX, toHexColor } from '../../lib/color.ts';
 import { ActionIcon, Switch } from '../../lib/core.ts';
 import { PRESETS, type ZoronTheme } from '../../lib/theme.ts';

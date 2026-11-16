@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react';
 import { faArrowUpRightFromSquare, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ReactNode } from 'react';
+import type { OverviewUsage } from '../../lib/theme.ts';
 import {
   bytesToString,
   Card,
@@ -11,10 +12,9 @@ import {
   useRedactedAddress,
   useServerStore,
 } from '../../lib/core.ts';
-import type { OverviewUsage } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
-import { NETWORK_FLOOR, useTelemetry } from '../console/Telemetry.tsx';
 import { SAMPLES, sparkPath, type Telemetry } from '../console/telemetry.ts';
+import { NETWORK_FLOOR, useTelemetry } from '../console/Telemetry.tsx';
 import { addressOf, type Phase, phaseOf } from '../home/home.ts';
 import { levelOf, percentOf } from './overview.ts';
 
@@ -96,7 +96,11 @@ export function ConnectDetails() {
 /** A usage sparkline's drawing box; CSS sizes it, the stroke keeps its width (`non-scaling-stroke`). */
 const SPARK_WIDTH = 120;
 const SPARK_HEIGHT = 24;
-const FLAT = sparkPath(new Array<number>(SAMPLES).fill(0), SPARK_WIDTH, SPARK_HEIGHT).line;
+const FLAT = sparkPath(
+  Array.from({ length: SAMPLES }, () => 0),
+  SPARK_WIDTH,
+  SPARK_HEIGHT,
+).line;
 
 /** A figure's last minute as a line over a faint fill, drawn by the console's builders; flat and muted when idle. */
 function Spark({ samples, max, live }: { samples: number[]; max: number; live: boolean }) {

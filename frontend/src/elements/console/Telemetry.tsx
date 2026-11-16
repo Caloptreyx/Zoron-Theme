@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { bytesToString, mbToBytes, useServerStore, useServerStoreApi } from '../../lib/core.ts';
 import type { ConsoleGraph, ConsoleMetric } from '../../lib/theme.ts';
+import { bytesToString, mbToBytes, useServerStore, useServerStoreApi } from '../../lib/core.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { EMPTY_TELEMETRY, SAMPLES, sparkBars, sparkPath, withReading } from './telemetry.ts';
 
@@ -12,7 +12,7 @@ const SPARK_HEIGHT = 20;
 export const NETWORK_FLOOR = 1024;
 
 /** The flat line and the row of stubs a stopped server's figures show. */
-const IDLE = new Array<number>(SAMPLES).fill(0);
+const IDLE = Array.from({ length: SAMPLES }, () => 0);
 const FLAT = sparkPath(IDLE, SPARK_WIDTH, SPARK_HEIGHT).line;
 const FLAT_BARS = sparkBars(IDLE, SPARK_WIDTH, SPARK_HEIGHT);
 

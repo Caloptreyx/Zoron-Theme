@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import type { ConsoleBarItem } from '../../lib/theme.ts';
 import {
   ActionIcon,
   CoreTerminal,
@@ -24,7 +25,6 @@ import {
   useVisualViewportBottomInset,
 } from '../../lib/core.ts';
 import { useZoronTheme } from '../../lib/store.ts';
-import type { ConsoleBarItem } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { phaseOf } from '../home/home.ts';
 import { TileHeading } from '../tiles/TileFace.tsx';

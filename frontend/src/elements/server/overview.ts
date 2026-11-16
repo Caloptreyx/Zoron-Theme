@@ -1,3 +1,4 @@
+import type { OverviewItem, OverviewSection } from '../../lib/theme.ts';
 import {
   fillGaps,
   GRID_COLUMNS,
@@ -9,7 +10,6 @@ import {
   resizeItem,
   settleGrid,
 } from '../../lib/grid.ts';
-import type { OverviewItem, OverviewSection } from '../../lib/theme.ts';
 
 /**
  * The server overview's small rules: activity labels, relative times, usage levels, the grid a visitor sees, and the

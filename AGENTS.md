@@ -272,7 +272,7 @@ Studio's preview follows each draft.
   is filled; mounted while that tab shows). It sits on the `consoleInspector` side ('right', or 'left': `data-side`
   on the workspace) or is 'off': no column, toggle, sheet, edit chip or personal commands (the site's still show).
   From 80rem of page width (`usePageSize`, measured as core's `usePageBreakpoint` does: the virtual window, else
-  the body; that hook only exists from panel 1.2.2, and biome bans `useMediaQuery`) it docks as a 20rem column
+  the body; that hook only exists from panel 1.2.2, and core's Biome config up to 1.2.9 banned `useMediaQuery`) it docks as a 20rem column
   behind a hairline and the terminal narrows; open state in `zoron:console-panel` ('shown' or 'hidden', written when
   the visitor toggles it), else `consoleInspectorOpen` (open by default). Below, it slides over the terminal from
   its side's edge (transform and opacity; none with the motion setting off or reduced motion), opens on demand only,
@@ -403,7 +403,8 @@ value. Add it to `PresetLook` only if it is part of a look rather than about the
 
 `node --test "tests/*.test.ts"` runs the model tests. Everything else runs in CI: `.github/workflows/check.yml`
 calls the org's shared extension check, which stages the extension into the newest panel release and runs
-typecheck, biome, the frontend build, the node tests and `cargo test -p dev_caloptreyx_zoron`. Push and read that
+typecheck, the panel's lint and format check (`oxlint` and `oxfmt --check` from panel 1.2.10, Biome before), the
+frontend build, the node tests and `cargo test -p dev_caloptreyx_zoron`. Push and read that
 run; do not build the panel on the development VM.
 
 For a quick visual check against the local dev panel, bind mount (not symlink: vite resolves `shared` from the
