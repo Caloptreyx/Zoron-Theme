@@ -1,6 +1,10 @@
+import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type ReactNode, useEffect, useState } from 'react';
+import { Link } from 'react-router';
 import type { ConsoleGraph, ConsoleMetric } from '../../lib/theme.ts';
-import { bytesToString, mbToBytes, useServerStore, useServerStoreApi } from '../../lib/core.ts';
+import { bytesToString, mbToBytes, Tooltip, useServerStore, useServerStoreApi } from '../../lib/core.ts';
+import { corePages } from '../../lib/routes.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { EMPTY_TELEMETRY, SAMPLES, sparkBars, sparkPath, withReading } from './telemetry.ts';
 
@@ -94,7 +98,7 @@ function Meter({
  * A command bar's live figures, those of `metrics` in its order (the theme's `consoleMetrics`, of CPU, memory, disk,
  * and the network's traffic each way as a rate), each with a sparkline of its last minute in the `graph` style
  * against the server's limit where it has one. A stopped server's figures read zero (the disk excepted) over a flat,
- * muted line.
+ * muted line. Where the panel has core's resource history (1.2.9), a link to it ends them.
  */
 export function Telemetry({
   live,
@@ -175,6 +179,13 @@ export function Telemetry({
       {metrics.map((metric) => (
         <Meter key={metric} {...meters[metric]} live={live} graph={graph} />
       ))}
+      {corePages.history && (
+        <Tooltip label={t('console.history', {})} innerClassName='zoron-con-history'>
+          <Link to={`/server/${server.uuidShort}/console/history`} aria-label={t('console.history', {})}>
+            <FontAwesomeIcon icon={faClockRotateLeft} />
+          </Link>
+        </Tooltip>
+      )}
     </div>
   );
 }

@@ -30,6 +30,7 @@ import { Loader, Select, useComputedColorScheme } from '@mantine/core';
 import { isAxiosError } from 'axios';
 import { type FC, useEffect, useReducer, useRef, useState } from 'react';
 import { useBeforeUnload, useNavigate } from 'react-router';
+import type { SectionProps } from '../elements/editor/sections/types.ts';
 import saveTheme from '../api/saveTheme.ts';
 import {
   SECTION_IDS,
@@ -38,18 +39,15 @@ import {
   sectionSettings,
   withSection,
 } from '../elements/editor/fields.ts';
-import {
-  BackdropSection,
-  ColorsSection,
-  ConsoleSection,
-  LayoutSection,
-  MotionSection,
-  PresetsSection,
-  type SectionProps,
-  ServerSection,
-  SurfacesSection,
-  TypographySection,
-} from '../elements/editor/sections.tsx';
+import { BackdropSection } from '../elements/editor/sections/Backdrop.tsx';
+import { ColorsSection } from '../elements/editor/sections/Colors.tsx';
+import { ConsoleSection } from '../elements/editor/sections/Console.tsx';
+import { LayoutSection } from '../elements/editor/sections/Layout.tsx';
+import { MotionSection } from '../elements/editor/sections/Motion.tsx';
+import { PresetsSection } from '../elements/editor/sections/Presets.tsx';
+import { ServerSection } from '../elements/editor/sections/Server.tsx';
+import { SurfacesSection } from '../elements/editor/sections/Surfaces.tsx';
+import { TypographySection } from '../elements/editor/sections/Typography.tsx';
 import {
   ActionIcon,
   Button,

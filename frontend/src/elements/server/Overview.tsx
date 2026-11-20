@@ -1,4 +1,11 @@
-import { faChevronRight, faClock, faGamepad, faServer, faTerminal } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronRight,
+  faClock,
+  faClockRotateLeft,
+  faGamepad,
+  faServer,
+  faTerminal,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import { type CSSProperties, type FC, type ReactNode, useEffect, useState } from 'react';
@@ -21,6 +28,7 @@ import {
   useServerStore,
 } from '../../lib/core.ts';
 import { sortGrid } from '../../lib/grid.ts';
+import { corePages } from '../../lib/routes.ts';
 import { useZoronTheme } from '../../lib/store.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { addressOf, phaseOf } from '../home/home.ts';
@@ -70,11 +78,12 @@ function GlanceRow({ to, label, value, detail }: { to: string | null; label: str
 }
 
 /**
- * Zoron's server overview: the server's name, status, game, node and uptime with core's own power controls and a way
- * to the console; live CPU, memory, disk and network from the server's websocket; recent activity; how to connect
- * (address, SFTP, the ID); and backups, schedules and addresses at a glance. The theme places the blocks on a snap
- * grid and picks the usage style, how much activity, the head and the description. Each block needs the permission
- * its page needs and is left out without it; the blocks beside it then close the gap.
+ * Zoron's server overview: the server's name, status, game, node and uptime with core's own power controls, a way to
+ * the console and, where the panel has it (1.2.9), to core's resource history; live CPU, memory, disk and network
+ * from the server's websocket; recent activity; how to connect (address, SFTP, the ID); and backups, schedules and
+ * addresses at a glance. The theme places the blocks on a snap grid and picks the usage style, how much activity,
+ * the head and the description. Each block needs the permission its page needs and is left out without it; the
+ * blocks beside it then close the gap.
  */
 function Overview() {
   const { t, language } = useExtTranslations();
@@ -176,6 +185,15 @@ function Overview() {
         >
           {t('overview.console', {})}
         </Button>
+        {corePages.history && (
+          <Button
+            variant='default'
+            leftSection={<FontAwesomeIcon icon={faClockRotateLeft} />}
+            onClick={() => navigate(`${base}/console/history`)}
+          >
+            {t('overview.history', {})}
+          </Button>
+        )}
         <ServerPowerControls />
       </div>
     </header>

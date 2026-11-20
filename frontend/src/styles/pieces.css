@@ -1,0 +1,176 @@
+/* Zoron: Zoron's own pieces and the overview's figures; loaded by app.css, scoped like every rule there to html[data-zoron…]. */
+
+/* ---------- Zoron's own pieces ---------- */
+
+/* the greeting takes the gradient only with "Gradient page titles" on, like the page titles */
+html[data-zoron-titles='gradient'] .zoron-greeting-title {
+  background: var(--zoron-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* the sign in pages' links (elements/LoginLinks.tsx): quiet chips above the logo, wrapping on a phone */
+html[data-zoron] .zoron-login-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+html[data-zoron] .zoron-login-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 4px 12px;
+  border: 1px solid var(--zoron-hairline);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 4%, transparent);
+  color: var(--mantine-color-dimmed);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+html[data-zoron] .zoron-login-link > svg {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-login-link:hover {
+    border-color: color-mix(in srgb, var(--zoron-accent) 45%, var(--zoron-hairline));
+    color: var(--mantine-color-text);
+  }
+}
+
+html[data-zoron] .zoron-login-link:focus-visible {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: 2px;
+}
+
+@keyframes zoron-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .zoron-pop {
+    animation: zoron-pop 360ms var(--zoron-ease, ease-out) both;
+  }
+}
+
+/* the editor's preview stage and its option tiles (pages/ThemeEditor.tsx, elements/editor) */
+.zoron-stage {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--mantine-color-text) 9%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 18px 18px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .zoron-tile:hover .zoron-tile-anim-rise {
+    animation: zoron-rise 1100ms var(--zoron-ease, ease-out) infinite;
+  }
+
+  .zoron-tile:hover .zoron-tile-anim-fade {
+    animation: zoron-fade 1100ms ease-out infinite;
+  }
+
+  .zoron-tile:hover .zoron-tile-anim-zoom {
+    animation: zoron-zoom 1100ms var(--zoron-ease, ease-out) infinite;
+  }
+}
+
+/* ---------- figures: a stat strip and usage bars (the server overview) ---------- */
+
+/* the stat strip: one card split by hairlines, not a card per figure */
+html[data-zoron] .zoron-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0;
+}
+
+html[data-zoron] .zoron-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 16px 20px 18px;
+}
+
+html[data-zoron] .zoron-stat-value {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+@container page (width >= 40rem) {
+  html[data-zoron] .zoron-stat-value {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+html[data-zoron] .zoron-stat:nth-child(even) {
+  border-left: 1px solid var(--zoron-hairline);
+}
+
+html[data-zoron] .zoron-stat:nth-child(n + 3) {
+  border-top: 1px solid var(--zoron-hairline);
+}
+
+@media (min-width: 64rem) {
+  html[data-zoron] .zoron-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  html[data-zoron] .zoron-stat:not(:first-child) {
+    border-left: 1px solid var(--zoron-hairline);
+  }
+
+  html[data-zoron] .zoron-stat:nth-child(n + 3) {
+    border-top: 0;
+  }
+}
+
+html[data-zoron] .zoron-stat .zoron-meter-track {
+  margin-top: 8px;
+}
+
+/* a usage bar: the accent, turning amber then red as it fills, as core colours usage */
+html[data-zoron] .zoron-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+html[data-zoron] .zoron-meter-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 6px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 9%, transparent);
+}
+
+html[data-zoron] .zoron-meter-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--zoron-accent);
+  transition: width 600ms var(--zoron-ease);
+}
+
+html[data-zoron] .zoron-meter[data-level='warn'] .zoron-meter-fill {
+  background: var(--mantine-color-yellow-filled);
+}
+
+html[data-zoron] .zoron-meter[data-level='danger'] .zoron-meter-fill {
+  background: var(--mantine-color-red-filled);
+}

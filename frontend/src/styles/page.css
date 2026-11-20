@@ -1,0 +1,308 @@
+/* Zoron: page backdrop and texture, shadows, blocks and the sidebar; loaded by app.css, scoped like every rule there to html[data-zoron…]. */
+
+/* ---------- page, backdrop and texture ---------- */
+
+/* a first visit waits for the theme (lib/store.ts), 1.5s at most, instead of flashing the default look */
+html[data-zoron-pending] body {
+  visibility: hidden;
+}
+
+html[data-zoron] {
+  --zoron-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  background-color: var(--mantine-color-body);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--mantine-color-text) 18%, transparent) transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* the backdrop and the texture are fixed layers under body, which lets them through */
+html[data-zoron] body {
+  background-color: transparent;
+}
+
+html[data-zoron]::before,
+html[data-zoron]::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+html[data-zoron]::before {
+  inset: -12vmax;
+}
+
+html[data-zoron]::after {
+  inset: 0;
+}
+
+/* the blur turns the gradients' straight falloff into soft light; rasterized once, then only moved */
+html[data-zoron]::before {
+  filter: blur(40px);
+}
+
+html[data-zoron-backdrop='aurora']::before {
+  background:
+    radial-gradient(44vmax 34vmax at 30% 22%, var(--zoron-field-1), transparent 70%),
+    radial-gradient(38vmax 30vmax at 80% 24%, var(--zoron-field-2), transparent 70%),
+    radial-gradient(50vmax 34vmax at 58% 86%, var(--zoron-field-3), transparent 70%);
+}
+
+html[data-zoron-backdrop='spotlight']::before {
+  background:
+    radial-gradient(60vmax 36vmax at 55% 12%, var(--zoron-field-1), transparent 72%),
+    radial-gradient(32vmax 22vmax at 66% 14%, var(--zoron-field-2), transparent 70%);
+}
+
+html[data-zoron-backdrop='mesh']::before {
+  background:
+    radial-gradient(40vmax 32vmax at 20% 18%, var(--zoron-field-1), transparent 70%),
+    radial-gradient(40vmax 32vmax at 84% 20%, var(--zoron-field-2), transparent 70%),
+    radial-gradient(40vmax 32vmax at 80% 84%, var(--zoron-field-1), transparent 70%),
+    radial-gradient(40vmax 32vmax at 20% 82%, var(--zoron-field-3), transparent 70%);
+}
+
+/* only transform moves, so the drift stays on the compositor */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-zoron-animate='on']::before {
+    animation: zoron-drift 36s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+}
+
+@keyframes zoron-drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(3vmax, -2vmax, 0) rotate(7deg) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-3vmax, 2.5vmax, 0) rotate(-5deg) scale(1.03);
+  }
+}
+
+html[data-zoron-pattern='grid']::after {
+  background-image:
+    linear-gradient(var(--zoron-pattern-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--zoron-pattern-color) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 100%);
+}
+
+html[data-zoron-pattern='dots']::after {
+  background-image: radial-gradient(var(--zoron-pattern-color) 1.2px, transparent 1.6px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 90% 75% at 50% 0%, #000 40%, transparent 100%);
+}
+
+html[data-zoron-pattern='noise']::after {
+  opacity: var(--zoron-noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html[data-zoron] ::selection {
+  background-color: color-mix(in srgb, var(--zoron-accent) 38%, transparent);
+}
+
+html[data-zoron] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html[data-zoron] ::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 18%, transparent);
+}
+
+html[data-zoron] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* core resets the outline on buttons and inputs; keyboard focus gets a visible accent ring back */
+html[data-zoron] :is(a, button, [role='button'], [role='tab'], [role='switch']):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--zoron-accent) 75%, transparent);
+  outline-offset: 2px;
+}
+
+/* ---------- shadows ---------- */
+
+html[data-zoron-shadow='none'] {
+  --zoron-shadow: 0 0 #0000;
+  --zoron-shadow-hover: 0 0 #0000;
+}
+
+html[data-zoron-shadow='soft'] {
+  --zoron-shadow:
+    0 1px 2px color-mix(in srgb, var(--zoron-shadow-color) 45%, transparent),
+    0 12px 32px -16px var(--zoron-shadow-color);
+  --zoron-shadow-hover:
+    0 2px 4px color-mix(in srgb, var(--zoron-shadow-color) 50%, transparent),
+    0 20px 44px -18px var(--zoron-shadow-color);
+}
+
+html[data-zoron-shadow='deep'] {
+  --zoron-shadow:
+    0 2px 6px color-mix(in srgb, var(--zoron-shadow-color) 60%, transparent),
+    0 26px 60px -22px var(--zoron-shadow-color);
+  --zoron-shadow-hover:
+    0 4px 10px color-mix(in srgb, var(--zoron-shadow-color) 60%, transparent),
+    0 34px 72px -24px var(--zoron-shadow-color);
+}
+
+/* ---------- blocks: cards (the sidebar is one) and bordered papers; overlays are handled below ---------- */
+
+html[data-zoron] .mantine-Card-root:not(.fixed > *),
+html[data-zoron]
+  .mantine-Paper-root[data-with-border]:not(
+    .mantine-Card-root,
+    .mantine-Modal-content,
+    .mantine-Drawer-content,
+    .mantine-Dialog-root,
+    .mantine-Notification-root
+  ) {
+  background-color: var(--zoron-card);
+  border-color: var(--zoron-hairline);
+  box-shadow:
+    var(--zoron-shadow),
+    inset 0 1px 0 var(--zoron-sheen);
+  transition:
+    transform 260ms var(--zoron-ease),
+    box-shadow 260ms var(--zoron-ease),
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+
+/* a block inside a block reads as a raised well, not another floating panel */
+html[data-zoron] .mantine-Card-root .mantine-Card-root {
+  background-color: color-mix(in srgb, var(--mantine-color-text) 3%, transparent);
+  box-shadow: none;
+}
+
+/* blur only the outermost glass blocks: nested backdrop filters cost a lot and add nothing */
+html[data-zoron-surface='glass'] .mantine-Card-root:not(.fixed > *, .mantine-Card-root .mantine-Card-root) {
+  -webkit-backdrop-filter: blur(var(--zoron-blur)) saturate(150%);
+  backdrop-filter: blur(var(--zoron-blur)) saturate(150%);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html[data-zoron-lift='on'] :is(a > .mantine-Card-root, .mantine-Card-root.cursor-pointer):hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--zoron-accent) 35%, var(--zoron-hairline));
+    box-shadow:
+      var(--zoron-shadow-hover),
+      0 10px 40px -18px var(--zoron-glow-color),
+      inset 0 1px 0 var(--zoron-sheen);
+  }
+}
+
+/* core's sticky page headers (a server's name and power buttons) paint the page colour, a dark band over the backdrop */
+html[data-zoron] .sticky.top-0[class~='bg-(--mantine-color-body)'] {
+  background-color: color-mix(in srgb, var(--mantine-color-body) 62%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+}
+
+/* ---------- sidebar ---------- */
+
+html[data-zoron-sidebar='floating'] #sidebar-desktop {
+  margin: 12px 0 12px 12px;
+  top: 12px;
+  height: calc(100vh - 24px);
+  border-radius: calc(var(--zoron-radius) + 4px);
+}
+
+html[data-zoron-sidebar='docked'] #sidebar-desktop {
+  margin: 0;
+  top: 0;
+  height: 100vh;
+  border-radius: 0;
+  border-width: 0 1px 0 0;
+  box-shadow: none;
+}
+
+/* overlay scrollbars paint over the links, so the scroller reaches into the card's padding and the bar sits there */
+html[data-zoron] #sidebar-content > .overflow-y-auto {
+  margin-right: calc(var(--mantine-spacing-sm) * -1);
+  padding-right: var(--mantine-spacing-sm);
+}
+
+/* section labels in sentence case (as core writes them), not tracked capitals */
+html[data-zoron] #sidebar-content .mantine-Divider-label {
+  padding-inline: var(--mantine-spacing-xs);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mantine-color-dimmed);
+}
+
+html[data-zoron] #sidebar-content .mantine-Divider-label::before,
+html[data-zoron] #sidebar-content .mantine-Divider-label::after {
+  display: none;
+}
+
+/* menu links (core's Sidebar.Link: a NavLink around a subtle Button that gets `active`) */
+html[data-zoron] #sidebar-content a > .mantine-Button-root {
+  font-weight: 500;
+  color: color-mix(in srgb, var(--mantine-color-text) 78%, transparent);
+  border-color: transparent;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 220ms ease;
+}
+
+html[data-zoron] #sidebar-content a > .mantine-Button-root svg {
+  opacity: 0.8;
+  transition: transform 220ms var(--zoron-ease);
+}
+
+@media (hover: hover) {
+  html[data-zoron] #sidebar-content a > .mantine-Button-root:not(.active):hover {
+    background-color: color-mix(in srgb, var(--mantine-color-text) 6%, transparent);
+    color: var(--mantine-color-text);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html[data-zoron]:not([data-zoron-motion='none']) #sidebar-content a > .mantine-Button-root:not(.active):hover svg {
+    transform: translateX(2px);
+  }
+}
+
+html[data-zoron] #sidebar-content a > .mantine-Button-root.active svg {
+  opacity: 1;
+}
+
+html[data-zoron-nav='pill'] #sidebar-content a > .mantine-Button-root.active {
+  background: var(--zoron-gradient);
+  color: var(--zoron-accent-ink);
+  box-shadow:
+    0 8px 22px -10px var(--zoron-glow-color),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+html[data-zoron-nav='glow'] #sidebar-content a > .mantine-Button-root.active {
+  background: var(--mantine-color-blue-light);
+  color: var(--mantine-color-blue-light-color);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--zoron-accent) 40%, transparent),
+    0 0 26px -6px var(--zoron-glow-color);
+}
+
+html[data-zoron-nav='bar'] #sidebar-content a > .mantine-Button-root.active {
+  background: color-mix(in srgb, var(--mantine-color-text) 7%, transparent);
+  color: var(--mantine-color-bright);
+  box-shadow: inset 3px 0 0 var(--zoron-accent);
+}
+
+html[data-zoron-nav='subtle'] #sidebar-content a > .mantine-Button-root.active {
+  background: color-mix(in srgb, var(--mantine-color-text) 8%, transparent);
+  color: var(--mantine-color-bright);
+}

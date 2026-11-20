@@ -12,6 +12,7 @@ import { ServerHome } from './elements/server/Overview.tsx';
 import Shell from './elements/shell/Shell.tsx';
 import { AccountContentContainer, Sidebar } from './lib/core.ts';
 import { THEME_UPDATE_PERMISSION } from './lib/permissions.ts';
+import { corePages } from './lib/routes.ts';
 import { applyCachedTheme, currentTheme, listenForPreview, loadTheme } from './lib/store.ts';
 import ThemeEditor, { LOGIN_PREVIEW_PATH } from './pages/ThemeEditor.tsx';
 import { getExtTranslations } from './translations.ts';
@@ -51,12 +52,14 @@ class DevCaloptreyxZoronExtension extends Extension {
     Sidebar.addRenderInterceptor((element, props) => createElement(Shell, { ...props, element }));
 
     // `serverOverview` (on by default): a server opens on Zoron's overview (elements/server) at `/`, and core's console
-    // moves to `/terminal`, the next link. One route keeps `/` whichever is on, its name and icon read the theme when
-    // the sidebar renders and its element when it mounts, so Studio's switch needs no reload. Core's console keeps
-    // its own `/console/popout`, which `/terminal` does not own, so an egg's custom sidebar order leaves it reachable.
+    // moves to `/terminal`, the next link. One route keeps `/` whichever is on, its name, icon and active matches read
+    // the theme when the sidebar renders and its element when it mounts, so Studio's switch needs no reload. Core's
+    // console keeps its own `/console/popout`, which `/terminal` does not own, so an egg's custom sidebar order leaves
+    // it reachable. The console's subpages (resource history and crashes, panel 1.2.9) light the console's link only.
     // `consolePage` (on by default): wherever the console shows (`/terminal`, or `/` with the overview off), it is
     // Zoron's console page (elements/console), switched when it mounts as well; the popout stays core's.
     ctx.extensionRegistry.routes.addServerRouteInterceptor((routes) => {
+      corePages.history = routes.some((route) => route.path === '/console/history');
       const index = routes.findIndex((route) => route.path === '/');
       if (index === -1) return;
       const consoleRoute = routes[index];
@@ -67,6 +70,7 @@ class DevCaloptreyxZoronExtension extends Extension {
       const overview = () => currentTheme().serverOverview;
       const consoleName = consoleRoute.name;
       const consoleIcon = consoleRoute.icon;
+      const consoleMatches = consoleRoute.activeMatches;
       routes.splice(
         index,
         1,
@@ -80,6 +84,9 @@ class DevCaloptreyxZoronExtension extends Extension {
                 : (consoleName ?? ''),
           get icon() {
             return overview() ? faGauge : consoleIcon;
+          },
+          get activeMatches() {
+            return overview() ? undefined : consoleMatches;
           },
           element: function ZoronServerHome() {
             return createElement(ServerHome, { Console });

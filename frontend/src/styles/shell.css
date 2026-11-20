@@ -1,0 +1,357 @@
+/* Zoron: the rail layout; loaded by app.css, scoped like every rule there to html[data-zoron…]. */
+
+/* ---------- the rail layout (elements/shell/Shell.tsx) ---------- */
+
+/* the rail and panel sit on the backdrop; the page is a raised canvas beside them */
+html[data-zoron] :is(.zoron-shell, .zoron-topbar) ~ :is(#dashboard-root, #server-root, #admin-root) {
+  margin: 10px 10px 10px 0;
+  min-height: calc(100vh - 20px);
+  min-height: calc(100dvh - 20px);
+  border: 1px solid var(--zoron-hairline);
+  border-radius: calc(var(--zoron-radius) + 6px);
+  background-color: var(--zoron-canvas);
+  box-shadow:
+    var(--zoron-shadow),
+    inset 0 1px 0 var(--zoron-sheen);
+  /* clip keeps the sticky page headers inside the rounded corners without making the canvas a scroller */
+  overflow: clip;
+}
+
+@container page (width < 64rem) {
+  html[data-zoron] .zoron-topbar ~ :is(#dashboard-root, #server-root, #admin-root) {
+    margin: 0 8px 8px;
+    min-height: calc(100vh - 3.5rem - 8px);
+    /* the visible height, not the one behind a phone browser's toolbar */
+    min-height: calc(100dvh - 3.5rem - 8px);
+  }
+}
+
+html[data-zoron] .zoron-topbar {
+  background-color: color-mix(in srgb, var(--mantine-color-body) 55%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+}
+
+/* the drawer slides from the screen's edge: only its open side is rounded and bordered, and the panel fills it
+   (doubled class to outrank the overlay rule below) */
+html[data-zoron] .zoron-drawer.zoron-drawer {
+  border-width: 0 1px 0 0;
+  border-radius: 0 calc(var(--zoron-radius) + 10px) calc(var(--zoron-radius) + 10px) 0;
+  background-color: var(--zoron-overlay);
+}
+
+html[data-zoron] .zoron-drawer .zoron-panel {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+html[data-zoron] .zoron-drawer .zoron-panel > div {
+  width: 100%;
+}
+
+html[data-zoron] .zoron-panel {
+  width: 256px;
+  transition: width 300ms var(--zoron-ease);
+}
+
+html[data-zoron] .zoron-panel[data-collapsed] {
+  width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-zoron] .zoron-panel {
+    transition: none;
+  }
+}
+
+/* core's server block and account card read as part of the panel, not cards floating on it */
+html[data-zoron] .zoron-panel .mantine-Card-root {
+  background-color: color-mix(in srgb, var(--mantine-color-text) 4%, transparent);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+html[data-zoron] .zoron-rail-servers {
+  scrollbar-width: none;
+}
+
+html[data-zoron] .zoron-panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--mantine-color-text) 18%, transparent) transparent;
+}
+
+/*
+ * The panel's links and the rail's servers fade out at an edge only while there is more to scroll that way. Scroll
+ * driven, so where it isn't supported (or nothing scrolls, which leaves the timeline inactive) nothing fades.
+ */
+@property --zoron-fade-top {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --zoron-fade-bottom {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes zoron-scroll-fade {
+  0% {
+    --zoron-fade-top: 0px;
+    --zoron-fade-bottom: 28px;
+  }
+  8% {
+    --zoron-fade-top: 28px;
+  }
+  92% {
+    --zoron-fade-bottom: 28px;
+  }
+  100% {
+    --zoron-fade-top: 28px;
+    --zoron-fade-bottom: 0px;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  html[data-zoron] :is(.zoron-panel-scroll, .zoron-rail-servers) {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--zoron-fade-top),
+      #000 calc(100% - var(--zoron-fade-bottom)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--zoron-fade-top),
+      #000 calc(100% - var(--zoron-fade-bottom)),
+      transparent
+    );
+    animation: zoron-scroll-fade linear both;
+    animation-timeline: scroll(self);
+  }
+}
+
+html[data-zoron] .zoron-rail-sep {
+  width: 28px;
+  height: 2px;
+  margin: 2px 0;
+  border-radius: 2px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 12%, transparent);
+}
+
+/* a square that rounds less when hovered or current, Discord style, with a pill on the rail's edge */
+html[data-zoron] .zoron-rail-btn {
+  position: relative;
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 6%, transparent);
+  color: var(--mantine-color-dimmed);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition:
+    border-radius 240ms var(--zoron-ease),
+    background-color 200ms ease,
+    color 200ms ease,
+    box-shadow 240ms ease,
+    transform 140ms var(--zoron-ease);
+}
+
+html[data-zoron] .zoron-rail-btn::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 4px;
+  height: 0;
+  border-radius: 0 4px 4px 0;
+  background-color: var(--mantine-color-text);
+  transform: translateY(-50%);
+  transition: height 240ms var(--zoron-ease);
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-rail-btn:hover {
+    border-radius: 14px;
+    background-color: color-mix(in srgb, var(--mantine-color-text) 11%, transparent);
+    color: var(--mantine-color-text);
+  }
+
+  html[data-zoron] .zoron-rail-btn:hover::before {
+    height: 12px;
+  }
+}
+
+html[data-zoron] .zoron-rail-btn:active {
+  transform: scale(0.94);
+}
+
+html[data-zoron] .zoron-rail-btn:focus-visible {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  html[data-zoron] :is(.zoron-rail-server, .zoron-rail-folder):hover {
+    filter: brightness(1.12);
+  }
+}
+
+html[data-zoron] .zoron-rail-btn[data-active] {
+  border-radius: 14px;
+  background: var(--zoron-gradient);
+  color: var(--zoron-accent-ink);
+  box-shadow: 0 8px 22px -10px var(--zoron-glow-color);
+}
+
+html[data-zoron] .zoron-rail-btn[data-active]::before {
+  height: 28px;
+}
+
+/* server tiles and folders keep their own colour; the current one gets a ring instead of the gradient */
+html[data-zoron] :is(.zoron-rail-server, .zoron-rail-folder)[data-active] {
+  box-shadow:
+    0 0 0 2px var(--mantine-color-body),
+    0 0 0 4px var(--zoron-accent);
+}
+
+/* a closed folder (one of core's server groups) is a rounded square previewing its first four servers, Discord style */
+html[data-zoron] .zoron-rail-folder {
+  border-radius: 14px;
+}
+
+html[data-zoron] .zoron-rail-folder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 15px);
+  grid-auto-rows: 15px;
+  gap: 3px;
+}
+
+html[data-zoron] .zoron-rail-folder-grid > span {
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* an open folder: its head and servers on one tinted pill */
+html[data-zoron] .zoron-rail-folder-open {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-radius: 22px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 7%, transparent);
+}
+
+html[data-zoron] .zoron-rail-folder-head {
+  background-color: transparent;
+}
+
+@keyframes zoron-folder-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-zoron]:not([data-zoron-motion='none']) .zoron-rail-folder-open {
+    animation: zoron-folder-open 200ms var(--zoron-ease);
+  }
+}
+
+/*
+ * Drag and drop in the rail: the picked up tile dims and a copy follows the pointer; a server or folder that would
+ * take it grows a ring; a place in a list (servers in an open folder, the folders) shows as a bar in the gap; the
+ * free space tints while the server can leave its folder there.
+ */
+html[data-zoron] .zoron-rail {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html[data-zoron] .zoron-rail-drag {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  /* a long press drags, so the phone's link preview must not open */
+  -webkit-touch-callout: none;
+}
+
+html[data-zoron] .zoron-rail-drag[data-dragging] {
+  opacity: 0.35;
+}
+
+html[data-zoron] .zoron-rail-drag[data-drop='onto'] .zoron-rail-btn {
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 2px var(--mantine-color-body),
+    0 0 0 4px var(--zoron-accent);
+  transform: scale(1.08);
+}
+
+html[data-zoron] .zoron-rail-folder-open {
+  position: relative;
+}
+
+html[data-zoron] .zoron-rail-folder-open[data-drop='onto'] {
+  background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
+  box-shadow: inset 0 0 0 2px var(--zoron-accent);
+}
+
+/* the bar sits in the 8px gap above or below the target */
+html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open):is([data-drop='before'], [data-drop='after'])::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--zoron-gradient);
+  box-shadow: 0 0 10px var(--zoron-glow-color);
+  pointer-events: none;
+}
+
+html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open)[data-drop='before']::after {
+  top: -5.5px;
+}
+
+html[data-zoron] :is(.zoron-rail-drag, .zoron-rail-folder-open)[data-drop='after']::after {
+  bottom: -5.5px;
+}
+
+html[data-zoron] .zoron-rail-servers[data-drop='onto'] {
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--zoron-accent) 8%, transparent);
+}
+
+html[data-zoron] .zoron-rail-ghost {
+  border-radius: 14px;
+  box-shadow: 0 14px 30px -10px rgb(0 0 0 / 0.55);
+  cursor: grabbing;
+}
+
+html[data-zoron] .zoron-rail-avatar,
+html[data-zoron] .zoron-rail-avatar[data-active] {
+  background: none;
+  box-shadow: none;
+}
+
+html[data-zoron] .zoron-rail-avatar[data-active] .mantine-Avatar-root {
+  box-shadow: 0 0 0 2px var(--zoron-accent);
+}

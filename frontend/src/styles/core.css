@@ -1,0 +1,248 @@
+/* Zoron: page chrome, buttons, inputs, overlays, tables, typography and page transitions; loaded by app.css, scoped like every rule there to html[data-zoron…]. */
+
+/* ---------- page chrome ---------- */
+
+/* sub pages (core's SubNavigation and other tab rows) as a segmented pill bar instead of underlined tabs */
+html[data-zoron] :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-list:not([data-orientation='vertical']) {
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: nowrap;
+  gap: 2px;
+  padding: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-radius: calc(var(--zoron-control-radius) + 4px);
+  background-color: color-mix(in srgb, var(--mantine-color-text) 5%, transparent);
+}
+
+html[data-zoron]
+  :is(#dashboard-root, #server-root, #admin-root)
+  .mantine-Tabs-list:not([data-orientation='vertical'])::before {
+  display: none;
+}
+
+html[data-zoron]
+  :is(#dashboard-root, #server-root, #admin-root)
+  .mantine-Tabs-list:not([data-orientation='vertical'])
+  .mantine-Tabs-tab {
+  margin: 0;
+  border: 0;
+  border-radius: var(--zoron-control-radius);
+  color: var(--mantine-color-dimmed);
+  white-space: nowrap;
+}
+
+html[data-zoron]
+  :is(#dashboard-root, #server-root, #admin-root)
+  .mantine-Tabs-list:not([data-orientation='vertical'])
+  .mantine-Tabs-tab[data-active] {
+  background-color: var(--zoron-card-solid);
+  color: var(--mantine-color-text);
+  box-shadow:
+    0 1px 2px var(--zoron-shadow-color),
+    inset 0 1px 0 var(--zoron-sheen);
+}
+
+/* ---------- buttons ---------- */
+
+html[data-zoron] :is(.mantine-Button-root, .mantine-ActionIcon-root) {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    filter 180ms ease,
+    transform 140ms var(--zoron-ease);
+}
+
+/* Mantine nudges pressed buttons 1px down; Zoron gives them a short squeeze instead */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-zoron]:not([data-zoron-motion='none']) .mantine-active:active:not(fieldset:disabled *) {
+    transform: scale(0.97);
+  }
+}
+
+/* `--button-bg` is the per colour fill Mantine sets inline, so red and green buttons keep their own colour */
+html[data-zoron-buttons='gradient']
+  .mantine-Button-root[data-variant='filled'][style*='--button-bg: var(--mantine-color-blue-filled)']:not(
+    :disabled,
+    [data-disabled]
+  ) {
+  background-image: var(--zoron-gradient);
+  border-color: transparent;
+  box-shadow:
+    0 8px 24px -12px var(--zoron-glow-color),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+html[data-zoron-buttons='gradient'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]):hover {
+  filter: brightness(1.08) saturate(1.05);
+}
+
+html[data-zoron-buttons='soft'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]) {
+  background-color: color-mix(in srgb, var(--button-bg) 20%, transparent);
+  border-color: color-mix(in srgb, var(--button-bg) 34%, transparent);
+  color: color-mix(in srgb, var(--button-bg) 45%, var(--zoron-ink));
+}
+
+html[data-zoron-buttons='soft'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]):hover {
+  background-color: color-mix(in srgb, var(--button-bg) 30%, transparent);
+}
+
+html[data-zoron-buttons='outline'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]) {
+  background-color: transparent;
+  border-color: color-mix(in srgb, var(--button-bg) 70%, transparent);
+  color: color-mix(in srgb, var(--button-bg) 50%, var(--zoron-ink));
+}
+
+html[data-zoron-buttons='outline'] .mantine-Button-root[data-variant='filled']:not(:disabled, [data-disabled]):hover {
+  background-color: color-mix(in srgb, var(--button-bg) 14%, transparent);
+}
+
+/* ---------- inputs ---------- */
+
+html[data-zoron] .mantine-Input-input {
+  transition:
+    border-color 160ms ease,
+    box-shadow 200ms ease,
+    background-color 160ms ease;
+}
+
+html[data-zoron] .mantine-Input-input:focus,
+html[data-zoron] .mantine-Input-input:focus-within,
+html[data-zoron] .mantine-Input-input[data-expanded] {
+  border-color: color-mix(in srgb, var(--zoron-accent) 80%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--zoron-accent) 20%, transparent);
+}
+
+/* ---------- overlays: menus, popovers, dropdowns, modals, drawers, tooltips ---------- */
+
+html[data-zoron]
+  :is(
+    .mantine-Menu-dropdown,
+    .mantine-Popover-dropdown,
+    .mantine-Combobox-dropdown,
+    .mantine-HoverCard-dropdown,
+    .mantine-Modal-content,
+    .mantine-Drawer-content
+  ) {
+  background-color: var(--zoron-overlay);
+  border: 1px solid var(--zoron-hairline);
+  box-shadow:
+    0 24px 60px -20px var(--zoron-shadow-color),
+    inset 0 1px 0 var(--zoron-sheen);
+}
+
+html[data-zoron-surface='glass']
+  :is(
+    .mantine-Menu-dropdown,
+    .mantine-Popover-dropdown,
+    .mantine-Combobox-dropdown,
+    .mantine-HoverCard-dropdown,
+    .mantine-Modal-content,
+    .mantine-Drawer-content
+  ) {
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+html[data-zoron] :is(.mantine-Modal-overlay, .mantine-Drawer-overlay) {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+html[data-zoron] .mantine-Modal-header {
+  background-color: transparent;
+}
+
+html[data-zoron] .mantine-Tooltip-tooltip {
+  border-radius: var(--mantine-radius-sm);
+  box-shadow: 0 10px 30px -12px var(--zoron-shadow-color);
+}
+
+/* ---------- tables, tabs, badges, progress ---------- */
+
+html[data-zoron] .mantine-Table-tbody > .mantine-Table-tr {
+  transition: background-color 160ms ease;
+}
+
+html[data-zoron] .mantine-Tabs-tab {
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+html[data-zoron] .mantine-Badge-root {
+  letter-spacing: 0.02em;
+}
+
+/* ---------- typography ---------- */
+
+html[data-zoron] .mantine-Title-root {
+  letter-spacing: -0.015em;
+}
+
+html[data-zoron] .mantine-Title-root:is([data-order='1'], [data-order='2']) {
+  letter-spacing: -0.025em;
+}
+
+html[data-zoron-titles='gradient'] :is(#dashboard-root, #server-root, #admin-root) .mantine-Title-root[data-order='1'] {
+  width: fit-content;
+  background: var(--zoron-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- page transitions ---------- */
+
+/*
+ * Each router's content column holds core's Container, whose first div holds the announcements and the routed page.
+ * A route change mounts a new page element there, which plays the animation once. No fill mode, so no transform
+ * outlives it, and the editor (a fixed full screen page) is left out: a transform would pin it to the column.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-zoron-transition='rise']
+    :is(#dashboard-root, #server-root, #admin-root)
+    > div
+    > div:first-child
+    > :not(:has(.zoron-editor)) {
+    animation: zoron-rise 480ms var(--zoron-ease);
+  }
+
+  html[data-zoron-transition='fade']
+    :is(#dashboard-root, #server-root, #admin-root)
+    > div
+    > div:first-child
+    > :not(:has(.zoron-editor)) {
+    animation: zoron-fade 320ms ease-out;
+  }
+
+  html[data-zoron-transition='zoom']
+    :is(#dashboard-root, #server-root, #admin-root)
+    > div
+    > div:first-child
+    > :not(:has(.zoron-editor)) {
+    animation: zoron-zoom 420ms var(--zoron-ease);
+  }
+}
+
+@keyframes zoron-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes zoron-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes zoron-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}

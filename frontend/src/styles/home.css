@@ -1,0 +1,577 @@
+/* Zoron: the servers page; loaded by app.css, scoped like every rule there to html[data-zoron…]. */
+
+/* ---------- the servers page (elements/home) ---------- */
+
+/* the toolbar's chips: status filters with counts, then one per server group in its folder colour */
+html[data-zoron] .zoron-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+html[data-zoron] .zoron-chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--zoron-hairline);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 4%, transparent);
+  color: color-mix(in srgb, var(--mantine-color-text) 80%, transparent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 120ms var(--zoron-ease);
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-chip:hover {
+    background-color: color-mix(in srgb, var(--mantine-color-text) 9%, transparent);
+    color: var(--mantine-color-text);
+  }
+}
+
+html[data-zoron] .zoron-chip:focus-visible {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: 2px;
+}
+
+html[data-zoron] .zoron-chip:active {
+  transform: scale(0.97);
+}
+
+/* the current chip: an accent tint and outline, so a row of them never turns into a gradient strip */
+html[data-zoron] .zoron-chip[data-active] {
+  border-color: color-mix(in srgb, var(--zoron-accent) 55%, transparent);
+  background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
+  color: color-mix(in srgb, var(--zoron-accent) 70%, var(--mantine-color-text));
+}
+
+html[data-zoron] .zoron-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+}
+
+html[data-zoron] .zoron-chip-count {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, currentColor 14%, transparent);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+html[data-zoron] .zoron-chips-sep {
+  flex-shrink: 0;
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background-color: var(--zoron-hairline);
+}
+
+html[data-zoron] .zoron-home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: 14px;
+}
+
+/* the compact layout: a denser grid of small cards */
+html[data-zoron] .zoron-home-grid[data-layout='compact'] {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: 10px;
+}
+
+/* a server card: the name's link stretches over it, the controls sit above that */
+html[data-zoron] .zoron-home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
+}
+
+html[data-zoron] .zoron-home-card[data-selected] {
+  border-color: var(--zoron-accent);
+  box-shadow:
+    0 0 0 1px var(--zoron-accent),
+    var(--zoron-shadow);
+}
+
+/* a compact card: the tile, the name over the game and the state, the menu (which holds the power actions) */
+html[data-zoron] .zoron-home-card[data-layout='compact'] {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+}
+
+html[data-zoron] .zoron-home-card[data-layout='compact'] .zoron-home-card-link {
+  font-size: 0.9375rem;
+}
+
+/* loading placeholders as tall as the cards they stand for */
+html[data-zoron] .zoron-home-card[data-skeleton] {
+  height: 168px;
+}
+
+html[data-zoron] .zoron-home-card[data-skeleton][data-layout='compact'] {
+  height: 82px;
+}
+
+html[data-zoron] .zoron-home-card-link {
+  display: block;
+  overflow: hidden;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-zoron] .zoron-home-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+html[data-zoron] .zoron-home-card-link:focus-visible {
+  outline: none;
+}
+
+html[data-zoron] .zoron-home-card-link:focus-visible::after {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: -2px;
+}
+
+html[data-zoron] .zoron-home-raise {
+  position: relative;
+  z-index: 1;
+}
+
+/* the server's tile, as in the rail; it turns into a check box while selecting or hovered */
+html[data-zoron] .zoron-home-tile {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+html[data-zoron] .zoron-home-tile > * {
+  grid-area: 1 / 1;
+}
+
+html[data-zoron] .zoron-home-tile-check {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background-color: rgb(0 0 0 / 0.45);
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+html[data-zoron] .zoron-home-tile:is([data-selecting], :focus-visible) .zoron-home-tile-check {
+  opacity: 1;
+  background-color: rgb(0 0 0 / 0.3);
+  color: rgb(255 255 255 / 0.35);
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-home-tile:hover .zoron-home-tile-check {
+    opacity: 1;
+  }
+}
+
+html[data-zoron] .zoron-home-tile[aria-pressed='true'] .zoron-home-tile-check {
+  opacity: 1;
+  background: var(--zoron-gradient);
+  color: var(--zoron-accent-ink);
+}
+
+/* the smaller tile of a compact card and a list row */
+html[data-zoron] :is(.zoron-home-card[data-layout='compact'], .zoron-home-row) .zoron-home-tile {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+}
+
+/*
+ * The list layout: one surface (its own container, so narrow lists drop columns wherever the page puts them) with a
+ * row per server between hairlines. The rows are subgrids of one grid, so every row's cells share its columns: tile,
+ * name, status, address, uptime, power, menu.
+ */
+html[data-zoron] .zoron-home-list {
+  container: zoron-home-list / inline-size;
+  padding: 0;
+  overflow: clip;
+}
+
+html[data-zoron] .zoron-home-rows {
+  display: grid;
+  grid-template-columns: auto minmax(8rem, 1fr) auto fit-content(16rem) auto auto auto;
+  column-gap: 14px;
+}
+
+html[data-zoron] .zoron-home-row {
+  position: relative;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  padding: 10px 14px;
+  transition: background-color 140ms ease;
+}
+
+html[data-zoron] :is(.zoron-home-row, .zoron-home-row-skeleton) + :is(.zoron-home-row, .zoron-home-row-skeleton) {
+  border-top: 1px solid var(--zoron-hairline);
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-home-row:hover {
+    background-color: color-mix(in srgb, var(--mantine-color-text) 4%, transparent);
+  }
+}
+
+html[data-zoron] .zoron-home-row[data-selected] {
+  background-color: color-mix(in srgb, var(--zoron-accent) 10%, transparent);
+}
+
+html[data-zoron] .zoron-home-row .zoron-home-card-link {
+  font-size: 0.9375rem;
+}
+
+html[data-zoron] .zoron-home-row-address {
+  display: flex;
+  min-width: 0;
+}
+
+html[data-zoron] .zoron-home-row-uptime {
+  color: var(--mantine-color-dimmed);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+html[data-zoron] .zoron-home-row-power {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* narrower lists drop the address and uptime, then the power buttons (the menu still holds them) */
+@container zoron-home-list (width < 46rem) {
+  html[data-zoron] .zoron-home-rows {
+    grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  }
+
+  html[data-zoron] :is(.zoron-home-row-address, .zoron-home-row-uptime) {
+    display: none;
+  }
+}
+
+@container zoron-home-list (width < 28rem) {
+  html[data-zoron] .zoron-home-rows {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+  }
+
+  html[data-zoron] .zoron-home-row-power {
+    display: none;
+  }
+}
+
+html[data-zoron] .zoron-home-row-skeleton {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+}
+
+/* a section per server group (`homeGroups`): the folder's colour, its name and how many of its servers show */
+html[data-zoron] .zoron-home-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+html[data-zoron] .zoron-home-section > .zoron-chip-dot {
+  flex-shrink: 0;
+}
+
+html[data-zoron] .zoron-home-section-count {
+  color: var(--mantine-color-dimmed);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* the visitor's layout switch: three icon buttons as one segmented control, as tall as the search beside it */
+html[data-zoron] .zoron-home-views {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  height: 2.25rem;
+  padding: 3px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--zoron-control-radius, 8px);
+  background-color: var(--mantine-color-default);
+}
+
+html[data-zoron] .zoron-home-view {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 100%;
+  border-radius: max(0px, calc(var(--zoron-control-radius, 8px) - 3px));
+  color: var(--mantine-color-dimmed);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-home-view:hover {
+    color: var(--mantine-color-text);
+  }
+}
+
+html[data-zoron] .zoron-home-view[aria-pressed='true'] {
+  background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
+  color: color-mix(in srgb, var(--zoron-accent) 70%, var(--mantine-color-text));
+}
+
+html[data-zoron] .zoron-home-view:focus-visible {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: 1px;
+}
+
+/* a server's tile on its own (the overview, the console's bar, the tile editor's preview), the user's look */
+html[data-zoron] .zoron-server-tile {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: var(--zoron-tile-size, 40px);
+  height: var(--zoron-tile-size, 40px);
+  border-radius: calc(var(--zoron-tile-size, 40px) * 0.28);
+  color: #fff;
+  font-size: calc(var(--zoron-tile-size, 40px) * 0.36);
+  font-weight: 700;
+  line-height: 1;
+}
+
+html[data-zoron] .zoron-con-id > .zoron-server-tile {
+  align-self: center;
+}
+
+/* the overview's tile opens the tile editor */
+html[data-zoron] .zoron-server-tile-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+html[data-zoron] .zoron-server-tile-button:focus-visible {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-server-tile-button:hover {
+    filter: brightness(1.12);
+  }
+}
+
+/* the tile editor's icon grid and colour swatches */
+html[data-zoron] .zoron-server-tile-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+html[data-zoron] .zoron-server-tile-pick {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: 10px;
+  background-color: var(--mantine-color-default);
+  color: var(--mantine-color-text);
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-server-tile-pick:hover {
+    border-color: var(--mantine-color-placeholder);
+  }
+}
+
+html[data-zoron] .zoron-server-tile-pick[aria-pressed='true'] {
+  border-color: var(--zoron-accent);
+  background-color: color-mix(in srgb, var(--zoron-accent) 16%, transparent);
+}
+
+html[data-zoron] .zoron-server-tile-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  cursor: pointer;
+}
+
+html[data-zoron] .zoron-server-tile-swatch[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 2px var(--mantine-color-body),
+    0 0 0 4px var(--zoron-accent);
+}
+
+html[data-zoron] :is(.zoron-server-tile-pick, .zoron-server-tile-swatch):focus-visible {
+  outline: 2px solid var(--zoron-accent);
+  outline-offset: 2px;
+}
+
+/* status: a dot in the server's state colour (Zoron's status colours), still, on a tint of it */
+html[data-zoron] .zoron-status {
+  --zoron-status: var(--color-server-status-offline, var(--mantine-color-red-filled));
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--zoron-status) 14%, transparent);
+  color: color-mix(in srgb, var(--zoron-status) 75%, var(--mantine-color-text));
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+html[data-zoron] :is(.zoron-status, .zoron-con-state)[data-phase='running'] {
+  --zoron-status: var(--color-server-status-running, var(--mantine-color-green-filled));
+}
+
+html[data-zoron] :is(.zoron-status, .zoron-con-state):is([data-phase='starting'], [data-phase='stopping']) {
+  --zoron-status: var(--color-server-status-starting, var(--mantine-color-yellow-filled));
+}
+
+html[data-zoron]
+  :is(.zoron-status, .zoron-con-state):is(
+    [data-phase='installing'],
+    [data-phase='restoring'],
+    [data-phase='transferring']
+  ) {
+  --zoron-status: var(--mantine-color-blue-filled);
+}
+
+html[data-zoron] :is(.zoron-status, .zoron-con-state):is([data-phase='failed'], [data-phase='suspended']) {
+  --zoron-status: var(--mantine-color-red-filled);
+}
+
+html[data-zoron] :is(.zoron-status, .zoron-con-state)[data-phase='offline'] {
+  --zoron-status: var(--mantine-color-dimmed);
+}
+
+html[data-zoron] .zoron-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--zoron-status);
+}
+
+/* the compact card's state: the dot and the word, no pill */
+html[data-zoron] .zoron-status[data-bare] {
+  align-self: flex-start;
+  padding: 0;
+  background-color: transparent;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-zoron]:not([data-zoron-motion='none']) .zoron-skeleton {
+    animation: zoron-shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes zoron-shimmer {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+html[data-zoron] .zoron-home-address {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 5px 10px;
+  border: 1px solid var(--zoron-hairline);
+  border-radius: var(--zoron-control-radius, 8px);
+  background-color: color-mix(in srgb, var(--mantine-color-text) 4%, transparent);
+  color: color-mix(in srgb, var(--mantine-color-text) 80%, transparent);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 0.75rem;
+}
+
+@media (hover: hover) {
+  html[data-zoron] button.zoron-home-address:hover {
+    border-color: color-mix(in srgb, var(--zoron-accent) 45%, var(--zoron-hairline));
+    color: var(--mantine-color-text);
+  }
+}
+
+html[data-zoron] .zoron-home-address[data-empty] {
+  font-family: inherit;
+  color: var(--mantine-color-dimmed);
+}
+
+html[data-zoron] .zoron-home-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+html[data-zoron] .zoron-home-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 6px;
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--mantine-color-text) 7%, transparent);
+  color: var(--zoron-accent);
+  font-size: 1.25rem;
+}

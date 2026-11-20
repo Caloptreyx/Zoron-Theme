@@ -27,7 +27,7 @@ console workspace, a server page of its own, and **Zoron Studio**, a live theme 
 - **Rail**: core's sidebar becomes an icon rail (Home, Admin, your server groups as Discord style folders, your other
   servers) beside a collapsible context panel. Drag a server onto another to make a folder, into a folder to add it,
   out to remove it; drag folders to reorder them. Right click a folder to rename or ungroup it. On a phone the rail
-  and panel open from a top bar.
+  and panel open from a top bar, which also carries the page's title on panels that hoist it (1.2.4+).
 - **Server tiles**: everyone can give a server their own tile, an icon (44 to pick from, or initials), a colour and
   a name only they see, from the rail tile's or the server card's menu or the server page header. It follows their
   account to every device and shows on the rail, the servers page, the server page and the console.
@@ -36,14 +36,15 @@ console workspace, a server page of its own, and **Zoron Studio**, a live theme 
   bulk power actions. Studio picks the layout and whether visitors may switch it; it can also be switched back to the
   panel's own list.
 - **Server page**: a server opens on its status, live CPU, memory, disk and network, recent activity, how to
-  connect (address, SFTP, ID) and its backups, schedules and addresses at a glance; the console is the next link.
+  connect (address, SFTP, ID) and its backups, schedules and addresses at a glance; the console is the next link, and
+  the header links to the panel's resource history (1.2.9+).
   In Studio you arrange its blocks on a snap grid by dragging them (move, resize, hide, add back, or start from a
   template), and pick bars, live graphs or plain figures for usage, how much activity, a plain or banner header and
   the description, or switch it off.
-- **Console**: one full height workspace: a command bar with the server's state and live figures with sparklines,
-  the terminal with a prompt line, quick command chips, and an inspector with the connect details, the commands and
-  other extensions' cards (docked, sliding in, or a sheet on a phone). Clear the console or download its log from
-  the terminal's header.
+- **Console**: one full height workspace: a command bar with the server's state and live figures with sparklines
+  (and a link to the resource history, 1.2.9+), the terminal with a prompt line, quick command chips, and an inspector
+  whose Details show the connect details with other extensions' cards right under them, beside its Commands (docked,
+  sliding in, or a sheet on a phone). Clear the console or download its log from the terminal's header.
   - In Studio: drag the pieces into place on a drawing of the workspace (name and state, figures, power into a top
     or bottom bar, quick command chips under the toolbar or above the prompt, the inspector left or right, or hide
     any), reorder the figures and pick their graph style (area, line, bars or none), whether the inspector starts

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Drawer } from '@mantine/core';
 import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { ActionIcon, useGlobalStore, useQuickActionsStore } from '../../lib/core.ts';
+import { ActionIcon, useGlobalStore, useQuickActionsStore, useRelativePageStore } from '../../lib/core.ts';
 import { useZoronTheme } from '../../lib/store.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { type Area, areaOf, type PanelNodes, panelNodes, type SidebarProps } from './nav.ts';
@@ -28,6 +28,8 @@ function RailShell({ header, footer, children }: SidebarProps) {
   const { t } = useExtTranslations();
   const { pathname } = useLocation();
   const app = useGlobalStore((state) => state.settings.app);
+  const setHasMobileNavbar = useRelativePageStore((state) => state.setHasMobileNavbar);
+  const pageHeader = useRelativePageStore((state) => state.pageHeader);
   const quickActionsOpen = useQuickActionsStore((state) => state.open);
   const setQuickActionsOpen = useQuickActionsStore((state) => state.setOpen);
   const [drawer, setDrawer] = useState(false);
@@ -44,6 +46,12 @@ function RailShell({ header, footer, children }: SidebarProps) {
   useEffect(() => {
     if (quickActionsOpen) setDrawer(false);
   }, [quickActionsOpen]);
+  // as core's sidebar (panel 1.2.4): the top bar takes the page's title, which pages then hide below lg
+  useEffect(() => {
+    if (!setHasMobileNavbar) return;
+    setHasMobileNavbar(true);
+    return () => setHasMobileNavbar(false);
+  }, [setHasMobileNavbar]);
 
   const toggle = () => {
     const next = !collapsed;
@@ -76,11 +84,26 @@ function RailShell({ header, footer, children }: SidebarProps) {
         >
           <FontAwesomeIcon icon={faBars} />
         </ActionIcon>
-        <Link to='/' className='flex min-w-0 items-center gap-2'>
+        <Link
+          to='/'
+          className={`flex min-w-0 items-center gap-2 ${pageHeader ? 'shrink-0' : ''}`}
+          aria-label={pageHeader ? app.name : undefined}
+        >
           <AppMark />
-          <span className='truncate text-sm font-semibold'>{app.name}</span>
+          {!pageHeader && <span className='truncate text-sm font-semibold'>{app.name}</span>}
         </Link>
-        <div className='flex-1' />
+        {pageHeader ? (
+          <div className='flex min-w-0 flex-1 flex-col'>
+            <span className='truncate text-sm leading-tight font-semibold'>{pageHeader.title}</span>
+            {pageHeader.subtitle && (
+              <span className='truncate text-xs leading-tight text-(--mantine-color-dimmed)'>
+                {pageHeader.subtitle}
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className='flex-1' />
+        )}
         <ActionIcon
           variant='subtle'
           color='gray'

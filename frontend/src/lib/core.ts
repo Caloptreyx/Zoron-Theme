@@ -6,6 +6,7 @@
 import type { z } from 'zod';
 import type { serverActivitySchema } from '@/lib/schemas/server/activity.ts';
 import type { serverResourceUsageSchema, serverSchema } from '@/lib/schemas/server/server.ts';
+import { useRelativePageStore as coreRelativePageStore } from '@/stores/relativePage.ts';
 
 /** A server as core's server lists return it. */
 export type CoreServer = z.infer<typeof serverSchema>;
@@ -13,6 +14,18 @@ export type CoreServer = z.infer<typeof serverSchema>;
 export type CoreServerUsage = z.infer<typeof serverResourceUsageSchema>;
 /** One entry of a server's activity log. */
 export type CoreServerActivity = z.infer<typeof serverActivitySchema>;
+
+/**
+ * What core's page store holds for a phone's navbar (panel 1.2.4): the page's title, hoisted out of the page while a
+ * navbar that shows it is mounted. Both are missing on older panels.
+ */
+type NavbarSlice = {
+  pageHeader?: { title: string; subtitle?: string } | null;
+  setHasMobileNavbar?: (hasMobileNavbar: boolean) => void;
+};
+
+/** Core's relative page store, typed for the navbar fields of every panel from 1.2.2. */
+export const useRelativePageStore = coreRelativePageStore as unknown as <T>(selector: (state: NavbarSlice) => T) => T;
 
 export { axiosInstance, httpErrorToHuman } from '@/api/axios.ts';
 export { default as createServerGroup } from '@/api/me/servers/groups/createServerGroup.ts';

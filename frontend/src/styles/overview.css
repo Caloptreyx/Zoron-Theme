@@ -1,0 +1,180 @@
+/* Zoron: the server overview; loaded by app.css, scoped like every rule there to html[data-zoron…]. */
+
+/* ---------- the server overview (elements/server) ---------- */
+
+/* the blocks on the theme's snap grid (lib/grid.ts): each cell carries its column, span, row and row span as whole
+   numbers, and rows are as tall as their content. Narrow pages show one column, the cells in reading order. Every
+   card grows to fill its cell, so neighbours share their edges. */
+html[data-zoron] .zoron-ov-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+html[data-zoron] .zoron-ov-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+html[data-zoron] .zoron-ov-cell > * {
+  flex-grow: 1;
+}
+
+@media (min-width: 64rem) {
+  html[data-zoron] .zoron-ov-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  html[data-zoron] .zoron-ov-cell {
+    grid-column: var(--zoron-col) / span var(--zoron-span);
+    grid-row: var(--zoron-row) / span var(--zoron-rows);
+  }
+}
+
+/* the 'banner' head: a band tinted with the accent over the card's own surface (its material, blur and border);
+   gradient buttons ask for gradients, and then the tint runs from one accent to the other */
+html[data-zoron] .mantine-Card-root.zoron-ov-banner {
+  padding: 22px 24px;
+  border-color: color-mix(in srgb, var(--zoron-accent) 24%, var(--zoron-hairline));
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--zoron-accent) 9%, transparent),
+    color-mix(in srgb, var(--zoron-accent) 9%, transparent)
+  );
+}
+
+html[data-zoron-buttons='gradient'] .mantine-Card-root.zoron-ov-banner {
+  background-image: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--zoron-accent) 14%, transparent),
+    color-mix(in srgb, var(--zoron-accent-2) 8%, transparent)
+  );
+}
+
+/* the 'numbers' usage style: no bars, so the figures carry the card */
+html[data-zoron] .zoron-stats[data-usage='numbers'] .zoron-stat-value {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+@container page (width >= 40rem) {
+  html[data-zoron] .zoron-stats[data-usage='numbers'] .zoron-stat-value {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+/* the 'graphs' usage style: each figure's last minute as a line over a faint fill, flat and muted while stopped */
+html[data-zoron] .zoron-stat-spark {
+  width: 100%;
+  height: 2rem;
+  margin-top: 8px;
+  overflow: visible;
+}
+
+html[data-zoron] .zoron-stat-spark-line {
+  fill: none;
+  stroke: var(--zoron-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+html[data-zoron] .zoron-stat-spark-area {
+  fill: color-mix(in srgb, var(--zoron-accent) 14%, transparent);
+}
+
+html[data-zoron] .zoron-stat-spark:not([data-live]) .zoron-stat-spark-line {
+  stroke: color-mix(in srgb, var(--mantine-color-text) 22%, transparent);
+}
+
+html[data-zoron] .zoron-ov-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 18px 20px;
+}
+
+html[data-zoron] .zoron-ov-link {
+  color: var(--zoron-accent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-ov-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* the activity list and the at-a-glance rows: hairlines between rows, none around them */
+html[data-zoron] .zoron-ov-activity {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+html[data-zoron] .zoron-ov-activity > li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+}
+
+html[data-zoron] :is(.zoron-ov-activity > li, .zoron-ov-glance) + :is(li, .zoron-ov-glance) {
+  border-top: 1px solid var(--zoron-hairline);
+}
+
+html[data-zoron] .zoron-ov-glance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 -8px;
+  padding: 10px 8px;
+  border-radius: var(--zoron-control-radius, 8px);
+  transition: background-color 160ms ease;
+}
+
+@media (hover: hover) {
+  html[data-zoron] a.zoron-ov-glance:hover {
+    background-color: color-mix(in srgb, var(--mantine-color-text) 5%, transparent);
+  }
+}
+
+html[data-zoron] .zoron-ov-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* a value to copy: monospace, outlined, the whole row is the button */
+html[data-zoron] .zoron-ov-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--zoron-hairline);
+  border-radius: var(--zoron-control-radius, 8px);
+  background-color: color-mix(in srgb, var(--mantine-color-text) 3%, transparent);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 0.8125rem;
+  text-align: left;
+  transition: border-color 160ms ease;
+}
+
+@media (hover: hover) {
+  html[data-zoron] .zoron-ov-copy:hover {
+    border-color: color-mix(in srgb, var(--zoron-accent) 45%, var(--zoron-hairline));
+  }
+}
+
+html[data-zoron] .zoron-ov-copy:active {
+  transform: scale(0.99);
+}

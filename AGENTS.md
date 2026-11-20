@@ -23,11 +23,14 @@ frontend/src/lib/core.ts          every core (`@/`) import, in one place
 frontend/src/lib/groups.ts        the server group queries the rail and the servers page share
 frontend/src/lib/grid.ts          the overview's snap grid: settle, move, resize, place, remove, fill gaps (pure)
 frontend/src/lib/tiles.ts         server tiles: the default look, each user's own look (normalizeTiles(), pure)
-frontend/src/app.css              static CSS keyed off html's data-zoron-* attributes, fonts
+frontend/src/app.css              imports styles/ in cascade order
+frontend/src/styles/              static CSS keyed off html's data-zoron-* attributes, one file per area: fonts,
+                                  page, shell, core, pieces, overview, console, terminal, home
 frontend/src/pages/ThemeEditor.tsx  Zoron Studio
-frontend/src/elements/editor/     sections (one per editor tab), controls, mocks (the option drawings), fields.ts (each
-                                  section's theme fields and their search labels), OverviewArrange.tsx and
-                                  ConsoleArrange.tsx (the drag and drop canvases of the Server page and Console tabs)
+frontend/src/elements/editor/     sections/ (one file per Studio tab, SectionProps in types.ts), controls, mocks (the
+                                  option drawings), fields.ts (each section's theme fields and their search labels),
+                                  OverviewArrange.tsx and ConsoleArrange.tsx (the drag and drop canvases of the Server
+                                  page and Console tabs)
 frontend/src/elements/shell/      the rail layout: Shell.tsx (context panel, phone top bar and drawer), Rail.tsx (the
                                   rail, folders, drag and drop), nav.ts (core's sidebar nodes), folders.ts (pure rules)
 frontend/src/elements/home/       the servers page: Home.tsx (page, HomeSwitch), ServerCard.tsx, home.ts (pure rules)
@@ -138,7 +141,10 @@ navigation from the props core gave the Sidebar.
   registered properties, so browsers without it, and lists that don't scroll, show no fade).
 - Below lg (a `page` container query, like core's) a sticky top bar (menu, app, search) replaces it; its menu opens
   rail and panel in a Mantine Drawer (`min(340px, 100vw - 3rem)`, the panel filling what the rail leaves), closed
-  on navigation and when quick actions open, as core's drawer is.
+  on navigation and when quick actions open, as core's drawer is. Since core's sidebar never mounts, the shell sets
+  core's `hasMobileNavbar` as it would (panel 1.2.4; `useRelativePageStore` in core.ts, typed loosely so 1.2.2
+  builds), so pages hoist their title into the top bar, where it replaces the app's name beside the mark, and hide
+  it below lg.
 - app.css makes the router's content column (`.zoron-shell ~ #…-root` or `.zoron-topbar ~ …`, so virtual windows
   without a sidebar are untouched) a rounded canvas (`--zoron-canvas`) with `overflow: clip`, which rounds the
   sticky page headers without making it a scroller. Page tabs (core's SubNavigation and others) become a pill bar.
@@ -185,11 +191,18 @@ its first page; that is the cost of not owning the route.
 
 `serverOverview` (on by default) makes Zoron's overview the page a server opens on. A server route interceptor in
 index.ts replaces core's console route at `/` with one route whose element is `ServerHome` (the overview, or core's
-console when the setting is off, read with the theme hook so Studio switches it live) and whose name and icon are
-getters on `currentTheme()` (resolved when the sidebar renders), and adds core's console again at `/terminal`,
-filtered to when the overview is on. `/console/popout` keeps no named parent, so it stays reachable. An egg with a
+console when the setting is off, read with the theme hook so Studio switches it live) and whose name, icon and
+`activeMatches` are getters on `currentTheme()` (resolved when the sidebar renders), and adds core's console again at
+`/terminal`, filtered to when the overview is on. Core's console route lights on its subpages (`/console/history`,
+`/console/crashes`, panel 1.2.9): with the overview on only the Console link keeps those matches, so Overview and
+Console are never both current. `/console/popout` keeps no named parent, so it stays reachable. An egg with a
 custom sidebar order (egg configurations) lists routes by path: `/` there shows as Overview, and Console appears only
 once the admin adds `/terminal` to that order (core's editor lists it, since it runs the interceptors too).
+
+- Resource history: the interceptor notes whether the panel has core's `/console/history` route (`corePages` in
+  lib/routes.ts); where it does, the overview's header has a History button beside Console, and the console's
+  figures end with a history link (Telemetry.tsx, held at the row's end while the figures overflow). Core's own link
+  lives in its charts, which Zoron's console drops.
 
 - Data: the server, its power state and its live stats are core's server store (`useServerStore`, fed by the
   server's websocket). Activity, backups, schedules and allocations are fetched under core's query keys plus
@@ -267,9 +280,10 @@ Studio's preview follows each draft.
 - The workspace paints the scheme (`--zoron-term-bg`, the solid card colour with 'panel') and, with a named scheme,
   sets Mantine's text, dimmed, default and border colours and `--zoron-hairline` from it, so a dark scheme in light
   mode (or the reverse) reads; the bar and the inspector sit a step off it (the scheme's text mixed in).
-- The inspector (Inspector.tsx): tabs Connect (the description, then parts.tsx's `ConnectDetails`), Commands (with
-  `control.console` and `consoleQuickCommands`) and More (core's `statCards` and `statBlocks` slots, only when one
-  is filled; mounted while that tab shows). It sits on the `consoleInspector` side ('right', or 'left': `data-side`
+- The inspector (Inspector.tsx): Details (the description, parts.tsx's `ConnectDetails`, then core's `statCards` and
+  `statBlocks` slots, where other extensions put their pills, so none hides behind a tab; issue #2) and, with
+  `control.console` and `consoleQuickCommands` (`useInspectorTabs`), a Commands tab; without that tab its head is a
+  "Details" heading. It sits on the `consoleInspector` side ('right', or 'left': `data-side`
   on the workspace) or is 'off': no column, toggle, sheet, edit chip or personal commands (the site's still show).
   From 80rem of page width (`usePageSize`, measured as core's `usePageBreakpoint` does: the virtual window, else
   the body; that hook only exists from panel 1.2.2, and core's Biome config up to 1.2.9 banned `useMediaQuery`) it docks as a 20rem column
@@ -282,7 +296,8 @@ Studio's preview follows each draft.
   sideways scrolling line with smaller sparklines (power and figures hide while the keyboard is up, and a bar left
   with only those hides too; a bottom bar takes the safe area padding); the
   toolbar's buttons 40px scrolling sideways; the prompt at 16px so the browser doesn't zoom. The inspector is a
-  Mantine `Drawer` from the bottom (at most 85dvh, safe area padded) with the same tabs, on either side setting.
+  Mantine `Drawer` from the bottom (at most 85dvh, safe area padded) with the same tabs, on either side setting,
+  titled "Details" (or the server's name above the tabs, when there are two).
   Touch targets are at least 40px; nothing depends on hover.
 - Quick commands (`consoleQuickCommands`, on by default; off hides the chip row and the Commands tab, while
   `consoleChips: 'off'` hides only the row): the site's
@@ -308,7 +323,7 @@ Studio's preview follows each draft.
   (lib/terminal.ts). Clear and download (`<server>-<date and time>.log`, the active buffer as plain text with soft
   wrapped rows joined) are core header buttons (`terminalHeaderRightComponents`), finding their terminal through
   the card they sit in.
-- Frames (`terminalSkin`, `data-zoron-term-skin`; app.css's "terminal frames" section) style the card holding
+- Frames (`terminalSkin`, `data-zoron-term-skin`; `styles/terminal.css`) style the card holding
   `.xterm` on core's console and the popout, and the whole workspace on Zoron's page (the card rules that would draw
   around the dissolved card skip `.zoron-con-term > *`): card (plain), window (core's card: a title bar of `::before`
   dots, core's header moved down by a margin, since core's `p-2!` is a layered `!important`; the workspace: the dots
@@ -402,10 +417,12 @@ value. Add it to `PresetLook` only if it is part of a look rather than about the
 ## Verifying a change
 
 `node --test "tests/*.test.ts"` runs the model tests. Everything else runs in CI: `.github/workflows/check.yml`
-calls the org's shared extension check, which stages the extension into the newest panel release and runs
-typecheck, the panel's lint and format check (`oxlint` and `oxfmt --check` from panel 1.2.10, Biome before), the
-frontend build, the node tests and `cargo test -p dev_caloptreyx_zoron`. Push and read that
-run; do not build the panel on the development VM.
+calls the org's shared extension check twice: against the newest panel release (typecheck, the panel's lint and
+format check, `oxlint` and `oxfmt --check` from panel 1.2.10, Biome before; the frontend build, the node tests and
+`cargo test -p dev_caloptreyx_zoron`) and against `release-1.2.2`, the floor in Metadata.toml, with `lint: false`
+(its Biome disagrees with oxfmt's formatting). `release.yml` waits for both. A core API newer than 1.2.2 is
+detected at runtime (a route, a store field) and typed so 1.2.2 still compiles. Push and read those runs; do not
+build the panel on the development VM.
 
 For a quick visual check against the local dev panel, bind mount (not symlink: vite resolves `shared` from the
 real path) `frontend/` at `calagopus-dev/frontend/extensions/dev_caloptreyx_zoron` and run vite there; the backend

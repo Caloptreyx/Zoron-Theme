@@ -28,8 +28,9 @@ import { useZoronTheme } from '../../lib/store.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { phaseOf } from '../home/home.ts';
 import { TileHeading } from '../tiles/TileFace.tsx';
+import { useServerTile } from '../tiles/useTiles.ts';
 import { barLayout, shownBarItems, toggleBar } from './console.ts';
-import { Inspector, type InspectorTab } from './Inspector.tsx';
+import { Inspector, type InspectorTab, useInspectorTabs } from './Inspector.tsx';
 import { CommandChips } from './QuickCommands.tsx';
 import { Telemetry } from './Telemetry.tsx';
 
@@ -184,6 +185,8 @@ function ConsolePage() {
   const state = useServerStore((state) => state.state);
   const uptime = useServerStore((state) => state.stats?.uptime ?? 0);
   const keyboardInset = useVisualViewportBottomInset();
+  const tile = useServerTile(server);
+  const tabbed = useInspectorTabs().length > 1;
   const root = useRef<HTMLElement>(null);
   const aside = useRef<HTMLElement>(null);
   const size = usePageSize(root);
@@ -193,7 +196,7 @@ function ConsolePage() {
   // at: a window crossing to a phone's width doesn't pop the sheet up
   const [shownAt, setShownAt] = useState<PageSize | null>(null);
   const shown = shownAt === size;
-  const [tab, setTab] = useState<InspectorTab>('connect');
+  const [tab, setTab] = useState<InspectorTab>('details');
   useViewportFill(root);
 
   const phone = size === 'phone';
@@ -352,12 +355,13 @@ function ConsolePage() {
           </CommandBar>
         )}
 
+        {/* the sheet's title is "Details", or with tabs (Details among them) the server's name above them */}
         {phone && inspector && (
           <Drawer
             opened={shown}
             onClose={() => setShownAt(null)}
             position='bottom'
-            title={t('console.details', {})}
+            title={tabbed ? tile.label : t('console.details', {})}
             classNames={{ content: 'zoron-sheet', header: 'zoron-sheet-header', body: 'zoron-sheet-body' }}
           >
             <Inspector tab={tab} onTab={setTab} />
