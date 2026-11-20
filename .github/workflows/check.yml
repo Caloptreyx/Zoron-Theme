@@ -22,10 +22,12 @@ jobs:
     uses: Caloptreyx/.github/.github/workflows/extension-check.yml@main
 
   # The oldest panel Metadata.toml allows (`panel_version`): its API, typecheck, build and crate tests. Its Biome
-  # predates the oxfmt formatting this repo follows, so its lint and format check is off.
+  # predates the oxfmt formatting this repo follows, so its lint and format check is off, and its own crates warn
+  # under today's stable Rust (deprecations), so warnings don't fail it; the check above still denies them.
   floor:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     uses: Caloptreyx/.github/.github/workflows/extension-check.yml@main
     with:
       panel-ref: release-1.2.2
       lint: false
+      build-warnings: warn

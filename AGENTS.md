@@ -420,7 +420,8 @@ value. Add it to `PresetLook` only if it is part of a look rather than about the
 calls the org's shared extension check twice: against the newest panel release (typecheck, the panel's lint and
 format check, `oxlint` and `oxfmt --check` from panel 1.2.10, Biome before; the frontend build, the node tests and
 `cargo test -p dev_caloptreyx_zoron`) and against `release-1.2.2`, the floor in Metadata.toml, with `lint: false`
-(its Biome disagrees with oxfmt's formatting). `release.yml` waits for both. A core API newer than 1.2.2 is
+(its Biome disagrees with oxfmt's formatting) and `build-warnings: warn` (that panel's own crates warn under today's
+stable Rust). `release.yml` waits for both. A core API newer than 1.2.2 is
 detected at runtime (a route, a store field) and typed so 1.2.2 still compiles. Push and read those runs; do not
 build the panel on the development VM.
 
