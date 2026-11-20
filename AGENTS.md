@@ -437,8 +437,10 @@ a real `panel-rs extensions export` instead (below).
 Set the new version in `backend/Cargo.toml`, commit, and push a tag `v<version>`: `.github/workflows/release.yml`
 runs the check, refuses a tag that doesn't match the version, creates the GitHub release, and the org's
 `extension-release.yml` builds panel-rs on Blacksmith, runs `panel-rs extensions export` on the tag and attaches the
-zip (notes generated; edit them into a changelog afterwards; "Run workflow" with a tag rebuilds an existing release's
-zip). README screenshots live in `docs/`, taken from the demo.
+zip (notes generated; edit them into a changelog afterwards), then publishes that zip as a SourceXchange release of
+product `vars.SOURCEXCHANGE_PRODUCT_ID` (skipped while unset; secret `SOURCEXCHANGE_TOKEN`) with the notes as they
+are then. "Run workflow" with a tag rebuilds an existing release's zip, and with "Also publish" ticked re-publishes it
+to SourceXchange. README screenshots live in `docs/`, taken from the demo.
 
 The public demo (https://zoron-demo.caloptreyx.com, `/root/zoron-demo` on the VM, like the Mint demo) installs the
 newest release every 15 minutes (`update.sh`, systemd `zoron-demo-update.timer`) and resets to its clean snapshot
