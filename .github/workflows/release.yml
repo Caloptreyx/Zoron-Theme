@@ -16,8 +16,15 @@ jobs:
   check:
     uses: Caloptreyx/.github/.github/workflows/extension-check.yml@main
 
+  # the oldest panel Metadata.toml allows; its Biome predates this repo's oxfmt formatting (check.yml)
+  floor:
+    uses: Caloptreyx/.github/.github/workflows/extension-check.yml@main
+    with:
+      panel-ref: release-1.2.2
+      lint: false
+
   release:
-    needs: check
+    needs: [check, floor]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

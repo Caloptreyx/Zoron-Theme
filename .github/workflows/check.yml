@@ -20,3 +20,12 @@ jobs:
     # A branch in this repo is already checked by its push; pull requests only add forks.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     uses: Caloptreyx/.github/.github/workflows/extension-check.yml@main
+
+  # The oldest panel Metadata.toml allows (`panel_version`): its API, typecheck, build and crate tests. Its Biome
+  # predates the oxfmt formatting this repo follows, so its lint and format check is off.
+  floor:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    uses: Caloptreyx/.github/.github/workflows/extension-check.yml@main
+    with:
+      panel-ref: release-1.2.2
+      lint: false
