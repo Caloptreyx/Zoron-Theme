@@ -51,7 +51,7 @@ frontend/src/translations.ts      every user facing string (English)
 tests/*.test.ts                   node:test cases for lib/theme.ts, lib/grid.ts, lib/color.ts, lib/terminal.ts,
                                   lib/tiles.ts, shell/folders.ts, home/home.ts, server/overview.ts, console/console.ts,
                                   console/telemetry.ts, editor/fields.ts (not shipped)
-scripts/package.py                builds dist/dev_caloptreyx_zoron.c7s.zip
+scripts/package.py                packs dist/dev_caloptreyx_zoron.c7s.zip locally, without panel-rs
 ```
 
 ## How the theming works
@@ -429,13 +429,16 @@ For a quick visual check against the local dev panel, bind mount (not symlink: v
 real path) `frontend/` at `calagopus-dev/frontend/extensions/dev_caloptreyx_zoron` and run vite there; the backend
 routes only exist in a panel built with the extension.
 
-Package with `python3 scripts/package.py` and check with `panel-rs extensions inspect`.
+Pack a zip locally with `python3 scripts/package.py` and check it with `panel-rs extensions inspect`; releases ship
+a real `panel-rs extensions export` instead (below).
 
 ## Releasing and the demo
 
 Set the new version in `backend/Cargo.toml`, commit, and push a tag `v<version>`: `.github/workflows/release.yml`
-runs the check, refuses a tag that doesn't match the version, packages the zip and attaches it to the GitHub release
-(notes generated; edit them into a changelog afterwards). README screenshots live in `docs/`, taken from the demo.
+runs the check, refuses a tag that doesn't match the version, creates the GitHub release, and the org's
+`extension-release.yml` builds panel-rs on Blacksmith, runs `panel-rs extensions export` on the tag and attaches the
+zip (notes generated; edit them into a changelog afterwards; "Run workflow" with a tag rebuilds an existing release's
+zip). README screenshots live in `docs/`, taken from the demo.
 
 The public demo (https://zoron-demo.caloptreyx.com, `/root/zoron-demo` on the VM, like the Mint demo) installs the
 newest release every 15 minutes (`update.sh`, systemd `zoron-demo-update.timer`) and resets to its clean snapshot
