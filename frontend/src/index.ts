@@ -13,6 +13,7 @@ import Shell from './elements/shell/Shell.tsx';
 import { AccountContentContainer, Sidebar } from './lib/core.ts';
 import { THEME_UPDATE_PERMISSION } from './lib/permissions.ts';
 import { corePages } from './lib/routes.ts';
+import { watchSideScrollers } from './lib/scrollers.ts';
 import { applyCachedTheme, currentTheme, listenForPreview, loadTheme } from './lib/store.ts';
 import ThemeEditor, { LOGIN_PREVIEW_PATH } from './pages/ThemeEditor.tsx';
 import { getExtTranslations } from './translations.ts';
@@ -31,6 +32,9 @@ class DevCaloptreyxZoronExtension extends Extension {
     applyCachedTheme();
     void loadTheme();
     listenForPreview();
+
+    // core's tab bars and Zoron's chip rows scroll sideways with a mouse wheel, and a tab bar shows its current tab
+    watchSideScrollers();
 
     // `greeting`: a welcome above the servers list, whichever of core's two list routes is the start page
     ctx.extensionRegistry.pages.dashboard.home

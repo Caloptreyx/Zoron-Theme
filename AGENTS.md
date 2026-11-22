@@ -21,6 +21,7 @@ frontend/src/lib/store.ts         paints the theme (with the visitor's terminal 
                                   bridge, useZoronTheme()
 frontend/src/lib/core.ts          every core (`@/`) import, in one place
 frontend/src/lib/groups.ts        the server group queries the rail and the servers page share
+frontend/src/lib/scrollers.ts     sideways rows (tab bars, chip rows): mouse wheel scrolling, the current tab in view
 frontend/src/lib/grid.ts          the overview's snap grid: settle, move, resize, place, remove, fill gaps (pure)
 frontend/src/lib/tiles.ts         server tiles: the default look, each user's own look (normalizeTiles(), pure)
 frontend/src/app.css              imports styles/ in cascade order
@@ -151,6 +152,13 @@ navigation from the props core gave the Sidebar.
 - app.css makes the router's content column (`.zoron-shell ~ #…-root` or `.zoron-topbar ~ …`, so virtual windows
   without a sidebar are untouched) a rounded canvas (`--zoron-canvas`) with `overflow: clip`, which rounds the
   sticky page headers without making it a scroller. Page tabs (core's SubNavigation and others) become a pill bar.
+- Sideways scrollers (core.css, lib/scrollers.ts): that pill bar and Zoron's chip rows (the servers page's filters,
+  the console's quick commands and its toolbar's buttons) are one row each, scrolling sideways with no scrollbar. A
+  trackpad scrolls them natively; `watchSideScrollers()` gives each a wheel listener that turns a vertical mouse wheel
+  into sideways scrolling until the row's end (then the page scrolls), and scrolls a tab bar to its current tab
+  (`data-active`) as it mounts or changes. Found by one MutationObserver on body, coalesced per frame, which skips
+  xterm's churn. An edge fades while there is more that way (scroll driven); browsers without scroll driven
+  animations get a thin scrollbar instead, except with a coarse pointer. Both lists must match.
 
 ## The servers page
 

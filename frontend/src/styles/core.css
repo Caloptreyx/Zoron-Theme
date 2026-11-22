@@ -10,6 +10,7 @@ html[data-zoron] :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-l
   gap: 2px;
   padding: 4px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   scrollbar-width: none;
   border-radius: calc(var(--zoron-control-radius) + 4px);
   background-color: color-mix(in srgb, var(--mantine-color-text) 5%, transparent);
@@ -41,6 +42,83 @@ html[data-zoron]
   box-shadow:
     0 1px 2px var(--zoron-shadow-color),
     inset 0 1px 0 var(--zoron-sheen);
+}
+
+/*
+ * Sideways scrollers: the tab bars above and Zoron's chip rows (the servers page's filters, the console's quick
+ * commands and its toolbar's buttons) show no scrollbar. lib/scrollers.ts scrolls them with a mouse wheel and keeps a
+ * tab bar's current tab in view; an edge fades while there is more that way (scroll driven, like the sidebar's
+ * lists). Browsers without scroll driven animations get a thin scrollbar instead, except under a finger. Keep the
+ * list in step with lib/scrollers.ts.
+ */
+@property --zoron-fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --zoron-fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes zoron-scroll-fade-x {
+  0% {
+    --zoron-fade-start: 0px;
+    --zoron-fade-end: 32px;
+  }
+  8% {
+    --zoron-fade-start: 32px;
+  }
+  92% {
+    --zoron-fade-end: 32px;
+  }
+  100% {
+    --zoron-fade-start: 32px;
+    --zoron-fade-end: 0px;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  html[data-zoron]
+    :is(
+      :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-list:not([data-orientation='vertical']),
+      .zoron-chips,
+      .zoron-con-chips,
+      .zoron-con-term > .mantine-Card-root > :first-child > :last-child
+    ) {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--zoron-fade-start),
+      #000 calc(100% - var(--zoron-fade-end)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--zoron-fade-start),
+      #000 calc(100% - var(--zoron-fade-end)),
+      transparent
+    );
+    animation: zoron-scroll-fade-x linear both;
+    animation-timeline: scroll(self inline);
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  @media not (pointer: coarse) {
+    html[data-zoron]
+      :is(
+        :is(#dashboard-root, #server-root, #admin-root) .mantine-Tabs-list:not([data-orientation='vertical']),
+        .zoron-chips,
+        .zoron-con-chips,
+        .zoron-con-term > .mantine-Card-root > :first-child > :last-child
+      ) {
+      scrollbar-width: thin;
+    }
+  }
 }
 
 /* ---------- buttons ---------- */
