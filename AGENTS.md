@@ -72,6 +72,9 @@ frame). Both are rewritten only when they change, so the editor repaints its pre
   pill links).
 - The backdrop is `html::before` (light fields, blurred, drifting with a transform only) and the texture
   `html::after`; body is transparent. Glass blur is applied to outermost cards only; nested cards become wells.
+- Core's PreviewCard (extension and egg library cards, panel 1.2.8+) opens a fuller copy of the card on hover; page.css
+  pins it to the card's bottom edge and width so it grows upward and its footer (Configure, the switch, delete) never
+  moves under the pointer. Core centres it and widens it 24px a side.
 - Page transitions animate the routed page element inside core's Container (`#…-root > div > div:first-child`),
   without fill mode; the editor (fixed, full screen) is excluded because a transform would pin it to the column.
 - A first visit with no cached theme hides the page (`data-zoron-pending`) until the fetch settles, at most 1.5s.

@@ -203,6 +203,27 @@ html[data-zoron-surface='glass'] .mantine-Card-root:not(.fixed > *, .mantine-Car
   }
 }
 
+/*
+ * core's PreviewCard (extension and egg library cards, panel 1.2.8+) opens a fuller copy of the card over it on hover,
+ * centred on the card and 24px wider each side, so its footer (Configure, the switch, delete) drops out from under the
+ * pointer. Pin that copy to the card's bottom edge and width instead: it grows upward only, and with a border as wide
+ * as the card's (transparent) its footer sits exactly on the card's. Core sets left and right inline, hence !important.
+ */
+html[data-zoron] .mantine-Card-root.h-full + [class~='z-20'][class~='-translate-y-1/2'] {
+  top: auto;
+  bottom: 0;
+  left: 0 !important;
+  right: 0 !important;
+  translate: none;
+}
+
+html[data-zoron]
+  .mantine-Card-root.h-full
+  + [class~='z-20'][class~='-translate-y-1/2']
+  > .mantine-Card-root:last-child {
+  border: calc(0.0625rem * var(--mantine-scale)) solid transparent;
+}
+
 /* core's sticky page headers (a server's name and power buttons) paint the page colour, a dark band over the backdrop */
 html[data-zoron] .sticky.top-0[class~='bg-(--mantine-color-body)'] {
   background-color: color-mix(in srgb, var(--mantine-color-body) 62%, transparent);
