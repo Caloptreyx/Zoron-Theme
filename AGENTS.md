@@ -63,7 +63,10 @@ variants in `app.css` (backdrop, texture, surface, sidebar, buttons, current lin
 frame). Both are rewritten only when they change, so the editor repaints its preview live without a reload.
 
 - The panel loads every extension's `app.css` even when the extension is disabled, so every rule there is scoped
-  to `html[data-zoron…]`, which only a running Zoron sets.
+  to `html[data-zoron…]`, which only a running Zoron sets. The exception is page.css's
+  `html:not([data-mantine-color-scheme])`: the frame the browser may paint before core's script runs gets the
+  default look's background and spinner (from 1.2.9 index.html disables the stylesheet for a disabled Zoron; before,
+  core disables it as its script starts, so that first frame is all it can touch).
 - Selectors in `buildCss` use `html:root` and `html:root[data-mantine-color-scheme=…]` to outrank Mantine's `:root`
   and core's pinned scheme overrides. Colours come from five values (two accents, background, surface, text);
   light mode derives its own palette (`lightBase()`) unless overridden.

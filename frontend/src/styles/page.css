@@ -12,6 +12,18 @@ html[data-zoron] #root > div > .spinner:not([data-testid]) {
   --loader-color: var(--zoron-accent);
 }
 
+/* The frame the browser may paint before core's script runs, when no theme is known yet: the default look's
+   background and accent instead of core's grey and Mantine's blue. The one unscoped rule here: from panel 1.2.9
+   index.html disables this stylesheet for a disabled Zoron; before, core disables it as its script starts, so a
+   disabled Zoron only tints that first frame. */
+html:not([data-mantine-color-scheme]) {
+  background-color: #0c0d10;
+}
+
+html:not([data-mantine-color-scheme]) #root > div > .spinner:not([data-testid]) {
+  --loader-color: #7c9fe0;
+}
+
 html[data-zoron] {
   --zoron-ease: cubic-bezier(0.22, 1, 0.36, 1);
   background-color: var(--mantine-color-body);

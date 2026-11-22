@@ -1,7 +1,8 @@
 /*
  * Zoron's static styles. The panel loads every extension's app.css whether the extension is enabled or not, so every
- * rule is scoped to the attributes applyTheme() (lib/store.ts) puts on html, which only an enabled Zoron sets. The
- * colours and sizes come from the variables buildCss() (lib/theme.ts) writes; the attributes pick the variants.
+ * rule is scoped to the attributes applyTheme() (lib/store.ts) puts on html, which only an enabled Zoron sets; the
+ * one exception is the frame painted before core's script runs (styles/page.css). The colours and sizes come from
+ * the variables buildCss() (lib/theme.ts) writes; the attributes pick the variants.
  * The rules live in styles/, one file per area, imported here in cascade order (order matters).
  */
 
