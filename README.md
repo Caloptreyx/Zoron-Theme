@@ -45,17 +45,17 @@ Open Studio from **Admin â†’ Zoron Studio** or the extension's card on **Admin â
 | --- | --- |
 | ![Console with the window frame](docs/console-window.png) | ![Console with the CRT frame](docs/console-crt.png) |
 
-| Zoron Studio | Studio's console settings |
+| Zoron Studio | Console and overview layouts |
 | --- | --- |
-| ![Zoron Studio previewing the Aurora preset](docs/studio.png) | ![Studio's Console tab](docs/studio-console.png) |
+| ![Zoron Studio previewing the Aurora preset](docs/studio.png) | ![Studio's Server page tab with the console layouts, previewing the Workspace layout](docs/studio-console.png) |
 
 | Servers page layouts | Arranging the server page |
 | --- | --- |
-| ![Studio's servers page layouts, the list previewed](docs/studio-servers.png) | ![Studio's Server page tab arranging the overview's blocks](docs/studio-arrange.png) |
+| ![Studio's servers page layouts, the list previewed](docs/studio-servers.png) | ![Studio's Server page tab, Customize, arranging the overview's blocks](docs/studio-arrange.png) |
 
 | Arranging the console | Servers as a list |
 | --- | --- |
-| ![Studio's Console tab with the figures in a bottom bar and the inspector on the left](docs/studio-console-arrange.png) | ![The servers page as a list](docs/servers-list.png) |
+| ![Studio's Server page tab, Customize, with the figures in a bottom bar and the details panel on the left](docs/studio-console-arrange.png) | ![The servers page as a list](docs/servers-list.png) |
 
 | Server tiles | Sign in page |
 | --- | --- |
