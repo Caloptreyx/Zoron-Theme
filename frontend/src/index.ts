@@ -14,9 +14,13 @@ import { AccountContentContainer, Sidebar } from './lib/core.ts';
 import { THEME_UPDATE_PERMISSION } from './lib/permissions.ts';
 import { corePages } from './lib/routes.ts';
 import { watchSideScrollers } from './lib/scrollers.ts';
-import { applyCachedTheme, currentTheme, listenForPreview, loadTheme } from './lib/store.ts';
+import { bootTheme, currentTheme, listenForPreview, startTheme } from './lib/store.ts';
 import ThemeEditor, { LOGIN_PREVIEW_PATH } from './pages/ThemeEditor.tsx';
 import { getExtTranslations } from './translations.ts';
+
+// core awaits its startup requests (settings, and icons from panel 1.2.7) before it initialises extensions and
+// mounts, its boot spinner in the stock colours meanwhile: the cached theme paints as this module loads instead
+bootTheme();
 
 // the login preview route is the only place that loads it outside core's own lazy auth router
 const Login = lazy(() => import('@/pages/auth/Login.tsx'));
@@ -27,10 +31,9 @@ class DevCaloptreyxZoronExtension extends Extension {
   public cardComponent: React.FC | null = null;
 
   public initialize(ctx: ExtensionContext): void {
-    // the look is runtime CSS (lib/store.ts): the cached theme paints at once, the fetch follows, and inside the
-    // editor's preview frame the editor's drafts replace both
-    applyCachedTheme();
-    void loadTheme();
+    // the look is runtime CSS (lib/store.ts): the cached theme painted as this module loaded and its fetch is on its
+    // way; inside the editor's preview frame the editor's drafts replace both
+    startTheme();
     listenForPreview();
 
     // core's tab bars and Zoron's chip rows scroll sideways with a mouse wheel, and a tab bar shows its current tab

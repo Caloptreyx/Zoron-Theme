@@ -79,6 +79,14 @@ frame). Both are rewritten only when they change, so the editor repaints its pre
 - Page transitions animate the routed page element inside core's Container (`#…-root > div > div:first-child`),
   without fill mode; the editor (fixed, full screen) is excluded because a transform would pin it to the column.
 - A first visit with no cached theme hides the page (`data-zoron-pending`) until the fetch settles, at most 1.5s.
+- The look paints before core mounts. Core's entry awaits its startup requests (settings, and icons from 1.2.7)
+  before it initialises extensions, showing its boot spinner in the stock colours meanwhile, so index.ts calls
+  `bootTheme()` as the module loads: it sets Mantine's `data-mantine-color-scheme` as the provider will (the stored
+  choice, `auto` resolved, else core's dark), paints the cached theme and starts the fetch, so a stale cache is
+  usually corrected before the page mounts; page.css gives the boot spinner the accent. It skips a Zoron that
+  index.html's `inactive-extensions` meta lists (1.2.9+); on older panels a disabled Zoron is only noticed when
+  core's first render into `#root` finds `startTheme()` (called by `initialize()`) never ran, and the paint is taken
+  back.
 - The default look is the Carbon preset (`DEFAULT_THEME` spreads it): off-black, one muted accent whose second
   accent is only a lighter step, solid surfaces, no glow, Geist and Geist Mono. Aurora (the violet to cyan glass
   the theme started with) is a preset, and themes saved before keep their own values. Zoron's own pieces follow

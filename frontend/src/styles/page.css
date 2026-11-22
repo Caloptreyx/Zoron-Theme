@@ -7,6 +7,11 @@ html[data-zoron-pending] body {
   visibility: hidden;
 }
 
+/* core's boot spinner (index.html's, until the app mounts) spins before Mantine defines its primary colour */
+html[data-zoron] #root > div > .spinner:not([data-testid]) {
+  --loader-color: var(--zoron-accent);
+}
+
 html[data-zoron] {
   --zoron-ease: cubic-bezier(0.22, 1, 0.36, 1);
   background-color: var(--mantine-color-body);

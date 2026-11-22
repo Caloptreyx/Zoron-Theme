@@ -12,6 +12,8 @@ export const READY_MSG = 'zoron:ready';
  * and at most this long, so a slow or failing request never leaves it blank.
  */
 const PENDING_MS = 1500;
+/** Zoron's frontend identifier, as index.html lists it among the inactive extensions (panel 1.2.9+). */
+const IDENTIFIER = 'dev_caloptreyx_zoron';
 
 let saved: ZoronTheme = DEFAULT_THEME;
 /** The theme given to paint (the site's, or a draft in the editor's preview), before the visitor's terminal look. */
@@ -21,6 +23,12 @@ let current: ZoronTheme = DEFAULT_THEME;
 let terminalPrefs: TerminalPrefs = {};
 let previewing = false;
 let pendingTimer: number | undefined;
+/** bootTheme() painted before core initialised the extensions. */
+let booted = false;
+/** Core initialised Zoron (startTheme()). */
+let started = false;
+/** Core mounted without initialising Zoron (disabled on a panel before 1.2.9): nothing paints any more. */
+let dropped = false;
 const listeners = new Set<() => void>();
 /** Studio's preview frame always shows the admin's terminal look, never the visitor's own. */
 export const inPreviewFrame = window.parent !== window;
@@ -49,6 +57,7 @@ export const useTerminalPrefs = () => useSyncExternalStore(subscribeTheme, () =>
  * after the cached paint) must not replace it.
  */
 function applyTheme(theme: ZoronTheme) {
+  if (dropped) return;
   const shown = inPreviewFrame ? theme : withTerminalPrefs(theme, terminalPrefs);
   let el = document.getElementById(STYLE_ID);
   if (!el) {
@@ -119,7 +128,7 @@ export function rememberTheme(theme: ZoronTheme) {
  * Paints the last known theme right away so the look never flashes in after the fetch, with the visitor's terminal
  * look, which other windows (the console popout) may change later.
  */
-export function applyCachedTheme() {
+function applyCachedTheme() {
   let cached: string | null = null;
   try {
     cached = localStorage.getItem(CACHE_KEY);
@@ -145,6 +154,68 @@ export function applyCachedTheme() {
   applyTheme(saved);
 }
 
+// Mantine's localStorage colour scheme manager keeps the admin's choice under this key
+const SCHEME_KEY = 'mantine-color-scheme-value';
+const SCHEME_ATTR = 'data-mantine-color-scheme';
+
+/**
+ * The scheme core's MantineProvider will set when it mounts (core's default is dark), set now so the scheme blocks of
+ * the cached theme apply to the boot spinner too, as Mantine's own ColorSchemeScript would.
+ */
+function seedScheme() {
+  const root = document.documentElement;
+  if (root.hasAttribute(SCHEME_ATTR)) return;
+  let stored: string | null = null;
+  try {
+    stored = localStorage.getItem(SCHEME_KEY);
+  } catch {
+    // storage blocked: Mantine falls back to the default too
+  }
+  const light = stored === 'light' || (stored === 'auto' && window.matchMedia('(prefers-color-scheme: light)').matches);
+  root.setAttribute(SCHEME_ATTR, light ? 'light' : 'dark');
+}
+
+/** Takes back what bootTheme() painted, for a Zoron core never initialised. */
+function dropTheme() {
+  dropped = true;
+  window.clearTimeout(pendingTimer);
+  document.getElementById(STYLE_ID)?.remove();
+  const data = document.documentElement.dataset;
+  for (const key of Object.keys(data)) if (key.startsWith('zoron')) delete data[key];
+}
+
+/**
+ * Runs while core's entry imports the extensions, before its startup requests, which core awaits before initialising
+ * extensions and mounting, its boot spinner in the stock colours meanwhile. Paints the cached theme in the scheme
+ * Mantine will pick and starts the fetch, so the spinner already wears the site's look and a stale cache is usually
+ * corrected before the page mounts. A disabled Zoron paints nothing: from panel 1.2.9 index.html says so; before, core
+ * mounts without calling initialize(), and its first render into `#root` takes the paint back.
+ */
+export function bootTheme() {
+  const inactive = document.querySelector<HTMLMetaElement>('meta[name="inactive-extensions"]')?.content.split(',');
+  if (inactive?.includes(IDENTIFIER)) return;
+  booted = true;
+  seedScheme();
+  applyCachedTheme();
+  void loadTheme();
+
+  const root = document.getElementById('root');
+  if (!root) return;
+  const mount = new MutationObserver(() => {
+    mount.disconnect();
+    if (!started) dropTheme();
+  });
+  mount.observe(root, { childList: true });
+}
+
+/** Core initialised Zoron: keeps what bootTheme() painted, or paints now if index.html had listed it as inactive. */
+export function startTheme() {
+  started = true;
+  if (booted) return;
+  applyCachedTheme();
+  void loadTheme();
+}
+
 /**
  * Fetches the site theme and the version the server holds (the editor sends it back on save, so a save over someone
  * else's is refused). The route answers 304 to the browser's revalidation. Null when it failed.
@@ -166,9 +237,6 @@ export async function loadTheme(): Promise<{ theme: ZoronTheme; version: string 
 
 export type PreviewScheme = 'light' | 'dark';
 
-// Mantine's localStorage colour scheme manager keeps the admin's choice under this key
-const SCHEME_KEY = 'mantine-color-scheme-value';
-const SCHEME_ATTR = 'data-mantine-color-scheme';
 let previewScheme: PreviewScheme | null = null;
 
 /** The editor renders the panel in an iframe and streams drafts into it, with the scheme to show them in. */
