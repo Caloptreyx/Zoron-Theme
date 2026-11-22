@@ -20,6 +20,10 @@ html:not([data-mantine-color-scheme]) {
   background-color: #0c0d10;
 }
 
+html:not([data-mantine-color-scheme]) body {
+  background-color: transparent;
+}
+
 html:not([data-mantine-color-scheme]) #root > div > .spinner:not([data-testid]) {
   --loader-color: #7c9fe0;
 }
