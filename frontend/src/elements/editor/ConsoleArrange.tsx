@@ -527,17 +527,24 @@ export function ConsoleArrange({ valid, set }: { valid: ZoronTheme; set: (patch:
     </div>
   );
 
+  // an empty side stays a visible, labelled slot, so a hidden inspector has somewhere obvious to go back to
   const side = (zone: 'left' | 'right') => (
     <div
       data-arrange-zone={zone}
       data-zoron-setting='consoleInspector'
       role='group'
       aria-label={t(ZONE_LABEL[zone], {})}
-      className={`flex shrink-0 rounded-md border p-1 transition-[opacity,background-color,border-color] duration-150 ${
-        inspectorZone === zone ? 'w-19' : 'w-5'
+      className={`flex shrink-0 items-center justify-center rounded-md border p-1 transition-[opacity,background-color,border-color] duration-150 ${
+        inspectorZone === zone ? 'w-19' : 'w-9'
       } ${slotLook(zone, 'border-dashed border-(--mantine-color-default-border)')}`}
     >
-      {inspectorZone === zone && pieceEl('inspector')}
+      {inspectorZone === zone ? (
+        pieceEl('inspector')
+      ) : (
+        <span className='rotate-180 text-[10px] whitespace-nowrap text-(--mantine-color-placeholder) [writing-mode:vertical-rl]'>
+          {t(ZONE_LABEL[zone], {})}
+        </span>
+      )}
     </div>
   );
 

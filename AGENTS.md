@@ -208,7 +208,10 @@ console when the setting is off, read with the theme hook so Studio switches it 
 `/console/crashes`, panel 1.2.9): with the overview on only the Console link keeps those matches, so Overview and
 Console are never both current. `/console/popout` keeps no named parent, so it stays reachable. An egg with a
 custom sidebar order (egg configurations) lists routes by path: `/` there shows as Overview, and Console appears only
-once the admin adds `/terminal` to that order (core's editor lists it, since it runs the interceptors too).
+once the admin adds `/terminal` to that order (core's editor lists it, since it runs the interceptors too). While the
+server installs, restores, transfers or is suspended for the visitor (core's `isConflictingState`), core's
+`ServerStateGuard` blocks every server page but `/` and the popout; `ServerHome` then shows the console there instead
+of the overview, keeping the install log reachable.
 
 - Resource history: the interceptor notes whether the panel has core's `/console/history` route (`corePages` in
   lib/routes.ts); where it does, the overview's header has a History button beside Console, and the console's
@@ -295,13 +298,16 @@ Studio's preview follows each draft.
   `statBlocks` slots, where other extensions put their pills, so none hides behind a tab; issue #2) and, with
   `control.console` and `consoleQuickCommands` (`useInspectorTabs`), a Commands tab; without that tab its head is a
   "Details" heading. It sits on the `consoleInspector` side ('right', or 'left': `data-side`
-  on the workspace) or is 'off': no column, toggle, sheet, edit chip or personal commands (the site's still show).
-  From 80rem of page width (`usePageSize`, measured as core's `usePageBreakpoint` does: the virtual window, else
-  the body; that hook only exists from panel 1.2.2, and core's Biome config up to 1.2.9 banned `useMediaQuery`) it docks as a 20rem column
-  behind a hairline and the terminal narrows; open state in `zoron:console-panel` ('shown' or 'hidden', written when
-  the visitor toggles it), else `consoleInspectorOpen` (open by default). Below, it slides over the terminal from
-  its side's edge (transform and opacity; none with the motion setting off or reduced motion), opens on demand only,
-  and closes on Escape and a press outside it (toggles and portals excepted).
+  on the workspace) or is 'off': no column, toggle or sheet (quick commands stay, their last chip opening the list in a
+  popover). The phone width is the page's (`usePageSize`, measured as core's `usePageBreakpoint` does: the virtual
+  window, else the body; that hook only exists from panel 1.2.2, and core's Biome config up to 1.2.9 banned
+  `useMediaQuery`); docking is the workspace's own width: from 52rem of it (so the sidebar, zoom and Interface size
+  count) the inspector docks as a 20rem column behind a hairline and the terminal narrows. Open state: the
+  visitor's toggle in `zoron:console-panel` (`{ open, base }`, `base` the `consoleInspectorOpen` they toggled
+  against; it applies only while that default is unchanged, so changing the default reaches everyone again; the old
+  'shown'/'hidden' strings are ignored), else `consoleInspectorOpen` (open by default). Narrower, it slides over the
+  terminal from its side's edge (transform and opacity; none with the motion setting off or reduced motion), opens on
+  demand only, and closes on Escape and a press outside it (toggles and portals excepted).
 - Phones (`data-phone` under 64rem, the shell's top bar width): the workspace bleeds to the canvas's edges (core's
   `px-4` and `mb-4`), the bar rows as `barLayout` gives them, power a full width segmented row, the figures one
   sideways scrolling line with smaller sparklines (power and figures hide while the keyboard is up, and a bar left
@@ -320,7 +326,8 @@ Studio's preview follows each draft.
   the own ones through `useSyncExternalStore`, so the chips and the inspector stay in step (a list storage refuses
   is kept for that load). Shown only with `control.console`; a click sends one over the server's websocket
   (`SocketRequest.SEND_COMMAND`) while it is connected and the server is not offline, the disabled chips' title
-  saying why. The last chip opens the inspector at Commands; with no own commands saved it is labelled.
+  saying why. The last chip opens the inspector at Commands, or with the inspector off the same list (`CommandsEditor`)
+  in a popover by the chip; with no own commands saved it is labelled.
 - xterm.ts hooks every console, core's page and the popout included (`pages.server.console.xterm`): the init handler
   sets the mono font (`MONO_STACKS`, core's when 'panel'), the line height and the palette (`terminalPalette`, with a
   transparent background: app.css paints `--zoron-term-bg` on the card holding `.xterm`, or on Zoron's workspace,

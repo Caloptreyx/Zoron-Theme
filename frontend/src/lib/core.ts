@@ -61,6 +61,7 @@ export { default as Popover } from '@/elements/overlays/Popover.tsx';
 export { default as Tooltip } from '@/elements/overlays/Tooltip.tsx';
 export { default as QuickActionsTrigger } from '@/elements/quickActions/QuickActionsTrigger.tsx';
 export { isAdmin } from '@/lib/auth/permissions.ts';
+export { isConflictingState } from '@/lib/domain/server.ts';
 export { downloadTextFile } from '@/lib/download/download.ts';
 export { bytesToString, mbToBytes } from '@/lib/format/size.ts';
 export { formatMilliseconds } from '@/lib/format/time.ts';

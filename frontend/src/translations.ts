@@ -357,16 +357,17 @@ const translations = defineTranslations({
       inspector: 'Inspector',
       inspectorHint:
         "The side panel with connection details, quick commands and other extensions' cards; place it above.",
-      inspectorRight: 'Right',
-      inspectorLeft: 'Left',
+      inspectorRight: 'Right side',
+      inspectorLeft: 'Left side',
       inspectorOpen: 'Open by default',
-      inspectorOpenHint: 'On wide screens, for people who have not opened or closed it themselves.',
+      inspectorOpenHint:
+        'When there is room beside the terminal. Visitors who opened or closed it keep their choice until you change this.',
       quickCommands: 'Quick commands',
       quickCommandsToggle: 'Show quick commands',
-      quickCommandsHint: 'Chips by the prompt or the toolbar (place them above), and a Commands tab in the inspector.',
+      quickCommandsHint:
+        'Chips by the prompt or the toolbar (place them above), and a Commands tab in the inspector. With the inspector hidden, the last chip opens the list.',
       siteCommands: 'Commands for everyone',
-      siteCommandsHint:
-        'Shown first to everyone who may use the console, before their own; they cannot remove them. With the inspector off, only these show.',
+      siteCommandsHint: 'Shown first to everyone who may use the console, before their own; they cannot remove them.',
       siteCommandPlaceholder: 'A command, e.g. save-all',
       addSiteCommand: 'Add',
       siteCommandTaken: 'Already in the list',

@@ -35,22 +35,31 @@ import { CommandChips } from './QuickCommands.tsx';
 import { Telemetry } from './Telemetry.tsx';
 
 /**
- * The visitor's own open state of the docked inspector, per browser ('shown' or 'hidden'); without one the theme's
- * `consoleInspectorOpen` decides.
+ * The visitor's own open state of the docked inspector, per browser: `{ open, base }`, where `base` is the theme's
+ * `consoleInspectorOpen` they toggled against. It applies only while that default is unchanged, so an admin who
+ * changes the default reaches everyone again; without one (or with the old 'shown' and 'hidden' strings) the theme
+ * decides.
  */
 const PANEL_KEY = 'zoron:console-panel';
 
+interface PanelChoice {
+  open: boolean;
+  base: boolean;
+}
+
 /**
- * Page widths in rem: under PHONE it is a phone's page (app.css's phone rules key off `data-phone`, the shell's top
- * bar takes over at the same width), from DOCK the inspector docks beside the terminal; between, it slides over it.
+ * Widths in rem. A page under PHONE is a phone's (app.css's phone rules key off `data-phone`, the shell's top bar
+ * takes over at the same page width). Otherwise the inspector docks beside the terminal once the workspace itself is
+ * DOCK wide (its 20rem column leaves the terminal at least 32rem), whatever the window, sidebar or zoom leave it;
+ * narrower, it slides over the terminal.
  */
 const PHONE = 64;
-const DOCK = 80;
+const DOCK = 52;
 
 type PageSize = 'phone' | 'mid' | 'wide';
 
-function pageSize(width: number, rem: number): PageSize {
-  return width < PHONE * rem ? 'phone' : width < DOCK * rem ? 'mid' : 'wide';
+function pageSize(page: number, workspace: number, rem: number): PageSize {
+  return page < PHONE * rem ? 'phone' : workspace < DOCK * rem ? 'mid' : 'wide';
 }
 
 /**
@@ -89,29 +98,38 @@ function useViewportFill(box: RefObject<HTMLElement | null>) {
 }
 
 /**
- * The width class of the page holding `node`: its `page` container (the virtual window it is in, else the body),
- * measured as core's `usePageBreakpoint` does (that hook only exists from panel 1.2.2).
+ * The width class of the workspace `node`: phone or not by its `page` container (the virtual window it is in, else
+ * the body, measured as core's `usePageBreakpoint` does; that hook only exists from panel 1.2.2), docked or not by
+ * the workspace's own width.
  */
 function usePageSize(node: RefObject<HTMLElement | null>): PageSize {
-  const [size, setSize] = useState(() => pageSize(document.body.getBoundingClientRect().width, 16));
+  const [size, setSize] = useState(() => {
+    const width = document.body.getBoundingClientRect().width;
+    return pageSize(width, width, 16);
+  });
   useLayoutEffect(() => {
-    const page = node.current?.closest<HTMLElement>('.page-container') ?? document.body;
+    const workspace = node.current;
+    const page = workspace?.closest<HTMLElement>('.page-container') ?? document.body;
     const update = () => {
       const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      setSize(pageSize(page.getBoundingClientRect().width, rem));
+      const width = page.getBoundingClientRect().width;
+      setSize(pageSize(width, workspace?.getBoundingClientRect().width ?? width, rem));
     };
     const observer = new ResizeObserver(update);
     observer.observe(page);
+    if (workspace) observer.observe(workspace);
     update();
     return () => observer.disconnect();
   }, [node]);
   return size;
 }
 
-function readPanel(): boolean | null {
+function readPanel(): PanelChoice | null {
   try {
-    const value = localStorage.getItem(PANEL_KEY);
-    return value === 'hidden' ? false : value === 'shown' ? true : null;
+    const value: unknown = JSON.parse(localStorage.getItem(PANEL_KEY) ?? 'null');
+    if (typeof value !== 'object' || value === null) return null;
+    const { open, base } = value as Record<string, unknown>;
+    return typeof open === 'boolean' && typeof base === 'boolean' ? { open, base } : null;
   } catch {
     return null;
   }
@@ -190,8 +208,8 @@ function ConsolePage() {
   const root = useRef<HTMLElement>(null);
   const aside = useRef<HTMLElement>(null);
   const size = usePageSize(root);
-  // the visitor's own choice, null until they toggle it (the theme's default applies until then)
-  const [docked, setDocked] = useState(readPanel);
+  // the visitor's own choice, applied while the theme's default is the one they toggled against
+  const [choice, setChoice] = useState(readPanel);
   // the sliding panel and the phone's sheet open on demand, never on load, and only at the size they were opened
   // at: a window crossing to a phone's width doesn't pop the sheet up
   const [shownAt, setShownAt] = useState<PageSize | null>(null);
@@ -202,7 +220,8 @@ function ConsolePage() {
   const phone = size === 'phone';
   const wide = size === 'wide';
   const inspector = theme.consoleInspector !== 'off';
-  const open = inspector && (wide ? (docked ?? theme.consoleInspectorOpen) : shown);
+  const docked = choice?.base === theme.consoleInspectorOpen ? choice.open : theme.consoleInspectorOpen;
+  const open = inspector && (wide ? docked : shown);
 
   // the sliding panel closes on Escape and on a press outside it (its toggles and anything in a portal, a menu
   // or tooltip it opened, excepted)
@@ -231,9 +250,10 @@ function ConsolePage() {
       setShownAt(next ? size : null);
       return;
     }
-    setDocked(next);
+    const picked: PanelChoice = { open: next, base: theme.consoleInspectorOpen };
+    setChoice(picked);
     try {
-      localStorage.setItem(PANEL_KEY, next ? 'shown' : 'hidden');
+      localStorage.setItem(PANEL_KEY, JSON.stringify(picked));
     } catch {
       // storage blocked: the state lasts until the next load
     }

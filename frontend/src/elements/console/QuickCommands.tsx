@@ -1,7 +1,7 @@
 import { faAngleRight, faPen, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type FormEvent, useMemo, useState, useSyncExternalStore } from 'react';
-import { ActionIcon, Button, SocketRequest, TextInput, useServerCan, useServerStore } from '../../lib/core.ts';
+import { ActionIcon, Button, Popover, SocketRequest, TextInput, useServerCan, useServerStore } from '../../lib/core.ts';
 import { useZoronTheme } from '../../lib/store.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { commandOf, commandsKey, MAX_COMMAND, MAX_COMMANDS, parseCommands, withCommand } from './console.ts';
@@ -71,10 +71,10 @@ function useCommandSender() {
  * The quick commands as a row of chips, just above the prompt or just under the terminal's toolbar (`consoleChips`,
  * `data-chips` on the workspace places it; 'off' shows none), a click sending one while the console can take it
  * (its title says why not otherwise): the site's (`consoleCommands`, set in Studio, marked quietly) first, then the
- * visitor's own saved ones that are not already among them, and a last chip opening the inspector at the list. With
- * none saved, only that chip, which says what it is. Without `onEdit` (the inspector is off) there is nowhere to
- * manage one's own, so only the site's show. Needs `control.console`, as core's command input does, and
- * `consoleQuickCommands`.
+ * visitor's own saved ones that are not already among them, and a last chip to manage them: `onEdit` (the inspector
+ * at its list) where there is an inspector, else the same list in a popover by the chip, so quick commands never
+ * depend on the inspector. With none saved, only that chip, which says what it is. Needs `control.console`, as core's
+ * command input does, and `consoleQuickCommands`.
  */
 export function CommandChips({ onEdit }: { onEdit?: () => void }) {
   const { t } = useExtTranslations();
@@ -83,12 +83,11 @@ export function CommandChips({ onEdit }: { onEdit?: () => void }) {
   const canConsole = useServerCan('control.console');
   const [saved] = useQuickCommands(uuid);
   const { ready, reason, send } = useCommandSender();
+  const [editing, setEditing] = useState(false);
 
   const site = theme.consoleCommands;
-  if (!canConsole || !theme.consoleQuickCommands || theme.consoleChips === 'off' || (!onEdit && site.length === 0)) {
-    return null;
-  }
-  const own = onEdit ? saved.filter((command) => !site.includes(command)) : [];
+  if (!canConsole || !theme.consoleQuickCommands || theme.consoleChips === 'off') return null;
+  const own = saved.filter((command) => !site.includes(command));
 
   // the site's and the visitor's own never overlap, so the command is a unique key
   const chip = (command: string, fromSite: boolean) => (
@@ -107,23 +106,41 @@ export function CommandChips({ onEdit }: { onEdit?: () => void }) {
     </button>
   );
 
+  const edit = (
+    <button
+      type='button'
+      className='zoron-con-chip'
+      data-edit
+      data-zoron-inspector-toggle
+      title={t('console.editCommands', {})}
+      aria-label={t('console.editCommands', {})}
+      aria-expanded={onEdit ? undefined : editing}
+      onClick={onEdit ?? (() => setEditing(!editing))}
+    >
+      <FontAwesomeIcon icon={own.length > 0 ? faPen : faPlus} />
+      {own.length === 0 && <span>{t('console.addFirstCommand', {})}</span>}
+    </button>
+  );
+
   return (
     <div className='zoron-con-chips' role='group' aria-label={t('console.commands', {})}>
       {site.map((command) => chip(command, true))}
       {own.map((command) => chip(command, false))}
-      {onEdit && (
-        <button
-          type='button'
-          className='zoron-con-chip'
-          data-edit
-          data-zoron-inspector-toggle
-          title={t('console.editCommands', {})}
-          aria-label={t('console.editCommands', {})}
-          onClick={onEdit}
+      {onEdit ? (
+        edit
+      ) : (
+        <Popover
+          opened={editing}
+          onChange={setEditing}
+          position='top-start'
+          width='min(22rem, calc(100vw - 1.5rem))'
+          trapFocus
         >
-          <FontAwesomeIcon icon={own.length > 0 ? faPen : faPlus} />
-          {own.length === 0 && <span>{t('console.addFirstCommand', {})}</span>}
-        </button>
+          <Popover.Target>{edit}</Popover.Target>
+          <Popover.Dropdown p='sm'>
+            <CommandsEditor key={uuid} />
+          </Popover.Dropdown>
+        </Popover>
       )}
     </div>
   );

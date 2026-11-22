@@ -20,9 +20,11 @@ import {
   getBackups,
   getSchedules,
   getServerActivity,
+  isConflictingState,
   queryKeys,
   ServerContentContainer,
   ServerPowerControls,
+  useAuth,
   useRedactedAddress,
   useServerCan,
   useServerStore,
@@ -38,12 +40,16 @@ import { eventLabel, newest, timeAgo, visibleGrid } from './overview.ts';
 import { ConnectDetails, Section, StatusChip, UsageStrip } from './parts.tsx';
 
 /**
- * The page a server opens on (route `/`). With `serverOverview` on it is Zoron's overview, else core's console, which
- * the interceptor in index.ts hands in; reading the theme here (not in the route) lets Studio switch it live.
+ * The page a server opens on (route `/`). With `serverOverview` on it is Zoron's overview, else the console, which
+ * the interceptor in index.ts hands in; reading the theme here (not in the route) lets Studio switch it live. While
+ * the server installs, restores, transfers or is suspended for this user, core's ServerStateGuard lets only this
+ * route (and the popout) through, so it is the console then, whose output is the one thing to watch.
  */
 export function ServerHome({ Console }: { Console: FC }) {
   const theme = useZoronTheme();
-  return theme.serverOverview ? <Overview /> : <Console />;
+  const { user } = useAuth();
+  const conflicting = useServerStore((state) => isConflictingState(state.server, user));
+  return theme.serverOverview && !conflicting ? <Overview /> : <Console />;
 }
 
 /** The clock relative times are measured against, ticking each minute so "3 minutes ago" moves on. */
