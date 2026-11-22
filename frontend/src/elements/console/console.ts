@@ -4,11 +4,22 @@
  */
 
 import type { ConsoleBarItem, ConsoleMetric, ZoronTheme } from '../../lib/theme.ts';
+import { UUID } from '../../lib/tiles.ts';
 
-/** Quick commands per server and browser, as a JSON array of strings. */
-export const commandsKey = (serverUuid: string) => `zoron:commands:${serverUuid}`;
+/**
+ * The user setting (core's user settings, account scope) holding each user's own quick commands: a map of server
+ * uuid to that server's list, so they follow the user to every browser.
+ */
+export const COMMANDS_KEY = 'zoron::quick_commands';
+/** Where a browser kept a server's commands before they moved to the account, as a JSON array of strings. */
+export const legacyCommandsKey = (serverUuid: string) => `zoron:commands:${serverUuid}`;
 export const MAX_COMMANDS = 20;
 export const MAX_COMMAND = 200;
+/** Servers the map keeps at most; saving one more drops the one edited longest ago. */
+export const MAX_COMMAND_SERVERS = 100;
+
+/** Every user's own commands, by server uuid; a server without any is not in it. */
+export type ServerCommands = Readonly<Record<string, string[]>>;
 
 /** A command as saved: trimmed, one line, at most MAX_COMMAND characters; null when that leaves nothing valid. */
 export function commandOf(input: unknown): string | null {
@@ -19,14 +30,8 @@ export function commandOf(input: unknown): string | null {
   return command;
 }
 
-/** The saved list, whatever is in storage: valid commands only, no repeats, at most MAX_COMMANDS. */
-export function parseCommands(raw: string | null): string[] {
-  let value: unknown;
-  try {
-    value = raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+/** A saved list, whatever it holds: valid commands only, no repeats, at most MAX_COMMANDS, in its order. */
+export function commandList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   const commands: string[] = [];
   for (const item of value) {
@@ -35,6 +40,46 @@ export function parseCommands(raw: string | null): string[] {
     if (commands.length === MAX_COMMANDS) break;
   }
   return commands;
+}
+
+/** A browser's old list (`legacyCommandsKey`), whatever is in storage. */
+export function parseCommands(raw: string | null): string[] {
+  try {
+    return commandList(raw ? JSON.parse(raw) : []);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * The saved map as it comes back from the API (any JSON): uuid keys (lower cased, each once), valid lists, none
+ * empty, at most MAX_COMMAND_SERVERS servers.
+ */
+export function normalizeCommandMap(raw: unknown): ServerCommands {
+  const map: Record<string, string[]> = {};
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return map;
+  let count = 0;
+  for (const [key, value] of Object.entries(raw)) {
+    if (count >= MAX_COMMAND_SERVERS) break;
+    const uuid = key.toLowerCase();
+    const list = commandList(value);
+    if (!UUID.test(uuid) || Object.hasOwn(map, uuid) || list.length === 0) continue;
+    map[uuid] = list;
+    count++;
+  }
+  return map;
+}
+
+/**
+ * The map with one server's list replaced (an empty list removes it). The edited server moves to the end, so when
+ * the map is full the server edited longest ago is the one dropped.
+ */
+export function withServerCommands(map: ServerCommands, uuid: string, list: readonly string[]): ServerCommands {
+  const key = uuid.toLowerCase();
+  const commands = commandList(list);
+  const rest = Object.entries(map).filter(([other]) => other !== key);
+  const entries = commands.length > 0 && UUID.test(key) ? [...rest, [key, commands] as const] : rest;
+  return Object.fromEntries(entries.slice(Math.max(0, entries.length - MAX_COMMAND_SERVERS)));
 }
 
 /** `list` with `input` added at the end; null when it is invalid, already there, or the list is full. */

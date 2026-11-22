@@ -15,6 +15,7 @@ import {
   Avatar,
   Button,
   Card,
+  ExtensionSlot,
   formatMilliseconds,
   getAllocations,
   getBackups,
@@ -106,12 +107,15 @@ function Overview() {
   const keys = queryKeys.server(server.uuid);
   const base = `/server/${server.uuidShort}`;
 
-  // the theme's grid without the blocks the visitor may not see, its neighbours widened over the hole that leaves
+  // the theme's grid without the blocks the visitor may not see (or that would be empty: no extension adds cards),
+  // its neighbours widened over the hole that leaves
+  const slots = window.extensionContext.extensionRegistry.pages.server.console;
   const allowed: Record<OverviewSection, boolean> = {
     usage: true,
     activity: canActivity,
     connect: true,
     glance: canBackups || canSchedules || canAllocations,
+    extensions: slots.statCards.length + slots.statBlocks.length > 0,
   };
   const grid = sortGrid(visibleGrid(theme.overviewGrid, allowed));
   const blocks = grid.map((item) => item.block);
@@ -296,6 +300,14 @@ function Overview() {
           )}
         </div>
       </Section>
+    ),
+    // core's console slots, where other extensions put their cards (an auto stop countdown, players online), which
+    // the console's details panel shows too
+    extensions: (
+      <div className='zoron-ov-extensions'>
+        <ExtensionSlot components={slots.statCards} name='console-stat-card' />
+        <ExtensionSlot components={slots.statBlocks} name='console-stat-block' />
+      </div>
     ),
   };
 

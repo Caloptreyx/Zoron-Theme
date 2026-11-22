@@ -14,10 +14,10 @@ const TAB_LABEL = {
   commands: 'console.commandsTab',
 } as const;
 
-/** The inspector's parts: Details, and Commands with `control.console` and `consoleQuickCommands`. */
+/** The details panel's parts: Details, and Commands with `control.console` while quick commands show at all. */
 export function useInspectorTabs(): InspectorTab[] {
   const canConsole = useServerCan('control.console');
-  const quickCommands = useZoronTheme().consoleQuickCommands;
+  const quickCommands = useZoronTheme().consoleChips !== 'off';
   return canConsole && quickCommands ? ['details', 'commands'] : ['details'];
 }
 

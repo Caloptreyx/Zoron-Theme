@@ -6,13 +6,16 @@ import {
   commandOf,
   logFileName,
   MAX_COMMAND,
+  MAX_COMMAND_SERVERS,
   MAX_COMMANDS,
+  normalizeCommandMap,
   parseCommands,
   placeBarItem,
   placed,
   shownBarItems,
   toggleBar,
   withCommand,
+  withServerCommands,
 } from '../frontend/src/elements/console/console.ts';
 import type { ConsoleBarItem } from '../frontend/src/lib/theme.ts';
 
@@ -44,6 +47,37 @@ describe('console page', () => {
     assert.equal(withCommand(['list'], ''), null);
     const full = Array.from({ length: MAX_COMMANDS }, (_, i) => `cmd ${i}`);
     assert.equal(withCommand(full, 'one more'), null);
+  });
+
+  test("the account's map keeps valid lists under server uuids only", () => {
+    const a = '0b9e7c2c-6f1e-4d5a-9c3b-1a2b3c4d5e6f';
+    const b = '1c8f6d3d-7a2f-4e6b-8d4c-2b3c4d5e6f70';
+    assert.deepEqual(normalizeCommandMap(null), {});
+    assert.deepEqual(normalizeCommandMap(['list']), {});
+    assert.deepEqual(
+      normalizeCommandMap({
+        [a.toUpperCase()]: ['list', 'list', ' save-all ', 7],
+        [a]: ['ignored, the key came already'],
+        [b]: [],
+        'not-a-uuid': ['list'],
+        '__proto__': ['list'],
+      }),
+      { [a]: ['list', 'save-all'] },
+    );
+  });
+
+  test('saving a server moves it last, an empty list removes it, the oldest goes past the limit', () => {
+    const uuid = (i: number) => `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`;
+    const map = withServerCommands(withServerCommands({}, uuid(1), ['list']), uuid(2), ['stop']);
+    assert.deepEqual(Object.keys(withServerCommands(map, uuid(1), ['list', 'say hi'])), [uuid(2), uuid(1)]);
+    assert.deepEqual(withServerCommands(map, uuid(1), []), { [uuid(2)]: ['stop'] });
+    assert.deepEqual(withServerCommands(map, 'nope', ['list']), map);
+    let full = {};
+    for (let i = 0; i < MAX_COMMAND_SERVERS; i++) full = withServerCommands(full, uuid(i), ['list']);
+    const next = withServerCommands(full, uuid(MAX_COMMAND_SERVERS), ['list']);
+    assert.equal(Object.keys(next).length, MAX_COMMAND_SERVERS);
+    assert.equal(uuid(0) in next, false);
+    assert.equal(uuid(MAX_COMMAND_SERVERS) in next, true);
   });
 
   test('the log is named after the server, safe for any file system', () => {

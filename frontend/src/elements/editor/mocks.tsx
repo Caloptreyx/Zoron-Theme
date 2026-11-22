@@ -4,6 +4,7 @@ import { GRID_COLUMNS, gridRows } from '../../lib/grid.ts';
 import {
   type Backdrop,
   type ButtonStyle,
+  type ConsoleBarItem,
   type ConsoleGraph,
   FONT_STACKS,
   type Font,
@@ -20,6 +21,7 @@ import {
   type TerminalScheme,
   type TerminalSkin,
   type Transition,
+  type ZoronTheme,
 } from '../../lib/theme.ts';
 import { serverTile } from '../../lib/tiles.ts';
 import { sparkBars, sparkPath } from '../console/telemetry.ts';
@@ -609,6 +611,75 @@ export function OverviewLayoutMock({ look, grid }: { look: Look; grid: readonly 
           />
         ))}
       </div>
+    </div>,
+  );
+}
+
+/**
+ * A console layout (Studio's console layout tiles): the top and bottom bars with their pieces (the name, the figures,
+ * power at the end), the terminal with its quick command chips where they sit, and the details panel on its side.
+ */
+export function ConsoleLayoutMock({
+  look,
+  layout,
+}: {
+  look: Look;
+  layout: Pick<ZoronTheme, 'consoleBar' | 'consoleFooter' | 'consoleInspector' | 'consoleChips'>;
+}) {
+  const radius = Math.max(2, (look.radius ?? 16) / 5);
+  const edge = `1px solid ${alpha(look.text, 0.12)}`;
+  const bar = (items: readonly ConsoleBarItem[]) =>
+    items.length > 0 && (
+      <div
+        className='flex h-2.5 shrink-0 items-center gap-[3px] px-[3px]'
+        style={{ background: alpha(look.surface, 0.9), border: edge, borderRadius: radius }}
+      >
+        {items.map((item) => (
+          <div
+            key={item}
+            className={`h-[3px] rounded-sm ${item === 'power' ? 'ml-auto' : ''}`}
+            style={{
+              width: item === 'metrics' ? '38%' : '16%',
+              background:
+                item === 'power' ? alpha(look.accent, 0.75) : alpha(look.text, item === 'metrics' ? 0.3 : 0.55),
+            }}
+          />
+        ))}
+      </div>
+    );
+  const chips = (
+    <div className='flex gap-[2px]'>
+      {[0, 1, 2].map((i) => (
+        <div key={i} className='h-[3px] w-2 rounded-sm' style={{ background: alpha(look.accent, 0.55) }} />
+      ))}
+    </div>
+  );
+  return frame(
+    look,
+    'spotlight',
+    <div className='absolute inset-1.5 flex flex-col gap-[3px]'>
+      {bar(layout.consoleBar)}
+      <div className={`flex min-h-0 flex-1 gap-[3px] ${layout.consoleInspector === 'left' ? 'flex-row-reverse' : ''}`}>
+        <div
+          className='flex min-w-0 flex-1 flex-col gap-[3px] p-[3px]'
+          style={{ background: mix(look.background, '#000000', 0.35), border: edge, borderRadius: radius }}
+        >
+          {layout.consoleChips === 'toolbar' && chips}
+          <div className='h-[2px] w-3/4 rounded-sm' style={{ background: alpha(look.text, 0.4) }} />
+          <div className='h-[2px] w-1/2 rounded-sm' style={{ background: alpha(look.text, 0.25) }} />
+          <div className='mt-auto flex flex-col gap-[3px]'>
+            {layout.consoleChips === 'prompt' && chips}
+            <div className='h-[2px] w-1/4 rounded-sm' style={{ background: alpha(look.accent, 0.6) }} />
+          </div>
+        </div>
+        {layout.consoleInspector !== 'off' && (
+          <div
+            className='w-1/4 shrink-0'
+            style={{ background: alpha(look.surface, 0.9), border: edge, borderRadius: radius }}
+          />
+        )}
+      </div>
+      {bar(layout.consoleFooter)}
     </div>,
   );
 }

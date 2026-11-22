@@ -7,7 +7,10 @@ import {
   buildCss,
   contrastIssues,
   CONSOLE_BAR_ITEMS,
+  CONSOLE_LAYOUTS,
   CONSOLE_METRICS,
+  consoleLayoutOf,
+  consoleLayoutPatch,
   DEFAULT_THEME,
   generatePalette,
   MAX_CUSTOM_PRESETS,
@@ -97,7 +100,9 @@ describe('normalizeTheme', () => {
       { block: 'activity', x: 0, y: 1, w: 7, h: 2 },
       { block: 'connect', x: 7, y: 1, w: 5, h: 1 },
       { block: 'glance', x: 7, y: 2, w: 5, h: 1 },
+      { block: 'extensions', x: 0, y: 3, w: 12, h: 1 },
     ]);
+    assert.equal(DEFAULT_THEME.overviewExtensions, true);
     assert.equal(DEFAULT_THEME.overviewUsage, 'bars');
     assert.equal(DEFAULT_THEME.overviewActivityCount, 8);
     assert.equal(DEFAULT_THEME.overviewHeader, 'plain');
@@ -116,14 +121,31 @@ describe('normalizeTheme', () => {
         null,
       ],
     }).overviewGrid;
-    // glance fits beside usage; connect, full width and asked to be last, goes under glance's four rows
+    // glance fits beside usage; connect, full width and asked to be last, goes under glance's four rows; the
+    // extensions block, missing from a grid saved before it, joins at the bottom
     assert.deepEqual(grid, [
       { block: 'usage', x: 0, y: 0, w: 3, h: 1 },
       { block: 'glance', x: 6, y: 0, w: 6, h: 4 },
       { block: 'connect', x: 0, y: 4, w: 12, h: 1 },
+      { block: 'extensions', x: 0, y: 5, w: 12, h: 1 },
     ]);
-    assert.deepEqual(normalizeTheme({ overviewGrid: [] }).overviewGrid, []);
+    assert.deepEqual(normalizeTheme({ overviewGrid: [], overviewExtensions: false }).overviewGrid, []);
     assert.deepEqual(normalizeTheme({ overviewGrid: 'usage' }).overviewGrid, DEFAULT_THEME.overviewGrid);
+  });
+
+  test('the extensions block follows overviewExtensions: added at the bottom when on, taken out when off', () => {
+    const extensions = { block: 'extensions', x: 0, y: 0, w: 12, h: 1 };
+    assert.deepEqual(normalizeTheme({ overviewGrid: [] }).overviewGrid, [extensions]);
+    assert.deepEqual(normalizeTheme({ overviewGrid: [extensions], overviewExtensions: false }).overviewGrid, []);
+    const off = normalizeTheme({ overviewExtensions: false });
+    assert.equal(off.overviewExtensions, false);
+    assert.equal(
+      off.overviewGrid.some((item) => item.block === 'extensions'),
+      false,
+    );
+    // placed by the admin, it keeps its place
+    const placed = { block: 'extensions', x: 0, y: 0, w: 6, h: 2 };
+    assert.deepEqual(normalizeTheme({ overviewGrid: [placed] }).overviewGrid, [placed]);
   });
 
   test('a theme saved before the grid keeps its blocks, order and layout', () => {
@@ -134,16 +156,20 @@ describe('normalizeTheme', () => {
         { block: 'connect', x: 0, y: 0, w: 5, h: 1 },
         { block: 'activity', x: 5, y: 0, w: 7, h: 1 },
         { block: 'usage', x: 0, y: 1, w: 12, h: 1 },
+        { block: 'extensions', x: 0, y: 2, w: 12, h: 1 },
       ],
     );
     assert.deepEqual(
       normalizeTheme({ overviewLayout: 'wide' }).overviewGrid,
       overviewTemplate(OVERVIEW_SECTIONS, 'wide'),
     );
-    assert.deepEqual(normalizeTheme({ overviewSections: [], overviewLayout: 'stacked' }).overviewGrid, []);
+    assert.deepEqual(
+      normalizeTheme({ overviewSections: [], overviewLayout: 'stacked', overviewExtensions: false }).overviewGrid,
+      [],
+    );
     // a saved grid wins, and the old fields are gone
     const theme = normalizeTheme({ overviewGrid: [], overviewSections: ['usage'], overviewLayout: 'wide' });
-    assert.deepEqual(theme.overviewGrid, []);
+    assert.deepEqual(theme.overviewGrid, [{ block: 'extensions', x: 0, y: 0, w: 12, h: 1 }]);
     assert.equal('overviewSections' in theme, false);
     assert.equal('overviewLayout' in theme, false);
   });
@@ -158,6 +184,7 @@ describe('normalizeTheme', () => {
       { block: 'activity', x: 0, y: 1, w: 12, h: 1 },
       { block: 'connect', x: 0, y: 2, w: 6, h: 1 },
       { block: 'glance', x: 6, y: 2, w: 6, h: 1 },
+      { block: 'extensions', x: 0, y: 3, w: 12, h: 1 },
     ]);
     assert.deepEqual(overviewTemplate(['connect', 'glance'], 'split'), [
       { block: 'connect', x: 0, y: 0, w: 12, h: 1 },
@@ -216,9 +243,8 @@ describe('normalizeTheme', () => {
     assert.deepEqual(DEFAULT_THEME.consoleMetrics, [...CONSOLE_METRICS]);
     assert.equal(DEFAULT_THEME.consoleGraphs, 'area');
     assert.equal(DEFAULT_THEME.consoleInspector, 'right');
-    assert.equal(DEFAULT_THEME.consoleInspectorOpen, true);
+    assert.equal(DEFAULT_THEME.consoleDetailsOpen, 'wide');
     assert.equal(DEFAULT_THEME.consoleDensity, 'comfortable');
-    assert.equal(DEFAULT_THEME.consoleQuickCommands, true);
     assert.deepEqual(DEFAULT_THEME.consoleCommands, []);
     assert.equal(normalizeTheme({ consoleGraphs: 'bars' }).consoleGraphs, 'bars');
     assert.equal(normalizeTheme({ consoleGraphs: 'pie' }).consoleGraphs, 'area');
@@ -226,10 +252,30 @@ describe('normalizeTheme', () => {
     assert.equal(normalizeTheme({ consoleInspector: 'top"]{}' }).consoleInspector, 'right');
     assert.equal(normalizeTheme({ consoleDensity: 'spacious' }).consoleDensity, 'spacious');
     assert.equal(normalizeTheme({ consoleDensity: 'huge' }).consoleDensity, 'comfortable');
-    assert.equal(normalizeTheme({ consoleInspectorOpen: false }).consoleInspectorOpen, false);
-    assert.equal(normalizeTheme({ consoleInspectorOpen: 0 }).consoleInspectorOpen, true);
-    assert.equal(normalizeTheme({ consoleQuickCommands: false }).consoleQuickCommands, false);
-    assert.equal(normalizeTheme({ consoleQuickCommands: 'no' }).consoleQuickCommands, true);
+    assert.equal(normalizeTheme({ consoleDetailsOpen: 'always' }).consoleDetailsOpen, 'always');
+    assert.equal(normalizeTheme({ consoleDetailsOpen: true }).consoleDetailsOpen, 'wide');
+  });
+
+  test('a theme saved before 1.0.6 keeps its console: the open switch and the quick commands switch map over', () => {
+    assert.equal(normalizeTheme({ consoleInspectorOpen: false }).consoleDetailsOpen, 'asked');
+    assert.equal(normalizeTheme({ consoleInspectorOpen: true }).consoleDetailsOpen, 'wide');
+    // a new value wins over the old switch
+    assert.equal(
+      normalizeTheme({ consoleInspectorOpen: false, consoleDetailsOpen: 'always' }).consoleDetailsOpen,
+      'always',
+    );
+    // quick commands off were off everywhere; on with the chips off meant the Commands tab only
+    assert.equal(normalizeTheme({ consoleQuickCommands: false, consoleChips: 'toolbar' }).consoleChips, 'off');
+    assert.equal(normalizeTheme({ consoleQuickCommands: true, consoleChips: 'off' }).consoleChips, 'panel');
+    assert.equal(normalizeTheme({ consoleQuickCommands: true, consoleChips: 'prompt' }).consoleChips, 'prompt');
+    // ...which, with no details panel, showed nothing
+    assert.equal(
+      normalizeTheme({ consoleQuickCommands: true, consoleChips: 'off', consoleInspector: 'off' }).consoleChips,
+      'off',
+    );
+    const old = normalizeTheme({ consoleQuickCommands: false, consoleInspectorOpen: false });
+    assert.equal('consoleQuickCommands' in old, false);
+    assert.equal('consoleInspectorOpen' in old, false);
   });
 
   test('console figures: allow listed, each once, in the order given; none is a choice', () => {
@@ -237,7 +283,11 @@ describe('normalizeTheme', () => {
       'netOut',
       'cpu',
     ]);
-    assert.deepEqual(normalizeTheme({ consoleMetrics: [] }).consoleMetrics, []);
+    // none picked leaves the figures out of both bars, as hiding the piece does
+    const none = normalizeTheme({ consoleMetrics: [], consoleBar: ['identity', 'metrics'], consoleFooter: [] });
+    assert.deepEqual(none.consoleMetrics, []);
+    assert.deepEqual(none.consoleBar, ['identity']);
+    assert.deepEqual(normalizeTheme({ consoleMetrics: [], consoleFooter: ['metrics'] }).consoleFooter, []);
     assert.deepEqual(normalizeTheme({ consoleMetrics: 'cpu' }).consoleMetrics, [...CONSOLE_METRICS]);
   });
 
@@ -256,7 +306,24 @@ describe('normalizeTheme', () => {
     assert.deepEqual(normalizeTheme({ consoleBar: [], consoleFooter: 'power' }).consoleFooter, []);
     assert.equal(normalizeTheme({ consoleChips: 'toolbar' }).consoleChips, 'toolbar');
     assert.equal(normalizeTheme({ consoleChips: 'off' }).consoleChips, 'off');
+    assert.equal(normalizeTheme({ consoleChips: 'panel' }).consoleChips, 'panel');
+    assert.equal(normalizeTheme({ consoleChips: 'panel', consoleInspector: 'off' }).consoleChips, 'off');
     assert.equal(normalizeTheme({ consoleChips: 'top"]' }).consoleChips, 'prompt');
+  });
+
+  test('console layouts: the default is Workspace, a patch makes its layout, anything else is Custom', () => {
+    assert.equal(consoleLayoutOf(DEFAULT_THEME), 'workspace');
+    for (const layout of CONSOLE_LAYOUTS) {
+      const theme = normalizeTheme({ ...DEFAULT_THEME, ...consoleLayoutPatch(DEFAULT_THEME, layout) });
+      assert.equal(consoleLayoutOf(theme), layout);
+    }
+    assert.equal(consoleLayoutOf(normalizeTheme({ consoleFooter: ['power'] })), null);
+    // a layout that shows the figures brings them back when none were picked
+    const none = normalizeTheme({ consoleMetrics: [] });
+    const focus = normalizeTheme({ ...none, ...consoleLayoutPatch(none, 'focus') });
+    assert.deepEqual(focus.consoleMetrics, [...CONSOLE_METRICS]);
+    assert.deepEqual(focus.consoleFooter, ['metrics']);
+    assert.deepEqual(consoleLayoutPatch(none, 'minimal').consoleMetrics, undefined);
   });
 
   test('site commands: strings only, control characters dropped, trimmed, 1 to 200 characters, unique, at most 12', () => {

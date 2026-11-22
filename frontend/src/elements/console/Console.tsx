@@ -11,7 +11,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { ConsoleBarItem } from '../../lib/theme.ts';
 import {
   ActionIcon,
   CoreTerminal,
@@ -25,6 +24,7 @@ import {
   useVisualViewportBottomInset,
 } from '../../lib/core.ts';
 import { useZoronTheme } from '../../lib/store.ts';
+import { type ConsoleBarItem, DETAILS_OPEN, type DetailsOpen } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { phaseOf } from '../home/home.ts';
 import { TileHeading } from '../tiles/TileFace.tsx';
@@ -35,16 +35,15 @@ import { CommandChips } from './QuickCommands.tsx';
 import { Telemetry } from './Telemetry.tsx';
 
 /**
- * The visitor's own open state of the docked inspector, per browser: `{ open, base }`, where `base` is the theme's
- * `consoleInspectorOpen` they toggled against. It applies only while that default is unchanged, so an admin who
- * changes the default reaches everyone again; without one (or with the old 'shown' and 'hidden' strings) the theme
- * decides.
+ * The visitor's own open state of the docked details panel, per browser: `{ open, base }`, where `base` is the
+ * theme's `consoleDetailsOpen` they toggled against. It applies only while that default is unchanged, so an admin who
+ * changes the default reaches everyone again; without one (or with an older value) the theme decides.
  */
 const PANEL_KEY = 'zoron:console-panel';
 
 interface PanelChoice {
   open: boolean;
-  base: boolean;
+  base: DetailsOpen;
 }
 
 /**
@@ -129,7 +128,8 @@ function readPanel(): PanelChoice | null {
     const value: unknown = JSON.parse(localStorage.getItem(PANEL_KEY) ?? 'null');
     if (typeof value !== 'object' || value === null) return null;
     const { open, base } = value as Record<string, unknown>;
-    return typeof open === 'boolean' && typeof base === 'boolean' ? { open, base } : null;
+    const known = DETAILS_OPEN.find((option) => option === base);
+    return typeof open === 'boolean' && known ? { open, base: known } : null;
   } catch {
     return null;
   }
@@ -218,9 +218,10 @@ function ConsolePage() {
   useViewportFill(root);
 
   const phone = size === 'phone';
-  const wide = size === 'wide';
+  // 'always' docks it at every desktop width, however narrow that leaves the terminal
+  const wide = size === 'wide' || (size === 'mid' && theme.consoleDetailsOpen === 'always');
   const inspector = theme.consoleInspector !== 'off';
-  const docked = choice?.base === theme.consoleInspectorOpen ? choice.open : theme.consoleInspectorOpen;
+  const docked = choice?.base === theme.consoleDetailsOpen ? choice.open : theme.consoleDetailsOpen !== 'asked';
   const open = inspector && (wide ? docked : shown);
 
   // the sliding panel closes on Escape and on a press outside it (its toggles and anything in a portal, a menu
@@ -250,7 +251,7 @@ function ConsolePage() {
       setShownAt(next ? size : null);
       return;
     }
-    const picked: PanelChoice = { open: next, base: theme.consoleInspectorOpen };
+    const picked: PanelChoice = { open: next, base: theme.consoleDetailsOpen };
     setChoice(picked);
     try {
       localStorage.setItem(PANEL_KEY, JSON.stringify(picked));

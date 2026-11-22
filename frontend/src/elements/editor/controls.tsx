@@ -227,7 +227,8 @@ export function ChoiceTiles<T extends string>({
   columns = 2,
   onChange,
 }: {
-  field: keyof ZoronTheme;
+  /** The setting the search finds here; tiles writing several fields (Studio's layouts) carry none. */
+  field?: keyof ZoronTheme;
   label?: string;
   value: T;
   options: Tile<T>[];

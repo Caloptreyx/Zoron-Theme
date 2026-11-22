@@ -10,23 +10,32 @@ import {
 import { createPortal } from 'react-dom';
 import { alpha } from '../../lib/color.ts';
 import { Menu } from '../../lib/core.ts';
-import { type ConsoleBarItem, type ConsoleMetric, terminalPalette, type ZoronTheme } from '../../lib/theme.ts';
+import {
+  CONSOLE_METRICS,
+  type ConsoleBarItem,
+  type ConsoleMetric,
+  terminalPalette,
+  type ZoronTheme,
+} from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { placeBarItem, placed, shownBarItems, toggleBar } from '../console/console.ts';
 import { terminalInk } from './mocks.tsx';
 
-/** The console's pieces the canvas places: the bar items, the quick command chips and the inspector. */
+/** The console's pieces the canvas places: the bar items, the quick commands and the details panel. */
 type Piece = ConsoleBarItem | 'chips' | 'inspector';
 
-/** The canvas's slots: the two bars, the two chip rows, the two sides, and the tray of hidden pieces. */
-type Zone = 'bar' | 'footer' | 'toolbar' | 'prompt' | 'left' | 'right' | 'hidden';
+/**
+ * The canvas's slots: the two bars, the two chip rows, the details panel's Commands tab (inside the panel's piece),
+ * the two sides, and the tray of hidden pieces.
+ */
+type Zone = 'bar' | 'footer' | 'toolbar' | 'prompt' | 'panel' | 'left' | 'right' | 'hidden';
 
 /** Where each piece may go; a drop anywhere else puts it back. */
 const ZONES: Record<Piece, readonly Zone[]> = {
   identity: ['bar', 'footer', 'hidden'],
   metrics: ['bar', 'footer', 'hidden'],
   power: ['bar', 'footer', 'hidden'],
-  chips: ['toolbar', 'prompt', 'hidden'],
+  chips: ['toolbar', 'prompt', 'panel', 'hidden'],
   inspector: ['left', 'right', 'hidden'],
 };
 
@@ -43,6 +52,7 @@ const ZONE_LABEL = {
   footer: 'consoleSection.footer',
   toolbar: 'consoleSection.placeToolbar',
   prompt: 'consoleSection.placePrompt',
+  panel: 'consoleSection.placePanel',
   left: 'consoleSection.inspectorLeft',
   right: 'consoleSection.inspectorRight',
   hidden: 'consoleSection.hidden',
@@ -140,13 +150,18 @@ function markerAt(items: readonly HTMLElement[], index: number, y: number, origi
   };
 }
 
-/** The slot under the pointer that takes `piece`, with the place in it; null over anything else. */
+/**
+ * The slot under the pointer that takes `piece`, with the place in it; null over anything else. A slot inside
+ * another (the Commands tab's, inside a side) passes a piece it does not take to the one around it.
+ */
 function dropAt(root: HTMLElement, piece: Piece, x: number, y: number): Drop | null {
-  const slot = document.elementFromPoint(x, y)?.closest<HTMLElement>('[data-arrange-zone]');
-  if (!slot || !root.contains(slot)) return null;
+  let slot = document.elementFromPoint(x, y)?.closest<HTMLElement>('[data-arrange-zone]');
   // set on the slots below, one of ZONES' names
+  while (slot && !ZONES[piece].includes(slot.dataset.arrangeZone as Zone)) {
+    slot = slot.parentElement?.closest<HTMLElement>('[data-arrange-zone]');
+  }
+  if (!slot || !root.contains(slot)) return null;
   const zone = slot.dataset.arrangeZone as Zone;
-  if (!ZONES[piece].includes(zone)) return null;
   if (zone !== 'bar' && zone !== 'footer') return { zone, index: 0, marker: null };
   const items = Array.from(slot.querySelectorAll<HTMLElement>(':scope > [data-arrange-piece]')).filter(
     (item) => item.dataset.arrangePiece !== piece,
@@ -173,7 +188,9 @@ function zoneOf(theme: ZoronTheme, piece: Piece): Zone {
 
 /**
  * The patch that puts `piece` in `zone` (a bar piece at `index`, by default its end), both bars at once when it
- * moves between them; null when that is where it already is.
+ * moves between them; null when that is where it already is. Hiding the details panel while it holds the quick
+ * commands moves them above the prompt, and placing the figures with none picked picks them all, so a move never
+ * leaves something placed that shows nothing.
  */
 function moved(
   theme: ZoronTheme,
@@ -182,16 +199,22 @@ function moved(
   index = Number.POSITIVE_INFINITY,
 ): Partial<ZoronTheme> | null {
   if (piece === 'chips') {
-    const consoleChips = zone === 'toolbar' || zone === 'prompt' ? zone : 'off';
+    const consoleChips = zone === 'toolbar' || zone === 'prompt' || zone === 'panel' ? zone : 'off';
     return consoleChips === theme.consoleChips ? null : { consoleChips };
   }
   if (piece === 'inspector') {
     const consoleInspector = zone === 'left' || zone === 'right' ? zone : 'off';
-    return consoleInspector === theme.consoleInspector ? null : { consoleInspector };
+    if (consoleInspector === theme.consoleInspector) return null;
+    return consoleInspector === 'off' && theme.consoleChips === 'panel'
+      ? { consoleInspector, consoleChips: 'prompt' }
+      : { consoleInspector };
   }
   const bars = placeBarItem(theme, piece, zone === 'bar' || zone === 'footer' ? zone : null, index);
   const same = sameList(bars.consoleBar, theme.consoleBar) && sameList(bars.consoleFooter, theme.consoleFooter);
-  return same ? null : bars;
+  if (same) return null;
+  return piece === 'metrics' && theme.consoleMetrics.length === 0
+    ? { ...bars, consoleMetrics: [...CONSOLE_METRICS] }
+    : bars;
 }
 
 /**
@@ -316,9 +339,9 @@ function FigureChips({
  * the chips into either chip row, the inspector to either side, any of them onto the tray to hide it. While one
  * drags, its slots are tinted and the rest dimmed; a drop elsewhere puts it back. A click (or Enter or Space) opens a
  * menu of the places it may go instead, for the keyboard and fingers that prefer it. Each change is one `set()`, so
- * one undo step. The Figures piece shows the shown figures, which reorder sideways (FigureChips); with none picked it
- * reads empty and the bar leaves the telemetry out, as the page does. The inspector button is drawn where the page
- * puts it (toggleBar()).
+ * one undo step. The Figures piece shows the shown figures, which reorder sideways (FigureChips). The details panel's
+ * piece holds a slot of its own for the quick commands (its Commands tab only). The panel button is drawn where the
+ * page puts it (toggleBar()).
  */
 export function ConsoleArrange({ valid, set }: { valid: ZoronTheme; set: (patch: Partial<ZoronTheme>) => void }) {
   const { t } = useExtTranslations();
@@ -419,9 +442,9 @@ export function ConsoleArrange({ valid, set }: { valid: ZoronTheme; set: (patch:
   const pieceEl = (piece: Piece, onTerminal = false) => {
     const zone = zoneOf(valid, piece);
     const label = t(PIECE_LABEL[piece], {});
-    const empty = piece === 'metrics' && valid.consoleMetrics.length === 0;
-    const off = piece === 'chips' && !valid.consoleQuickCommands;
     const upright = zone === 'left' || zone === 'right';
+    // the Commands tab is a place only while there is a details panel
+    const targets = ZONES[piece].filter((target) => target !== 'panel' || inspectorZone !== 'hidden');
     return (
       <Menu
         key={piece}
@@ -433,10 +456,9 @@ export function ConsoleArrange({ valid, set }: { valid: ZoronTheme; set: (patch:
         <Menu.Target>
           <div
             data-arrange-piece={piece}
-            title={off ? t('consoleSection.pieceChipsOff', {}) : undefined}
             className={`flex min-w-0 max-w-full cursor-grab touch-none items-center gap-1.5 rounded-md border px-1.5 py-1 text-[11px] font-medium select-none ${PIECE_LOOK} ${
-              empty || off ? 'border-dashed' : ''
-            } ${drag?.piece === piece ? 'opacity-35' : ''} ${upright ? 'w-full flex-1 flex-col justify-center' : ''}`}
+              drag?.piece === piece ? 'opacity-35' : ''
+            } ${upright ? 'w-full flex-1 flex-col justify-center' : ''}`}
             style={onTerminal ? { color: ink.foreground } : undefined}
             onPointerDown={(event) => onPointerDown(event, piece)}
             onPointerMove={onPointerMove}
@@ -446,28 +468,22 @@ export function ConsoleArrange({ valid, set }: { valid: ZoronTheme; set: (patch:
             <button
               type='button'
               className={`flex min-w-0 items-center gap-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-(--zoron-accent) ${
-                empty || off ? 'opacity-70' : ''
-              } ${upright ? 'flex-col' : ''}`}
+                upright ? 'flex-col' : ''
+              }`}
               aria-label={t('consoleSection.pieceAt', { piece: label, place: t(ZONE_LABEL[zone], {}) })}
               aria-haspopup='menu'
             >
               <FontAwesomeIcon icon={faGripVertical} className='text-[9px] opacity-50' />
               <span className='truncate'>{label}</span>
             </button>
-            {piece === 'metrics' &&
-              zone !== 'hidden' &&
-              (empty ? (
-                <span className='text-[10px] text-(--mantine-color-dimmed)'>
-                  {t('consoleSection.pieceMetricsEmpty', {})}
-                </span>
-              ) : (
-                <FigureChips metrics={valid.consoleMetrics} onReorder={(consoleMetrics) => set({ consoleMetrics })} />
-              ))}
+            {piece === 'metrics' && zone !== 'hidden' && (
+              <FigureChips metrics={valid.consoleMetrics} onReorder={(consoleMetrics) => set({ consoleMetrics })} />
+            )}
           </div>
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>{label}</Menu.Label>
-          {ZONES[piece].map((target) => (
+          {targets.map((target) => (
             <Menu.Item
               key={target}
               onClick={() => apply(moved(valid, piece, target))}
@@ -527,21 +543,42 @@ export function ConsoleArrange({ valid, set }: { valid: ZoronTheme; set: (patch:
     </div>
   );
 
-  // an empty side stays a visible, labelled slot, so a hidden inspector has somewhere obvious to go back to
+  // an empty side stays a visible, labelled slot, so a hidden panel has somewhere obvious to go back to; a placed one
+  // holds the slot for quick commands kept to its Commands tab
   const side = (zone: 'left' | 'right') => (
     <div
       data-arrange-zone={zone}
       data-zoron-setting='consoleInspector'
       role='group'
       aria-label={t(ZONE_LABEL[zone], {})}
-      className={`flex shrink-0 items-center justify-center rounded-md border p-1 transition-[opacity,background-color,border-color] duration-150 ${
-        inspectorZone === zone ? 'w-19' : 'w-9'
+      className={`flex shrink-0 flex-col items-stretch justify-center gap-1 rounded-md border p-1 transition-[opacity,background-color,border-color] duration-150 ${
+        inspectorZone === zone ? 'w-21' : 'w-9'
       } ${slotLook(zone, 'border-dashed border-(--mantine-color-default-border)')}`}
     >
       {inspectorZone === zone ? (
-        pieceEl('inspector')
+        <>
+          {pieceEl('inspector')}
+          <div
+            data-arrange-zone='panel'
+            role='group'
+            aria-label={t(ZONE_LABEL.panel, {})}
+            title={t(ZONE_LABEL.panel, {})}
+            className={`flex min-h-7 items-center justify-center rounded border p-0.5 transition-[opacity,background-color,border-color] duration-150 ${slotLook(
+              'panel',
+              'border-dashed border-(--mantine-color-default-border)',
+            )}`}
+          >
+            {chipsZone === 'panel' ? (
+              pieceEl('chips')
+            ) : (
+              <span className='text-center text-[9px] leading-tight text-(--mantine-color-placeholder)'>
+                {t('consoleSection.panelSlot', {})}
+              </span>
+            )}
+          </div>
+        </>
       ) : (
-        <span className='rotate-180 text-[10px] whitespace-nowrap text-(--mantine-color-placeholder) [writing-mode:vertical-rl]'>
+        <span className='rotate-180 self-center text-[10px] whitespace-nowrap text-(--mantine-color-placeholder) [writing-mode:vertical-rl]'>
           {t(ZONE_LABEL[zone], {})}
         </span>
       )}

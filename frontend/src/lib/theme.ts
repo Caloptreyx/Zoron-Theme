@@ -1,5 +1,5 @@
 import { alpha, contrastRatio, HEX, hsl, luminance, mix, readable, shades } from './color.ts';
-import { GRID_COLUMNS, type GridItem, normalizeGrid, settleGrid } from './grid.ts';
+import { GRID_COLUMNS, type GridItem, gridRows, normalizeGrid, settleGrid } from './grid.ts';
 
 /**
  * The saved theme is operator supplied JSON that ends up in a stylesheet served to every visitor (the login page
@@ -38,8 +38,11 @@ export type Motion = (typeof MOTIONS)[number];
 export const TRANSITIONS = ['rise', 'fade', 'zoom', 'none'] as const;
 export type Transition = (typeof TRANSITIONS)[number];
 
-/** The server overview's blocks: live usage, recent activity, how to connect, and backups, schedules, addresses. */
-export const OVERVIEW_SECTIONS = ['usage', 'activity', 'connect', 'glance'] as const;
+/**
+ * The server overview's blocks: live usage, recent activity, how to connect, backups, schedules and addresses, and
+ * other extensions' cards (core's console `statCards` and `statBlocks` slots; left out while none are installed).
+ */
+export const OVERVIEW_SECTIONS = ['usage', 'activity', 'connect', 'glance', 'extensions'] as const;
 export type OverviewSection = (typeof OVERVIEW_SECTIONS)[number];
 /** A block on the overview's snap grid (lib/grid.ts). */
 export type OverviewItem = GridItem<OverviewSection>;
@@ -130,15 +133,24 @@ export type ConsoleMetric = (typeof CONSOLE_METRICS)[number];
  */
 export const CONSOLE_BAR_ITEMS = ['identity', 'metrics', 'power'] as const;
 export type ConsoleBarItem = (typeof CONSOLE_BAR_ITEMS)[number];
-/** Where the quick command chips sit: just above the prompt, just under the terminal's toolbar, or nowhere. */
-export const CONSOLE_CHIPS = ['prompt', 'toolbar', 'off'] as const;
+/**
+ * Where the quick commands show: as chips just above the prompt or just under the terminal's toolbar, only in the
+ * details panel's Commands tab, or nowhere.
+ */
+export const CONSOLE_CHIPS = ['prompt', 'toolbar', 'panel', 'off'] as const;
 export type ConsoleChips = (typeof CONSOLE_CHIPS)[number];
 /** The command bar's sparklines: a line over a faint fill, the line alone, thin columns, or none (figures only). */
 export const CONSOLE_GRAPHS = ['area', 'line', 'bars', 'none'] as const;
 export type ConsoleGraph = (typeof CONSOLE_GRAPHS)[number];
-/** Where the console's inspector sits (docked or sliding in from that side), or 'off' for none at all. */
+/** Where the console's details panel sits (docked or sliding in from that side), or 'off' for none at all. */
 export const CONSOLE_INSPECTORS = ['right', 'left', 'off'] as const;
 export type ConsoleInspector = (typeof CONSOLE_INSPECTORS)[number];
+/**
+ * When the details panel opens for visitors who never toggled it: docked open where it fits beside the terminal
+ * (sliding over it, closed, where it doesn't); docked open at every desktop width; or closed until asked for.
+ */
+export const DETAILS_OPEN = ['wide', 'always', 'asked'] as const;
+export type DetailsOpen = (typeof DETAILS_OPEN)[number];
 /** Site wide quick commands: at most this many, each at most MAX_SITE_COMMAND characters. */
 export const MAX_SITE_COMMANDS = 12;
 export const MAX_SITE_COMMAND = 200;
@@ -230,6 +242,8 @@ export interface ZoronTheme {
   overviewHeader: OverviewHeader;
   /** Whether the overview shows the server's description under its name. */
   overviewDescription: boolean;
+  /** Whether other extensions' cards are on the overview; kept in step with `overviewGrid` holding 'extensions'. */
+  overviewExtensions: boolean;
   /** Zoron's console page (elements/console): a full height terminal, live readouts, a details panel. */
   consolePage: boolean;
   terminalScheme: TerminalScheme;
@@ -253,12 +267,10 @@ export interface ZoronTheme {
   /** A bar under the terminal: its items in order, none in `consoleBar`; empty for no such bar. */
   consoleFooter: ConsoleBarItem[];
   consoleChips: ConsoleChips;
-  /** Whether the docked inspector starts open for visitors who never toggled it (`zoron:console-panel` wins). */
-  consoleInspectorOpen: boolean;
+  /** When the details panel (`consoleInspector`) opens for visitors who never toggled it (`zoron:console-panel`). */
+  consoleDetailsOpen: DetailsOpen;
   /** The spacing of the console's command bar, toolbar, chip row and prompt. */
   consoleDensity: Density;
-  /** Quick commands at all: the chip row (where `consoleChips` puts it) and the inspector's Commands tab. */
-  consoleQuickCommands: boolean;
   /** Quick commands the admins set for everyone who may use the console, shown before each visitor's own. */
   consoleCommands: string[];
   /** Links shown as chips above the form on every sign in page (the login, the password reset). */
@@ -396,6 +408,7 @@ export const DEFAULT_THEME: ZoronTheme = {
   overviewActivityCount: 8,
   overviewHeader: 'plain',
   overviewDescription: true,
+  overviewExtensions: true,
   consolePage: true,
   terminalScheme: 'theme',
   terminalSkin: 'card',
@@ -408,9 +421,8 @@ export const DEFAULT_THEME: ZoronTheme = {
   consoleBar: [...CONSOLE_BAR_ITEMS],
   consoleFooter: [],
   consoleChips: 'prompt',
-  consoleInspectorOpen: true,
+  consoleDetailsOpen: 'wide',
   consoleDensity: 'comfortable',
-  consoleQuickCommands: true,
   consoleCommands: [],
   loginLinks: [],
   customPresets: [],
@@ -740,12 +752,19 @@ function consoleMetrics(v: unknown, fallback: ConsoleMetric[]): ConsoleMetric[] 
 
 /**
  * The bars' items: allow listed, each once, in the order given, and none in both bars: a bar given wins over one
- * taken from the fallback, and the top bar over the bottom one when both are given.
+ * taken from the fallback, and the top bar over the bottom one when both are given. With no figures picked the
+ * figures are in neither, so an empty pick and a hidden piece are the same thing.
  */
-function consoleBars(r: Record<string, unknown>, d: ZoronTheme): Pick<ZoronTheme, 'consoleBar' | 'consoleFooter'> {
+function consoleBars(
+  r: Record<string, unknown>,
+  d: ZoronTheme,
+  metrics: readonly ConsoleMetric[],
+): Pick<ZoronTheme, 'consoleBar' | 'consoleFooter'> {
+  const none: ConsoleBarItem[] = metrics.length === 0 ? ['metrics'] : [];
   const items = (v: unknown, taken: readonly ConsoleBarItem[]) =>
     [...new Set(Array.isArray(v) ? v : [])].filter(
-      (item): item is ConsoleBarItem => CONSOLE_BAR_ITEMS.includes(item) && !taken.includes(item),
+      (item): item is ConsoleBarItem =>
+        CONSOLE_BAR_ITEMS.includes(item) && !taken.includes(item) && !none.includes(item),
     );
   if (!Array.isArray(r.consoleBar) && Array.isArray(r.consoleFooter)) {
     const consoleFooter = items(r.consoleFooter, []);
@@ -759,10 +778,90 @@ function consoleBars(r: Record<string, unknown>, d: ZoronTheme): Pick<ZoronTheme
 }
 
 /**
+ * Where the quick commands show. Themes saved before 'panel' had a `consoleQuickCommands` switch: off is 'off', and
+ * on with the chips off (which then meant the Commands tab only) is 'panel'. 'panel' needs the details panel;
+ * without one it is 'off', as nothing showed them there before either.
+ */
+function consoleChips(r: Record<string, unknown>, d: ZoronTheme, inspector: ConsoleInspector): ConsoleChips {
+  let chips = choice(r.consoleChips, CONSOLE_CHIPS, d.consoleChips);
+  if (r.consoleQuickCommands === false) chips = 'off';
+  else if (r.consoleQuickCommands === true && chips === 'off') chips = 'panel';
+  return chips === 'panel' && inspector === 'off' ? 'off' : chips;
+}
+
+/**
+ * Studio's ready made console layouts: Workspace (the default: name, figures and power on top, details docked
+ * right), Mirrored (details left), Focus (figures in a bar under the terminal, details only when asked) and Minimal
+ * (name and power only, the commands under the toolbar, details only when asked). A tile writes these fields; it is
+ * not stored, and reads as picked while the theme matches it.
+ */
+export const CONSOLE_LAYOUTS = ['workspace', 'mirrored', 'focus', 'minimal'] as const;
+export type ConsoleLayout = (typeof CONSOLE_LAYOUTS)[number];
+type ConsoleLayoutFields = Pick<
+  ZoronTheme,
+  'consoleBar' | 'consoleFooter' | 'consoleInspector' | 'consoleChips' | 'consoleDetailsOpen'
+>;
+const CONSOLE_LAYOUT_FIELDS: Record<ConsoleLayout, ConsoleLayoutFields> = {
+  workspace: {
+    consoleBar: ['identity', 'metrics', 'power'],
+    consoleFooter: [],
+    consoleInspector: 'right',
+    consoleChips: 'prompt',
+    consoleDetailsOpen: 'wide',
+  },
+  mirrored: {
+    consoleBar: ['identity', 'metrics', 'power'],
+    consoleFooter: [],
+    consoleInspector: 'left',
+    consoleChips: 'prompt',
+    consoleDetailsOpen: 'wide',
+  },
+  focus: {
+    consoleBar: ['identity', 'power'],
+    consoleFooter: ['metrics'],
+    consoleInspector: 'right',
+    consoleChips: 'prompt',
+    consoleDetailsOpen: 'asked',
+  },
+  minimal: {
+    consoleBar: ['identity', 'power'],
+    consoleFooter: [],
+    consoleInspector: 'right',
+    consoleChips: 'toolbar',
+    consoleDetailsOpen: 'asked',
+  },
+};
+
+/** The fields `layout` sets on `theme`, with every figure when it places the figures and none are picked. */
+export function consoleLayoutPatch(theme: ZoronTheme, layout: ConsoleLayout): Partial<ZoronTheme> {
+  const fields = CONSOLE_LAYOUT_FIELDS[layout];
+  const patch = { ...fields, consoleBar: [...fields.consoleBar], consoleFooter: [...fields.consoleFooter] };
+  const figures = [...fields.consoleBar, ...fields.consoleFooter].includes('metrics');
+  return figures && theme.consoleMetrics.length === 0 ? { ...patch, consoleMetrics: [...CONSOLE_METRICS] } : patch;
+}
+
+/** The layout `theme` is laid out as, or null for one of its own (Studio's "Custom"). */
+export function consoleLayoutOf(theme: ZoronTheme): ConsoleLayout | null {
+  const same = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((x, i) => x === b[i]);
+  return (
+    CONSOLE_LAYOUTS.find((layout) => {
+      const fields = CONSOLE_LAYOUT_FIELDS[layout];
+      return (
+        same(fields.consoleBar, theme.consoleBar) &&
+        same(fields.consoleFooter, theme.consoleFooter) &&
+        fields.consoleInspector === theme.consoleInspector &&
+        fields.consoleChips === theme.consoleChips &&
+        fields.consoleDetailsOpen === theme.consoleDetailsOpen
+      );
+    }) ?? null
+  );
+}
+
+/**
  * `blocks` (the shown ones, in order) laid on the grid as `template` lays them. 'split' gives usage a row and sets
  * activity, as tall as the blocks listed next to it, beside a narrower column of them, on the side it was listed;
  * 'stacked' is one block a row; 'wide' gives usage and activity rows and sets neighbouring connect and glance cards
- * side by side at equal widths.
+ * side by side at equal widths. Other extensions' cards always take a row of their own.
  */
 export function overviewTemplate(blocks: readonly OverviewSection[], template: OverviewTemplate): OverviewItem[] {
   const items: OverviewItem[] = [];
@@ -799,7 +898,7 @@ export function overviewTemplate(blocks: readonly OverviewSection[], template: O
     run = [];
   };
   for (const block of blocks) {
-    if (block === 'usage' || (template === 'wide' && block === 'activity')) {
+    if (block === 'usage' || block === 'extensions' || (template === 'wide' && block === 'activity')) {
       flush();
       row(block);
       y++;
@@ -813,16 +912,23 @@ export function overviewTemplate(blocks: readonly OverviewSection[], template: O
 
 /**
  * The saved grid; a theme saved before the grid had `overviewSections` (the shown blocks in order) and
- * `overviewLayout` (a template), which become the grid they drew.
+ * `overviewLayout` (a template), which become the grid they drew. `extensions` (`overviewExtensions`) decides the
+ * extensions block, so a grid saved before it existed gets it at the bottom.
  */
-function overviewGrid(r: Record<string, unknown>, fallback: OverviewItem[]): OverviewItem[] {
-  const grid = normalizeGrid(r.overviewGrid, OVERVIEW_SECTIONS);
-  if (grid) return grid;
-  if (!Array.isArray(r.overviewSections) && r.overviewLayout === undefined) return fallback;
-  const blocks = Array.isArray(r.overviewSections)
-    ? [...new Set(r.overviewSections)].filter((block): block is OverviewSection => OVERVIEW_SECTIONS.includes(block))
-    : [...OVERVIEW_SECTIONS];
-  return overviewTemplate(blocks, choice(r.overviewLayout, OVERVIEW_TEMPLATES, 'split'));
+function overviewGrid(r: Record<string, unknown>, fallback: OverviewItem[], extensions: boolean): OverviewItem[] {
+  let grid = normalizeGrid(r.overviewGrid, OVERVIEW_SECTIONS);
+  if (!grid && (Array.isArray(r.overviewSections) || r.overviewLayout !== undefined)) {
+    const blocks = Array.isArray(r.overviewSections)
+      ? [...new Set(r.overviewSections)].filter((block): block is OverviewSection => OVERVIEW_SECTIONS.includes(block))
+      : [...OVERVIEW_SECTIONS];
+    grid = overviewTemplate(blocks, choice(r.overviewLayout, OVERVIEW_TEMPLATES, 'split'));
+  }
+  grid ??= fallback;
+  const has = grid.some((item) => item.block === 'extensions');
+  if (extensions && !has) {
+    return settleGrid([...grid, { block: 'extensions', x: 0, y: gridRows(grid), w: GRID_COLUMNS, h: 1 }]);
+  }
+  return extensions || !has ? grid : settleGrid(grid.filter((item) => item.block !== 'extensions'));
 }
 
 /** At most MAX_CUSTOM_PRESETS entries with a valid, unique name; each look normalized like a theme. */
@@ -844,6 +950,9 @@ function customPresets(v: unknown, fallback: CustomPreset[]): CustomPreset[] {
 export function normalizeTheme(raw: unknown, d: ZoronTheme = DEFAULT_THEME): ZoronTheme {
   const r = record(raw) ?? {};
   const image = r.backgroundImage;
+  const overviewExtensions = flag(r.overviewExtensions, d.overviewExtensions);
+  const metrics = consoleMetrics(r.consoleMetrics, d.consoleMetrics);
+  const inspector = choice(r.consoleInspector, CONSOLE_INSPECTORS, d.consoleInspector);
 
   return {
     accent: color(r.accent, d.accent),
@@ -902,7 +1011,7 @@ export function normalizeTheme(raw: unknown, d: ZoronTheme = DEFAULT_THEME): Zor
     homeGroups: flag(r.homeGroups, d.homeGroups),
     homeLayoutChoice: flag(r.homeLayoutChoice, d.homeLayoutChoice),
     serverOverview: flag(r.serverOverview, d.serverOverview),
-    overviewGrid: overviewGrid(r, d.overviewGrid),
+    overviewGrid: overviewGrid(r, d.overviewGrid, overviewExtensions),
     overviewUsage: choice(r.overviewUsage, OVERVIEW_USAGE, d.overviewUsage),
     overviewActivityCount: int(
       r.overviewActivityCount,
@@ -912,20 +1021,26 @@ export function normalizeTheme(raw: unknown, d: ZoronTheme = DEFAULT_THEME): Zor
     ),
     overviewHeader: choice(r.overviewHeader, OVERVIEW_HEADERS, d.overviewHeader),
     overviewDescription: flag(r.overviewDescription, d.overviewDescription),
+    overviewExtensions,
     consolePage: flag(r.consolePage, d.consolePage),
     terminalScheme: choice(r.terminalScheme, TERMINAL_SCHEMES, d.terminalScheme),
     terminalSkin: choice(r.terminalSkin, TERMINAL_SKINS, d.terminalSkin),
     terminalLineHeight: int(r.terminalLineHeight, 100, 180, d.terminalLineHeight),
     consoleHighlight: flag(r.consoleHighlight, d.consoleHighlight),
     terminalUserChoice: flag(r.terminalUserChoice, d.terminalUserChoice),
-    consoleMetrics: consoleMetrics(r.consoleMetrics, d.consoleMetrics),
+    consoleMetrics: metrics,
     consoleGraphs: choice(r.consoleGraphs, CONSOLE_GRAPHS, d.consoleGraphs),
-    consoleInspector: choice(r.consoleInspector, CONSOLE_INSPECTORS, d.consoleInspector),
-    ...consoleBars(r, d),
-    consoleChips: choice(r.consoleChips, CONSOLE_CHIPS, d.consoleChips),
-    consoleInspectorOpen: flag(r.consoleInspectorOpen, d.consoleInspectorOpen),
+    consoleInspector: inspector,
+    ...consoleBars(r, d, metrics),
+    consoleChips: consoleChips(r, d, inspector),
+    // themes saved before the choice had a switch: open by default on wide screens, or not
+    consoleDetailsOpen:
+      r.consoleDetailsOpen === undefined && typeof r.consoleInspectorOpen === 'boolean'
+        ? r.consoleInspectorOpen
+          ? 'wide'
+          : 'asked'
+        : choice(r.consoleDetailsOpen, DETAILS_OPEN, d.consoleDetailsOpen),
     consoleDensity: choice(r.consoleDensity, DENSITIES, d.consoleDensity),
-    consoleQuickCommands: flag(r.consoleQuickCommands, d.consoleQuickCommands),
     consoleCommands: siteCommands(r.consoleCommands, d.consoleCommands),
     loginLinks: loginLinks(r.loginLinks, d.loginLinks),
     customPresets: customPresets(r.customPresets, d.customPresets),

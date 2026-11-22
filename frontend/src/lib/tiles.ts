@@ -78,7 +78,8 @@ export type ServerTiles = Readonly<Record<string, TileStyle>>;
  */
 export const TILE_SWATCHES = [0, 28, 45, 90, 140, 170, 195, 215, 240, 270, 315].map((hue) => hsl(hue, 50, 48));
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+/** A server's uuid as core sends it, lower case; the key of every per server map kept in user settings. */
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 /** Control characters and the invisible bidi controls that would reorder the text around a name. */
 const CONTROL = /[\p{Cc}\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/gu;
 

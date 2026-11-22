@@ -66,7 +66,13 @@ export { downloadTextFile } from '@/lib/download/download.ts';
 export { bytesToString, mbToBytes } from '@/lib/format/size.ts';
 export { formatMilliseconds } from '@/lib/format/time.ts';
 export { queryKeys } from '@/lib/queryKeys.ts';
-export { getUserSetting, removeUserSetting, setUserSetting, useUserSetting } from '@/lib/userSettings.ts';
+export {
+  getUserSetting,
+  removeUserSetting,
+  setUserSetting,
+  useUserSetting,
+  useUserSettingsLoaded,
+} from '@/lib/userSettings.ts';
 export { default as BulkActionBar } from '@/pages/dashboard/home/BulkActionBar.tsx';
 export { default as ServerAddGroupModal } from '@/pages/dashboard/home/modals/ServerAddGroupModal.tsx';
 export { default as ServerPowerControls } from '@/pages/server/console/stats/ServerPowerControls.tsx';

@@ -41,12 +41,12 @@ import {
 } from '../elements/editor/fields.ts';
 import { BackdropSection } from '../elements/editor/sections/Backdrop.tsx';
 import { ColorsSection } from '../elements/editor/sections/Colors.tsx';
-import { ConsoleSection } from '../elements/editor/sections/Console.tsx';
 import { LayoutSection } from '../elements/editor/sections/Layout.tsx';
 import { MotionSection } from '../elements/editor/sections/Motion.tsx';
 import { PresetsSection } from '../elements/editor/sections/Presets.tsx';
 import { ServerSection } from '../elements/editor/sections/Server.tsx';
 import { SurfacesSection } from '../elements/editor/sections/Surfaces.tsx';
+import { TerminalSection } from '../elements/editor/sections/Terminal.tsx';
 import { TypographySection } from '../elements/editor/sections/Typography.tsx';
 import {
   ActionIcon,
@@ -78,7 +78,7 @@ const SECTIONS: Record<SectionId, { icon: IconDefinition; Component: FC<SectionP
   layout: { icon: faTableColumns, Component: LayoutSection },
   typography: { icon: faFont, Component: TypographySection },
   server: { icon: faServer, Component: ServerSection },
-  console: { icon: faTerminal, Component: ConsoleSection },
+  terminal: { icon: faTerminal, Component: TerminalSection },
   motion: { icon: faWandMagicSparkles, Component: MotionSection },
 };
 
@@ -228,8 +228,10 @@ export default function ThemeEditor() {
 
   useEffect(() => {
     fetchTheme(false);
+    // the admin's own first server, else (an admin who owns none) the first of everyone else's
     getServers(1, undefined, false)
-      .then((res) => setServerId(res.data[0]?.uuidShort ?? null))
+      .then(async (res) => res.data[0] ?? (await getServers(1, undefined, true)).data[0])
+      .then((server) => setServerId(server?.uuidShort ?? null))
       .catch(() => {
         // the server pages are simply left out of the picker
       });
@@ -266,11 +268,14 @@ export default function ThemeEditor() {
     return () => window.removeEventListener('message', onMessage);
   }, [scheme]);
 
-  // a setting picked in the search: scrolled into view in its (now open) section and briefly lit, once
+  // a setting picked in the search: scrolled into view in its (now open) section and briefly lit, once; a setting in
+  // a closed disclosure (the Server page tab's Customize) opens it first
   useEffect(() => {
     if (!jump) return;
     const el = asideRef.current?.querySelector<HTMLElement>(`[data-zoron-setting="${jump.field}"]`);
     if (!el) return;
+    const details = el.closest('details');
+    if (details) details.open = true;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
     const lit = 'color-mix(in srgb, var(--zoron-accent) 20%, transparent)';

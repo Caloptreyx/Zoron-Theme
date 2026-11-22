@@ -30,8 +30,8 @@ frontend/src/styles/              static CSS keyed off html's data-zoron-* attri
 frontend/src/pages/ThemeEditor.tsx  Zoron Studio
 frontend/src/elements/editor/     sections/ (one file per Studio tab, SectionProps in types.ts), controls, mocks (the
                                   option drawings), fields.ts (each section's theme fields and their search labels),
-                                  OverviewArrange.tsx and ConsoleArrange.tsx (the drag and drop canvases of the Server
-                                  page and Console tabs)
+                                  OverviewArrange.tsx and ConsoleArrange.tsx (the drag and drop canvases under the
+                                  Server page tab's Customize)
 frontend/src/elements/shell/      the rail layout: Shell.tsx (context panel, phone top bar and drawer), Rail.tsx (the
                                   rail, folders, drag and drop), nav.ts (core's sidebar nodes), folders.ts (pure rules)
 frontend/src/elements/home/       the servers page: Home.tsx (page, HomeSwitch), ServerCard.tsx, home.ts (pure rules)
@@ -225,16 +225,21 @@ of the overview, keeping the install log reachable.
   fetched (core's list includes passwords).
 - Power is core's own `ServerPowerControls` (websocket, kill confirmation, other extensions' power buttons).
 - The blocks sit on a snap grid, `overviewGrid` (lib/grid.ts): `{ block, x, y, w, h }` per shown block (usage,
-  activity, connect, glance; one not on it is hidden) on 12 columns, `w` 3 to 12, `h` 1 to 4 rows, rows as tall as
-  their cards. normalizeTheme() allow lists, de-duplicates, clamps and settles it (`settleGrid`: no overlaps, every
-  block as high as it fits, so no empty rows). Themes saved before the grid had `overviewSections` and
+  activity, connect, glance, extensions; one not on it is hidden) on 12 columns, `w` 3 to 12, `h` 1 to 4 rows, rows as
+  tall as their cards. normalizeTheme() allow lists, de-duplicates, clamps and settles it (`settleGrid`: no overlaps,
+  every block as high as it fits, so no empty rows). Themes saved before the grid had `overviewSections` and
   `overviewLayout`; normalizeTheme() turns those into the grid they drew (`overviewTemplate`, the same templates
   Studio offers: 'split', usage across and activity 7 columns wide beside a column of the blocks listed next to it;
-  'stacked'; 'wide'). The page renders `visibleGrid(grid, allowed)` (overview.ts: a block the visitor may not see is
-  dropped and its neighbours widen over the gap, `fillGaps`) as one `.zoron-ov-grid` of `.zoron-ov-cell`s in reading
-  order, each with whole number custom properties (`--zoron-col`, `--zoron-span`, `--zoron-row`, `--zoron-rows`)
-  that app.css uses from 64rem; below, one column in reading order. Cards stretch to fill their cell, so neighbours
-  share edges.
+  'stacked'; 'wide'; the extensions block always a row of its own). The page renders `visibleGrid(grid, allowed)`
+  (overview.ts: a block the visitor may not see is dropped and its neighbours widen over the gap, `fillGaps`) as one
+  `.zoron-ov-grid` of `.zoron-ov-cell`s in reading order, each with whole number custom properties (`--zoron-col`,
+  `--zoron-span`, `--zoron-row`, `--zoron-rows`) that app.css uses from 64rem; below, one column in reading order.
+  Cards stretch to fill their cell, so neighbours share edges.
+- The extensions block is core's console `statCards` and `statBlocks` slots, where other extensions put their cards
+  (the details panel shows them too), in a wrapping grid; it is left out while no extension adds any.
+  `overviewExtensions` (on by default) keeps it in step: normalizeTheme() adds it at the bottom of a grid that lacks
+  it while the flag is on (so grids saved before it get it) and takes it out while it is off; Studio sets the flag
+  from the grid on every change.
 - The rest of the theme shapes it too, read with `useZoronTheme()` so Studio's preview follows each draft:
   `overviewUsage` ('bars' against the limits; 'graphs', sparklines of the last minute from the console's
   `useTelemetry` and `sparkPath`, the network then as rates; 'numbers', the figures alone and larger),
@@ -250,9 +255,12 @@ of the overview, keeping the install log reachable.
 `consolePage` (on by default) replaces core's console page wherever core shows it: `/terminal`, and `/` when the
 overview is off. The route interceptor in index.ts gives both a `ConsoleSwitch` around core's element, read with the
 theme hook so Studio switches it live; `/console/popout` stays core's. The page's own settings (`consoleMetrics`,
-`consoleGraphs`, `consoleBar`, `consoleFooter`, `consoleChips`, `consoleInspector`, `consoleInspectorOpen`,
-`consoleDensity`, `consoleQuickCommands`, `consoleCommands`) are read with `useZoronTheme()` in the components, so
-Studio's preview follows each draft.
+`consoleGraphs`, `consoleBar`, `consoleFooter`, `consoleChips`, `consoleInspector`, `consoleDetailsOpen`,
+`consoleDensity`, `consoleCommands`) are read with `useZoronTheme()` in the components, so Studio's preview follows
+each draft. Themes saved before 1.0.6 had `consoleInspectorOpen` (true is 'wide', false 'asked') and
+`consoleQuickCommands` (false is chips 'off'; true with chips 'off', which then meant the Commands tab only, is
+'panel'); normalizeTheme() maps them over. An empty `consoleMetrics` takes the figures out of both bars, so picking
+none and hiding the piece are the same thing.
 
 - The page is one workspace: a single surface (`.zoron-con`) from where it starts (`--zoron-con-top`, measured when the
   page's height or the window changes) to the viewport's bottom, at least 24rem, shrinking above the on-screen
@@ -294,20 +302,21 @@ Studio's preview follows each draft.
 - The workspace paints the scheme (`--zoron-term-bg`, the solid card colour with 'panel') and, with a named scheme,
   sets Mantine's text, dimmed, default and border colours and `--zoron-hairline` from it, so a dark scheme in light
   mode (or the reverse) reads; the bar and the inspector sit a step off it (the scheme's text mixed in).
-- The inspector (Inspector.tsx): Details (the description, parts.tsx's `ConnectDetails`, then core's `statCards` and
-  `statBlocks` slots, where other extensions put their pills, so none hides behind a tab; issue #2) and, with
-  `control.console` and `consoleQuickCommands` (`useInspectorTabs`), a Commands tab; without that tab its head is a
-  "Details" heading. It sits on the `consoleInspector` side ('right', or 'left': `data-side`
-  on the workspace) or is 'off': no column, toggle or sheet (quick commands stay, their last chip opening the list in a
-  popover). The phone width is the page's (`usePageSize`, measured as core's `usePageBreakpoint` does: the virtual
-  window, else the body; that hook only exists from panel 1.2.2, and core's Biome config up to 1.2.9 banned
-  `useMediaQuery`); docking is the workspace's own width: from 52rem of it (so the sidebar, zoom and Interface size
-  count) the inspector docks as a 20rem column behind a hairline and the terminal narrows. Open state: the
-  visitor's toggle in `zoron:console-panel` (`{ open, base }`, `base` the `consoleInspectorOpen` they toggled
-  against; it applies only while that default is unchanged, so changing the default reaches everyone again; the old
-  'shown'/'hidden' strings are ignored), else `consoleInspectorOpen` (open by default). Narrower, it slides over the
-  terminal from its side's edge (transform and opacity; none with the motion setting off or reduced motion), opens on
-  demand only, and closes on Escape and a press outside it (toggles and portals excepted).
+- The details panel (Inspector.tsx; "inspector" in the code and fields): Details (the description, parts.tsx's
+  `ConnectDetails`, then core's `statCards` and `statBlocks` slots, where other extensions put their pills, so none
+  hides behind a tab; issue #2) and, with `control.console` and quick commands not 'off' (`useInspectorTabs`), a
+  Commands tab; without that tab its head is a "Details" heading. It sits on the `consoleInspector` side ('right', or
+  'left': `data-side` on the workspace) or is 'off': no column, toggle or sheet (quick commands stay, their last chip
+  opening the list in a popover). The phone width is the page's (`usePageSize`, measured as core's
+  `usePageBreakpoint` does: the virtual window, else the body; that hook only exists from panel 1.2.2, and core's
+  Biome config up to 1.2.9 banned `useMediaQuery`); docking is the workspace's own width: from 52rem of it (so the
+  sidebar, zoom and Interface size count) the panel docks as a 20rem column behind a hairline and the terminal
+  narrows, and with `consoleDetailsOpen: 'always'` at every desktop width. Open state: the visitor's toggle in
+  `zoron:console-panel` (`{ open, base }`, `base` the `consoleDetailsOpen` they toggled against; it applies only
+  while that default is unchanged, so changing the default reaches everyone again; older values are ignored), else
+  `consoleDetailsOpen` ('wide' and 'always' open, 'asked' closed). Narrower, it slides over the terminal from its
+  side's edge (transform and opacity; none with the motion setting off or reduced motion), opens on demand only, and
+  closes on Escape and a press outside it (toggles and portals excepted).
 - Phones (`data-phone` under 64rem, the shell's top bar width): the workspace bleeds to the canvas's edges (core's
   `px-4` and `mb-4`), the bar rows as `barLayout` gives them, power a full width segmented row, the figures one
   sideways scrolling line with smaller sparklines (power and figures hide while the keyboard is up, and a bar left
@@ -316,18 +325,22 @@ Studio's preview follows each draft.
   Mantine `Drawer` from the bottom (at most 85dvh, safe area padded) with the same tabs, on either side setting,
   titled "Details" (or the server's name above the tabs, when there are two).
   Touch targets are at least 40px; nothing depends on hover.
-- Quick commands (`consoleQuickCommands`, on by default; off hides the chip row and the Commands tab, while
-  `consoleChips: 'off'` hides only the row): the site's
+- Quick commands (`consoleChips`: chips above the prompt or under the toolbar, 'panel' for the details panel's
+  Commands tab only, or 'off' for none anywhere; 'panel' without a panel is 'off'): the site's
   (`consoleCommands`, set in Studio: control characters dropped, trimmed, 1 to 200 characters, unique, at most 12,
-  by normalizeTheme()'s `siteCommand()`) first, then the visitor's own, per server and browser
-  (`zoron:commands:<uuid>`), at most 20 of 200 characters, one line each, validated on read (console.ts); an own one
+  by normalizeTheme()'s `siteCommand()`) first, then the user's own, per server, in core's user settings (account
+  scope) under `zoron::quick_commands` (server uuid to list, at most 100 servers, the oldest edit dropped; at most 20
+  commands of 200 characters, one line each; `normalizeCommandMap()` validates the map as core reads it through a
+  zod schema), so they follow the user to every browser. Saving works as server tiles do (`useSaveTile`): shown at
+  once from a pending copy, sent with `updateUserSettings`, handed to core's store when accepted, dropped with core's
+  toast when refused. A list a browser kept before 1.0.6 (`zoron:commands:<uuid>`) is added to the account's the
+  first time that server's console opens once the settings have loaded, then removed from the browser. An own one
   the site already has is not shown twice, nor can it be added. Site chips carry `data-site` (a faint accent edge
-  and cue) and the inspector lists them under their own heading without a remove button. `useQuickCommands` reads
-  the own ones through `useSyncExternalStore`, so the chips and the inspector stay in step (a list storage refuses
-  is kept for that load). Shown only with `control.console`; a click sends one over the server's websocket
-  (`SocketRequest.SEND_COMMAND`) while it is connected and the server is not offline, the disabled chips' title
-  saying why. The last chip opens the inspector at Commands, or with the inspector off the same list (`CommandsEditor`)
-  in a popover by the chip; with no own commands saved it is labelled.
+  and cue) and the panel lists them under their own heading without a remove button. Shown only with
+  `control.console`; a click sends one over the server's websocket (`SocketRequest.SEND_COMMAND`) while it is
+  connected and the server is not offline, the disabled chips' title saying why. The last chip opens the panel at
+  Commands, or with the panel off the same list (`CommandsEditor`) in a popover by the chip; with no own commands
+  saved it is labelled.
 - xterm.ts hooks every console, core's page and the popout included (`pages.server.console.xterm`): the init handler
   sets the mono font (`MONO_STACKS`, core's when 'panel'), the line height and the palette (`terminalPalette`, with a
   transparent background: app.css paints `--zoron-term-bg` on the card holding `.xterm`, or on Zoron's workspace,
@@ -385,40 +398,46 @@ in the draft; the preview and drawings use the last valid normalized draft.
   unique, at most `MAX_CUSTOM_PRESETS`). They are saved, undone, exported and imported with the theme like any field,
   so every visitor's theme JSON carries them; they hold looks only. "Reset to the default look" keeps them.
 - The preview's page picker lists the first server's overview and console (`/terminal` while the overview is on,
-  otherwise the console is the server's own page).
-- The Server page tab: Page (`serverOverview`, moved here from Layout), then, only while the overview is on, Arrange
-  (OverviewArrange.tsx, `overviewGrid`): a canvas of the 12 columns, rows drawn 44px tall, a fixed header strip on top.
-  Drag a block to move it (the target cell is where its corner would be, rounded: `snapCell`; a dashed ghost marks
-  it while the others reflow as `moveItem` leaves them), its corner to resize it (`snapSize`, `resizeItem`), its ×
-  or a drop on the "Hidden blocks" tray to hide it; drag a tray chip onto the canvas to place it there at its
-  `BLOCK_SIZE`, or press it to add it at the bottom. Raw pointer events with capture (mouse and touch alike), a 5px
-  move before a press drags, Escape cancels; the dragged block's element stays mounted as its ghost, since it holds
-  the capture, and the canvas only fills its spare row during a drag, so the tray stays put. Keyboard: arrows move a
-  block, Shift and the arrows resize it, Delete hides it, announced in a polite live region. Each gesture is one
-  `set()`, so one undo step. "Start from" tiles (`OverviewLayoutMock` of each template) lay the shown blocks out as
-  `overviewTemplate` does; one reads as picked while the grid equals it. Then Usage figures (`OverviewUsageMock`, the
-  graphs drawn with telemetry.ts's `sparkPath`) with the activity entries slider, and Header (`OverviewHeaderMock`)
-  with the description switch.
+  otherwise the console is the server's own page): the admin's own first server, else the first of everyone else's.
+- The Server page tab lays out both server pages. Server opens on (`serverOverview`, Overview or Console); Console
+  layout, tiles (`ConsoleLayoutMock`) of `CONSOLE_LAYOUTS` (theme.ts: Workspace, Mirrored, Focus, Minimal) that write
+  `consoleLayoutPatch()` (bars, details side, chips, `consoleDetailsOpen`, and every figure when a layout shows the
+  figures and none are picked) and read as picked while `consoleLayoutOf()` matches, a Custom tile otherwise (a note
+  instead while Zoron's console is off); Details panel, when it opens (`consoleDetailsOpen`, while there is one);
+  Overview layout (while the overview is on), tiles of the templates (`templateGrid`/`templateOf` in
+  OverviewArrange.tsx: the shown blocks as `overviewTemplate` lays them; Custom otherwise), usage figures and
+  header. Then Customize, a `<details>` the settings search opens when it picks a setting inside (ThemeEditor):
+  Console (the Zoron console switch, spacing, the arrange canvas, the figures, graphs, and the commands for everyone
+  while quick commands are not 'off') and Overview (the arrange canvas, activity entries, description).
+- The overview's arrange canvas (OverviewArrange.tsx, `overviewGrid`): the 12 columns, rows drawn 44px tall, a fixed
+  header strip on top. Drag a block to move it (the target cell is where its corner would be, rounded: `snapCell`; a
+  dashed ghost marks it while the others reflow as `moveItem` leaves them), its corner to resize it (`snapSize`,
+  `resizeItem`), its × or a drop on the "Hidden blocks" tray to hide it; drag a tray chip onto the canvas to place it
+  there at its `BLOCK_SIZE`, or press it to add it at the bottom. Raw pointer events with capture (mouse and touch
+  alike), a 5px move before a press drags, Escape cancels; the dragged block's element stays mounted as its ghost,
+  since it holds the capture, and the canvas only fills its spare row during a drag, so the tray stays put.
+  Keyboard: arrows move a block, Shift and the arrows resize it, Delete hides it, announced in a polite live region.
+  Each gesture is one `set()` (with `overviewExtensions` following the grid), so one undo step.
 - The Layout tab's Pages group: the servers page switch, then while it is on `homeLayout` (each tile a
   `HomeLayoutMock`), `homeGroups` and `homeLayoutChoice`.
-- The Console tab: Page (Zoron's console page, and with it its spacing), then, only while that page is on, Arrange
-  (ConsoleArrange.tsx): a drawing of the workspace with a top and a bottom bar, the terminal in the scheme's colours
-  with a chip slot under its toolbar and one above its prompt, a side slot left and right, and a "Hidden" tray; each
-  zone carries its field (`consoleBar` on the wrapper, `consoleFooter`, `consoleChips`, `consoleInspector`). The
-  pieces (name and state, figures, power, quick commands, inspector) drag between the zones that take them (bar
-  pieces snap between the items of either bar, marked by an accent bar; chips to either slot; the inspector to
-  either side; any to the tray to hide it); the zones that take a piece are tinted while it drags, the rest dimmed,
-  and a drop elsewhere or Escape puts it back. A click, Enter or Space on a piece opens a menu of where it can go
-  (the keyboard and touch path). The figures piece shows the picked figures as chips that drag sideways (or move
-  with the arrows) to reorder `consoleMetrics`. `placeBarItem` and `placed` (console.ts) do the moves; each gesture
-  is one `set()`. Then Command bar (the figures as toggle chips, `ToggleChips` with `keepOrder`, so a figure switched
-  on joins the end; the graph style, each tile a `ConsoleGraphMock` drawn with telemetry.ts's builders), Inspector
-  (open by default, while it is not off) and Quick commands (the switch, and the site's commands as an editable
-  list: add with Enter or the button, move up and down, remove, with normalizeTheme()'s limits and a count); then
-  the terminal
-  scheme in groups (matched to the panel, dark, light, retro; each tile a `TerminalMock` of `terminalPalette()` in
-  dark mode; Panel drawn as core's, on the surface), the frame (`TerminalSkinMock`, the draft's scheme in each
-  frame), whether visitors may pick their own, line height and log highlighting. The code font stays under Type.
+- The console's arrange canvas (ConsoleArrange.tsx): a drawing of the workspace with a top and a bottom bar, the
+  terminal in the scheme's colours with a chip slot under its toolbar and one above its prompt, a labelled side slot
+  left and right (the placed details panel holds a Commands tab slot, for chips kept to the panel), and a "Hidden"
+  tray; each zone carries its field (`consoleBar` on the wrapper, `consoleFooter`, `consoleChips`,
+  `consoleInspector`). The pieces (name and state, figures, power, quick commands, details panel) drag between the
+  zones that take them (bar pieces snap between the items of either bar, marked by an accent bar; chips to either
+  slot or the panel's; the panel to either side; any to the tray to hide it; a slot inside another passes a piece it
+  does not take to the one around it); the zones that take a piece are tinted while it drags, the rest dimmed, and a
+  drop elsewhere or Escape puts it back. A click, Enter or Space on a piece opens a menu of where it can go (the
+  keyboard and touch path). Hiding the panel while it holds the chips moves them above the prompt; placing the
+  figures with none picked picks them all. The figures piece shows the picked figures as chips that drag sideways (or
+  move with the arrows) to reorder `consoleMetrics`; the figure toggle chips below (`keepOrder`, so a figure switched
+  on joins the end) take the piece out with the last one and put it back before power with the first. `placeBarItem`
+  and `placed` (console.ts) do the moves; each gesture is one `set()`.
+- The Terminal tab: the scheme in groups (matched to the panel, dark, light, retro; each tile a `TerminalMock` of
+  `terminalPalette()` in dark mode; Panel drawn as core's, on the surface), the frame (`TerminalSkinMock`, the draft's
+  scheme in each frame), whether visitors may pick their own, line height and log highlighting. The code font stays
+  under Type.
 
 A new theme field needs: the `ZoronTheme` field and default, a line in `normalizeTheme()`, its use in `buildCss()`
 or `themeAttributes()` plus `app.css` (or in a component, read with `useZoronTheme()`), a control in a section (with

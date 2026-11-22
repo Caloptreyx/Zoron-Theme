@@ -21,6 +21,14 @@ html[data-zoron] .zoron-ov-cell > * {
   flex-grow: 1;
 }
 
+/* other extensions' cards (core's console statCards and statBlocks): side by side, wrapping, each at least 14rem */
+html[data-zoron] .zoron-ov-extensions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
+  align-content: start;
+  gap: 16px;
+}
+
 @media (min-width: 64rem) {
   html[data-zoron] .zoron-ov-grid {
     grid-template-columns: repeat(12, minmax(0, 1fr));

@@ -25,9 +25,9 @@ console workspace, a server page of its own, and **Zoron Studio**, a live theme 
 ## Features
 
 - **Navigation:** an icon rail with server groups, folders, drag-and-drop organization, server tiles, and responsive mobile navigation.
-- **Server views:** searchable and filterable server cards, tiles, or lists; customizable server pages; live resource metrics; and quick access to backups, schedules, and addresses.
-- **Console:** a full-height terminal with live stats, quick commands, an inspector, downloadable logs, customizable terminal themes, and multiple frames.
-- **Zoron Studio:** live responsive previews, drag-and-drop layouts, theme presets, color and typography controls, import/export, undo/redo, and per-tab settings.
+- **Server views:** searchable and filterable server cards, tiles, or lists; server pages laid out from ready-made layouts or block by block; live resource metrics; other extensions' cards; and quick access to backups, schedules, and addresses.
+- **Console:** a full-height terminal with live stats, quick commands that follow each user across browsers, a details panel, downloadable logs, customizable terminal themes, and multiple frames.
+- **Zoron Studio:** live responsive previews, ready-made and drag-and-drop layouts, theme presets, color and typography controls, import/export, undo/redo, and per-tab settings.
 - **Appearance:** nine presets, custom palettes, backdrops, surfaces, light mode, contrast checking, motion controls, and sign-in page links.
 
 Open Studio from **Admin → Zoron Studio** or the extension's card on **Admin → Extensions**. Saving needs

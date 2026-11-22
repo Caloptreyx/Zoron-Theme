@@ -85,6 +85,7 @@ export const BLOCK_SIZE: Record<OverviewSection, { w: number; h: number }> = {
   activity: { w: 7, h: 2 },
   connect: { w: 5, h: 1 },
   glance: { w: 5, h: 1 },
+  extensions: { w: GRID_COLUMNS, h: 1 },
 };
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));

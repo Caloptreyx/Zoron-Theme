@@ -1,10 +1,10 @@
 import {
-  faCheck,
   faClockRotateLeft,
   faGaugeHigh,
   faLayerGroup,
   faPlug,
   faPlus,
+  faPuzzlePiece,
   faXmark,
   type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
@@ -16,12 +16,23 @@ import {
   OVERVIEW_TEMPLATES,
   type OverviewItem,
   type OverviewSection,
+  type OverviewTemplate,
   overviewTemplate,
-  type ZoronTheme,
 } from '../../lib/theme.ts';
 import { useExtTranslations } from '../../translations.ts';
 import { BLOCK_SIZE, dropGrid, nudgeItem, snapCell, snapSize } from '../server/overview.ts';
-import { OverviewLayoutMock } from './mocks.tsx';
+
+/** The blocks on `grid` in reading order, or every block when it is empty: what a template lays out. */
+export function templateGrid(grid: readonly OverviewItem[], template: OverviewTemplate): OverviewItem[] {
+  const shown = sortGrid(grid).map((item) => item.block);
+  return overviewTemplate(shown.length > 0 ? shown : OVERVIEW_SECTIONS, template);
+}
+
+/** The template `grid` is laid out as, or null for one of its own. */
+export function templateOf(grid: readonly OverviewItem[]): OverviewTemplate | null {
+  const current = JSON.stringify(grid);
+  return OVERVIEW_TEMPLATES.find((template) => JSON.stringify(templateGrid(grid, template)) === current) ?? null;
+}
 
 /**
  * Studio's arrange canvas for the server overview (`overviewGrid`): the blocks on the twelve column snap grid
@@ -45,6 +56,7 @@ const ICONS: Record<OverviewSection, IconDefinition> = {
   activity: faClockRotateLeft,
   connect: faPlug,
   glance: faLayerGroup,
+  extensions: faPuzzlePiece,
 };
 
 const TINT = 'bg-[color-mix(in_srgb,var(--zoron-accent)_14%,transparent)]';
@@ -97,11 +109,9 @@ function outcome(grid: readonly OverviewItem[], gesture: Gesture | null): Overvi
 }
 
 export function OverviewArrange({
-  look,
   grid,
   onChange,
 }: {
-  look: ZoronTheme;
   grid: readonly OverviewItem[];
   onChange: (grid: OverviewItem[]) => void;
 }) {
@@ -268,9 +278,6 @@ export function OverviewArrange({
     const from = moving?.from === 'grid' && moving.block === block && grid.find((other) => other.block === block);
     return from ? [{ item: from, gone: true }] : [];
   });
-  const shown = sortGrid(grid).map((item) => item.block);
-  const templateBlocks = shown.length > 0 ? shown : OVERVIEW_SECTIONS;
-  const current = JSON.stringify(grid);
 
   return (
     <div ref={rootRef} className='relative flex flex-col gap-4 select-none'>
@@ -424,39 +431,6 @@ export function OverviewArrange({
             {moving?.from === 'grid' ? t('overviewSection.trayDrop', {}) : t('overviewSection.trayEmpty', {})}
           </p>
         )}
-      </div>
-
-      <div className='flex flex-col gap-1.5'>
-        <span className='text-sm'>{t('overviewSection.startFrom', {})}</span>
-        <div className='grid grid-cols-3 gap-2' role='group' aria-label={t('overviewSection.startFrom', {})}>
-          {OVERVIEW_TEMPLATES.map((template) => {
-            const out = overviewTemplate(templateBlocks, template);
-            const picked = JSON.stringify(out) === current;
-            return (
-              <button
-                key={template}
-                type='button'
-                aria-pressed={picked}
-                onClick={() => {
-                  if (!picked) onChange(out);
-                }}
-                className={`zoron-tile flex cursor-pointer flex-col gap-1 rounded-xl border p-1 text-left transition-[border-color,background-color,box-shadow] duration-200 ${
-                  picked
-                    ? 'border-(--zoron-accent) bg-(--mantine-color-default-hover) shadow-[0_0_0_3px_color-mix(in_srgb,var(--zoron-accent)_22%,transparent)]'
-                    : 'border-(--mantine-color-default-border) bg-(--mantine-color-default) hover:border-(--mantine-color-placeholder)'
-                }`}
-              >
-                <div className='h-12 w-full overflow-hidden rounded-lg'>
-                  <OverviewLayoutMock look={look} grid={out} />
-                </div>
-                <span className='flex items-center justify-between gap-1 px-1 pb-0.5 text-xs font-medium'>
-                  <span className='truncate'>{t(`overviewSection.${template}`, {})}</span>
-                  {picked && <FontAwesomeIcon icon={faCheck} className='text-[0.625rem] text-(--zoron-accent)' />}
-                </span>
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* the dragged block under the pointer, inset like the blocks on the canvas */}

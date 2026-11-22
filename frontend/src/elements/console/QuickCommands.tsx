@@ -1,52 +1,138 @@
 import { faAngleRight, faPen, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { type FormEvent, useMemo, useState, useSyncExternalStore } from 'react';
-import { ActionIcon, Button, Popover, SocketRequest, TextInput, useServerCan, useServerStore } from '../../lib/core.ts';
+import { type FormEvent, useEffect, useState, useSyncExternalStore } from 'react';
+import { z } from 'zod';
+import {
+  ActionIcon,
+  Button,
+  getUserSetting,
+  httpErrorToHuman,
+  Popover,
+  removeUserSetting,
+  SocketRequest,
+  setUserSetting,
+  TextInput,
+  updateUserSettings,
+  useServerCan,
+  useServerStore,
+  useToast,
+  useUserSetting,
+  useUserSettingsLoaded,
+} from '../../lib/core.ts';
 import { useZoronTheme } from '../../lib/store.ts';
 import { useExtTranslations } from '../../translations.ts';
-import { commandOf, commandsKey, MAX_COMMAND, MAX_COMMANDS, parseCommands, withCommand } from './console.ts';
+import {
+  COMMANDS_KEY,
+  commandList,
+  commandOf,
+  legacyCommandsKey,
+  MAX_COMMAND,
+  MAX_COMMANDS,
+  normalizeCommandMap,
+  parseCommands,
+  type ServerCommands,
+  withCommand,
+  withServerCommands,
+} from './console.ts';
 
-/** Lists saved while storage refused them, kept for this load; they win over storage until the next save. */
-const unsaved = new Map<string, string>();
-const commandListeners = new Set<() => void>();
+/** Core parses each setting through a schema; this one is normalizeCommandMap(), so a malformed map reads as none. */
+const commandsSchema = z.unknown().transform(normalizeCommandMap);
+const NONE: ServerCommands = {};
+const NO_COMMANDS: readonly string[] = [];
 
-function readCommands(key: string): string | null {
-  const kept = unsaved.get(key);
-  if (kept !== undefined) return kept;
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
+/**
+ * The map being saved, shown until the panel answers (as server tiles do, useTiles.ts: core's own setter only logs
+ * a refusal, so Zoron sends the map itself and hands it to core's store once the panel took it).
+ */
+let pending: { id: number; map: ServerCommands } | null = null;
+let saves = 0;
+const listeners = new Set<() => void>();
+/** Servers whose list this browser kept before the account did, already moved (or being moved) this load. */
+const moved = new Set<string>();
+
+function setPending(next: typeof pending) {
+  pending = next;
+  for (const listener of listeners) listener();
 }
 
-function subscribeCommands(listener: () => void) {
-  commandListeners.add(listener);
+function subscribePending(listener: () => void) {
+  listeners.add(listener);
   return () => {
-    commandListeners.delete(listener);
+    listeners.delete(listener);
   };
 }
 
-function saveCommands(key: string, next: string[]) {
-  const raw = JSON.stringify(next);
-  try {
-    localStorage.setItem(key, raw);
-    unsaved.delete(key);
-  } catch {
-    unsaved.set(key, raw);
-  }
-  for (const listener of commandListeners) listener();
+/**
+ * Saves one server's own list: shown at once, then sent. Accepted, it becomes core's value; refused (over the panel's
+ * size limit, an impersonating admin), the saved map shows again and core's toast says why. Resolves to whether
+ * the panel took it.
+ */
+function useSaveCommands() {
+  const { addToast } = useToast();
+
+  return async (uuid: string, list: readonly string[]): Promise<boolean> => {
+    const map = withServerCommands(pending?.map ?? getUserSetting(COMMANDS_KEY, commandsSchema, NONE), uuid, list);
+    const id = ++saves;
+    setPending({ id, map });
+    const empty = Object.keys(map).length === 0;
+    try {
+      await updateUserSettings({ [COMMANDS_KEY]: empty ? null : map });
+      if (empty) removeUserSetting(COMMANDS_KEY);
+      else setUserSetting(COMMANDS_KEY, map);
+      return true;
+    } catch (err) {
+      addToast(httpErrorToHuman(err), 'error');
+      return false;
+    } finally {
+      if (pending?.id === id) setPending(null);
+    }
+  };
 }
 
 /**
- * A server's quick commands (`zoron:commands:<uuid>`, per browser), shared by every part showing them (the chips,
- * the inspector's list), with the setter that saves them.
+ * A server's own quick commands, saved to the user's account (core's user settings, under COMMANDS_KEY) so they
+ * follow them to every browser, shared by every part showing them (the chips, the panel's list), with the setter that
+ * saves them. A list this browser kept before (`legacyCommandsKey`) joins the account's once the account's settings
+ * have loaded, and is forgotten here once the panel took it.
  */
 function useQuickCommands(uuid: string) {
-  const key = commandsKey(uuid);
-  const raw = useSyncExternalStore(subscribeCommands, () => readCommands(key));
-  const commands = useMemo(() => parseCommands(raw), [raw]);
-  return [commands, (next: string[]) => saveCommands(key, next)] as const;
+  const [saved] = useUserSetting(COMMANDS_KEY, commandsSchema, NONE);
+  const unsaved = useSyncExternalStore(subscribePending, () => pending);
+  const loaded = useUserSettingsLoaded();
+  const save = useSaveCommands();
+  const key = uuid.toLowerCase();
+  const commands = (unsaved?.map ?? saved)[key] ?? NO_COMMANDS;
+
+  useEffect(() => {
+    if (!loaded || moved.has(key)) return;
+    moved.add(key);
+    const storageKey = legacyCommandsKey(uuid);
+    const forget = () => {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {
+        // storage blocked: nothing was kept there either
+      }
+    };
+    let kept: string[];
+    try {
+      kept = parseCommands(localStorage.getItem(storageKey));
+    } catch {
+      return;
+    }
+    const current = (pending?.map ?? getUserSetting(COMMANDS_KEY, commandsSchema, NONE))[key] ?? NO_COMMANDS;
+    const merged = commandList([...current, ...kept]);
+    if (merged.length === current.length) {
+      forget();
+      return;
+    }
+    void save(uuid, merged).then((ok) => {
+      if (ok) forget();
+      // refused: kept here, tried again on the next load
+    });
+  }, [loaded, key, uuid, save]);
+
+  return [commands, (next: readonly string[]) => save(uuid, next)] as const;
 }
 
 /**
@@ -69,12 +155,12 @@ function useCommandSender() {
 
 /**
  * The quick commands as a row of chips, just above the prompt or just under the terminal's toolbar (`consoleChips`,
- * `data-chips` on the workspace places it; 'off' shows none), a click sending one while the console can take it
- * (its title says why not otherwise): the site's (`consoleCommands`, set in Studio, marked quietly) first, then the
- * visitor's own saved ones that are not already among them, and a last chip to manage them: `onEdit` (the inspector
- * at its list) where there is an inspector, else the same list in a popover by the chip, so quick commands never
- * depend on the inspector. With none saved, only that chip, which says what it is. Needs `control.console`, as core's
- * command input does, and `consoleQuickCommands`.
+ * `data-chips` on the workspace places it; 'panel' and 'off' show none), a click sending one while the console can
+ * take it (its title says why not otherwise): the site's (`consoleCommands`, set in Studio, marked quietly) first,
+ * then the user's own saved ones that are not already among them, and a last chip to manage them: `onEdit` (the
+ * details panel at its list) where there is a panel, else the same list in a popover by the chip, so quick commands
+ * never depend on the panel. With none saved, only that chip, which says what it is. Needs `control.console`, as
+ * core's command input does.
  */
 export function CommandChips({ onEdit }: { onEdit?: () => void }) {
   const { t } = useExtTranslations();
@@ -86,7 +172,7 @@ export function CommandChips({ onEdit }: { onEdit?: () => void }) {
   const [editing, setEditing] = useState(false);
 
   const site = theme.consoleCommands;
-  if (!canConsole || !theme.consoleQuickCommands || theme.consoleChips === 'off') return null;
+  if (!canConsole || theme.consoleChips === 'off' || theme.consoleChips === 'panel') return null;
   const own = saved.filter((command) => !site.includes(command));
 
   // the site's and the visitor's own never overlap, so the command is a unique key
@@ -187,7 +273,7 @@ export function CommandsEditor() {
   const add = (event: FormEvent) => {
     event.preventDefault();
     if (!next) return;
-    save(next);
+    void save(next);
     setDraft('');
   };
 
@@ -230,7 +316,7 @@ export function CommandsEditor() {
                 color='gray'
                 size='md'
                 aria-label={t('console.removeCommand', { command })}
-                onClick={() => save(commands.filter((saved) => saved !== command))}
+                onClick={() => void save(commands.filter((saved) => saved !== command))}
               >
                 <FontAwesomeIcon icon={faXmark} />
               </ActionIcon>
