@@ -301,24 +301,32 @@ pub async fn sync_current(state: &State) -> Result<(), anyhow::Error> {
     Ok(())
 }
 
+/// Runs `sync_current()` once the panel has registered every extension's templates and variables. Variables already
+/// stored in the database are listed before that too, but only as declared (with a default) once registered, and the
+/// panel sets the templates just before the variables.
 pub fn spawn_boot_sync(state: State) {
     tokio::spawn(async move {
-        for _ in 0..50 {
+        for _ in 0..600 {
             if state
                 .mail
                 .templates
                 .get_variables(&state, None)
                 .await
-                .is_ok_and(|vars| vars.iter().any(|v| v.name == "zoron_email_bg"))
+                .is_ok_and(|vars| {
+                    vars.iter()
+                        .any(|v| v.name == "zoron_email_bg" && v.default_value.is_some())
+                })
             {
                 if let Err(err) = sync_current(&state).await {
-                    tracing::warn!("Zoron email branding boot sync failed: {err:#}");
+                    tracing::warn!("Zoron email sync on boot failed: {err:#}");
                 }
                 return;
             }
             tokio::time::sleep(std::time::Duration::from_millis(100)).await;
         }
-        tracing::warn!("Zoron email branding sync timed out waiting for email registration");
+        tracing::warn!(
+            "Zoron email sync timed out waiting for the panel to register email templates"
+        );
     });
 }
 
