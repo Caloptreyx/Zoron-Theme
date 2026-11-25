@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{ language }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ subject }}</title>
+</head>
+<body bgcolor="{{ vars.zoron_email_bg }}" style="margin:0;background:{{ vars.zoron_email_bg }};color:{{ vars.zoron_email_text }};font-family:Arial,sans-serif">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+    <tr><td align="center" style="padding:32px 16px">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;text-align:left">
+        <tr><td style="padding:0 0 22px;font-size:22px;font-weight:bold">
+          {% if vars.zoron_email_logo %}<img src="{{ vars.zoron_email_logo }}" width="32" alt="" style="vertical-align:middle;margin-right:8px">{% endif %}
+          {{ settings.app.name }}
+        </td></tr>
+        <tr><td bgcolor="{{ vars.zoron_email_surface }}" style="padding:36px 30px;border:1px solid {{ vars.zoron_email_border }};border-top:6px solid {{ vars.zoron_email_accent }};border-radius:{{ vars.zoron_email_radius }};font-size:15px;line-height:1.6">
+          <h1 style="margin:0 0 22px;font-size:28px;line-height:1.2">{{ subject }}</h1>
+          <p>{{ vars.greeting }}</p>
+          <p>{{ vars.intro }}</p>
+          {% if kind == 'two_factor_code' %}
+            <p style="padding:16px;background:{{ vars.zoron_email_bg }};border:1px solid {{ vars.zoron_email_border }};border-radius:{{ vars.zoron_email_button_radius }};text-align:center;font-family:monospace;font-size:26px;font-weight:bold;letter-spacing:.12em">{{ code }}</p>
+          {% elif kind == 'connection_test' %}
+            <p><strong>{{ vars.success }}</strong></p>
+          {% elif kind == 'session_created' %}
+            <p style="padding:16px;background:{{ vars.zoron_email_bg }};border:1px solid {{ vars.zoron_email_border }};border-radius:{{ vars.zoron_email_button_radius }}"><strong>{{ vars.ip_label }}</strong> {{ ip }}<br><strong>{{ vars.device_label }}</strong> {{ user_agent }}</p>
+            {% set action_url = sessions_link %}
+          {% elif kind == 'account_created' or kind == 'password_reset' %}
+            {% set action_url = reset_link %}
+          {% elif kind == 'email_verification' %}
+            {% set action_url = verification_link %}
+          {% elif kind == 'added_to_server' or kind == 'server_installed' or kind == 'server_restored' %}
+            {% set action_url = server_link %}
+          {% endif %}
+          {% if vars.instruction %}<p>{{ vars.instruction }}</p>{% endif %}
+          {% if action_url and vars.button %}
+            <table role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:12px 0">
+            <table role="presentation" cellspacing="0" cellpadding="0"><tr>
+              <td bgcolor="{{ vars.zoron_email_accent }}" style="border-radius:{{ vars.zoron_email_button_radius }}">
+                <a href="{{ action_url }}" style="display:inline-block;padding:13px 22px;color:{{ vars.zoron_email_ink }};font-weight:bold;text-decoration:none">{{ vars.button }}</a>
+              </td>
+            </tr></table>
+            </td></tr></table>
+          {% endif %}
+          {% if vars.note %}<p style="margin:18px 0 0">{{ vars.note }}</p>{% endif %}
+        </td></tr>
+        <tr><td style="padding:22px 2px;font-size:13px;line-height:1.6">
+            <div style="margin-bottom:10px;font-weight:bold">{{ settings.app.name }}</div>
+            {% if vars.footer %}<div>{{ vars.footer }}</div>{% endif %}
+            {% if vars.zoron_email_footer %}<div>{{ vars.zoron_email_footer }}</div>{% endif %}
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

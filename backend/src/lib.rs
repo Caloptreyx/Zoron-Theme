@@ -2,10 +2,12 @@ use shared::{
     State,
     extensions::{
         Extension, ExtensionPermissionsBuilder, ExtensionRouteBuilder, ExtensionUpdateInfo,
+        email_templates::ExtensionEmailTemplateBuilder,
     },
 };
 use std::sync::Arc;
 
+mod mail;
 mod permissions;
 mod routes;
 pub mod settings;
@@ -31,6 +33,15 @@ impl Extension for ExtensionStruct {
             .add_admin_api_router(|routes| {
                 routes.nest("/extensions/dev.caloptreyx.zoron", routes::admin(&state))
             })
+    }
+
+    async fn initialize_email_templates(
+        &mut self,
+        state: State,
+        builder: ExtensionEmailTemplateBuilder,
+    ) -> ExtensionEmailTemplateBuilder {
+        mail::spawn_boot_sync(state);
+        mail::register(builder)
     }
 
     /// `zoron-theme.update`: saving the theme without the panel wide `settings.update`.

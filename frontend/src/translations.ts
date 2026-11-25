@@ -258,6 +258,11 @@ const translations = defineTranslations({
       loginUrlInvalid: 'Use an http(s) address or a path starting with /, without spaces or quotes.',
       loginRemove: 'Remove this link',
       loginAdd: 'Add a link',
+      email: 'Email branding',
+      emailSync: 'Sync emails with the saved theme',
+      emailSyncHint: 'Updates the default email palette and branding. Saved mail template overrides still take precedence.',
+      emailLogo: 'Email logo URL',
+      emailFooter: 'Email footer note',
     },
     typography: {
       body: 'Body',

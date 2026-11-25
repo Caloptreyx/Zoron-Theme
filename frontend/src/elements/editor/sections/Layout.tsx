@@ -150,6 +150,32 @@ export function LayoutSection({ draft, valid, set }: SectionProps) {
       <Group title={t('layout.login', {})} hint={t('layout.loginHint', {})}>
         <LoginLinksField draft={draft} set={set} />
       </Group>
+      <Group title={t('layout.email', {})}>
+        <ToggleField
+          field='emailSync'
+          label={t('layout.emailSync', {})}
+          description={t('layout.emailSyncHint', {})}
+          checked={draft.emailSync}
+          onChange={(emailSync) => set({ emailSync })}
+        />
+        <Setting field='emailLogo'>
+          <TextInput
+            label={t('layout.emailLogo', {})}
+            value={draft.emailLogo}
+            maxLength={2048}
+            error={draft.emailLogo.trim() !== valid.emailLogo ? t('layout.loginUrlInvalid', {}) : undefined}
+            onChange={(event) => set({ emailLogo: event.currentTarget.value })}
+          />
+        </Setting>
+        <Setting field='emailFooter'>
+          <TextInput
+            label={t('layout.emailFooter', {})}
+            value={draft.emailFooter}
+            maxLength={200}
+            onChange={(event) => set({ emailFooter: event.currentTarget.value })}
+          />
+        </Setting>
+      </Group>
     </div>
   );
 }

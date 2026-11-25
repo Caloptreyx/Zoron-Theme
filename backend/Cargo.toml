@@ -2,13 +2,14 @@
 name = "dev_caloptreyx_zoron"
 description = "A Calagopus Panel theme with an icon rail, a console workspace and a live theme editor."
 authors = ["Caloptreyx"]
-version = "1.0.7"
+version = "1.0.8"
 edition = { workspace = true }
 
 [dependencies]
 shared = { workspace = true }
 async-trait = { workspace = true }
 tracing = { workspace = true }
+tokio = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 utoipa = { workspace = true }

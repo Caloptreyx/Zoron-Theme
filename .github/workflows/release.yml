@@ -63,7 +63,12 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           if ! gh release view "${TAG}" > /dev/null 2>&1; then
-            gh release create "${TAG}" --verify-tag --title "Zoron Theme ${VERSION}" --generate-notes
+            notes="docs/releases/${TAG}.md"
+            if [ -f "${notes}" ]; then
+              gh release create "${TAG}" --verify-tag --title "Zoron Theme ${VERSION}" --notes-file "${notes}"
+            else
+              gh release create "${TAG}" --verify-tag --title "Zoron Theme ${VERSION}" --generate-notes
+            fi
           fi
 
   export:

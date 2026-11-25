@@ -275,6 +275,9 @@ export interface ZoronTheme {
   consoleCommands: string[];
   /** Links shown as chips above the form on every sign in page (the login, the password reset). */
   loginLinks: LoginLink[];
+  emailSync: boolean;
+  emailLogo: string;
+  emailFooter: string;
   /** Looks the admins saved in Studio, applied like the built in presets. */
   customPresets: CustomPreset[];
 }
@@ -425,6 +428,9 @@ export const DEFAULT_THEME: ZoronTheme = {
   consoleDensity: 'comfortable',
   consoleCommands: [],
   loginLinks: [],
+  emailSync: true,
+  emailLogo: '',
+  emailFooter: '',
   customPresets: [],
 };
 
@@ -1043,6 +1049,17 @@ export function normalizeTheme(raw: unknown, d: ZoronTheme = DEFAULT_THEME): Zor
     consoleDensity: choice(r.consoleDensity, DENSITIES, d.consoleDensity),
     consoleCommands: siteCommands(r.consoleCommands, d.consoleCommands),
     loginLinks: loginLinks(r.loginLinks, d.loginLinks),
+    emailSync: flag(r.emailSync, d.emailSync),
+    emailLogo:
+      typeof r.emailLogo === 'string'
+        ? SAFE_URL.test(r.emailLogo.trim()) && r.emailLogo.trim().length <= MAX_URL
+          ? r.emailLogo.trim()
+          : ''
+        : d.emailLogo,
+    emailFooter:
+      typeof r.emailFooter === 'string'
+        ? Array.from(r.emailFooter.trim()).slice(0, 200).join('')
+        : d.emailFooter,
     customPresets: customPresets(r.customPresets, d.customPresets),
   };
 }

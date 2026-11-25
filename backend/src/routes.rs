@@ -227,6 +227,9 @@ mod put {
             }
         };
         settings.save().await?;
+        if let Err(err) = crate::mail::sync_current(&state).await {
+            tracing::warn!("Zoron email branding sync failed: {err:#}");
+        }
 
         activity_logger
             .log("zoron:theme.update", serde_json::json!({}))
