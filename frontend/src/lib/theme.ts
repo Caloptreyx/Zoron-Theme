@@ -275,6 +275,12 @@ export interface ZoronTheme {
   consoleCommands: string[];
   /** Links shown as chips above the form on every sign in page (the login, the password reset). */
   loginLinks: LoginLink[];
+  /**
+   * Zoron's layout for the panel's emails (backend/src/mail.rs). Off by default: the panel sends its own. Turning it
+   * off restores every template Zoron wrote and nobody edited since.
+   */
+  emailTemplates: boolean;
+  /** While the templates are on: the emails' colours and radii follow the saved theme. */
   emailSync: boolean;
   emailLogo: string;
   emailFooter: string;
@@ -428,6 +434,7 @@ export const DEFAULT_THEME: ZoronTheme = {
   consoleDensity: 'comfortable',
   consoleCommands: [],
   loginLinks: [],
+  emailTemplates: false,
   emailSync: true,
   emailLogo: '',
   emailFooter: '',
@@ -1049,6 +1056,7 @@ export function normalizeTheme(raw: unknown, d: ZoronTheme = DEFAULT_THEME): Zor
     consoleDensity: choice(r.consoleDensity, DENSITIES, d.consoleDensity),
     consoleCommands: siteCommands(r.consoleCommands, d.consoleCommands),
     loginLinks: loginLinks(r.loginLinks, d.loginLinks),
+    emailTemplates: flag(r.emailTemplates, d.emailTemplates),
     emailSync: flag(r.emailSync, d.emailSync),
     emailLogo:
       typeof r.emailLogo === 'string'

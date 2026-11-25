@@ -5,3 +5,9 @@ export const THEME_UPDATE_PERMISSION = 'zoron-theme.update';
 
 /** The backend's check for the theme PUT: admins, and roles holding `settings.update` or `zoron-theme.update`. */
 export const useCanSaveTheme = () => useAdminCan(['settings.update', THEME_UPDATE_PERMISSION]);
+
+/**
+ * The backend's extra check on a theme save that changes the email fields (`emailTemplates` and the rest): core's
+ * mail templates permission, since they restyle every panel email.
+ */
+export const useCanEditEmails = () => useAdminCan('email-templates.update');

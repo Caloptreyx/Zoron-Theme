@@ -70,6 +70,7 @@ export const SECTION_FIELDS = {
     density: 'layout.density',
     uiScale: 'layout.scale',
     loginLinks: 'layout.login',
+    emailTemplates: 'layout.emailTemplates',
     emailSync: 'layout.emailSync',
     emailLogo: 'layout.emailLogo',
     emailFooter: 'layout.emailFooter',

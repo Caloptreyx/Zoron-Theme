@@ -13,6 +13,7 @@ backend/src/routes.rs             GET /zoron/theme (public, `{ theme, version }`
 backend/src/permissions.rs        the `zoron-theme.update` admin permission; the PUT takes it or settings.update
 backend/src/updates.rs            Admin → Updates: the newest GitHub release carrying the zip above the installed version,
                                   with every newer release's bullet points (Mint's checker; 10 minute cache, ETag)
+backend/src/mail.rs               the panel emails: the opt-in Carbon layout (`mails/carbon.html`) and its colour sync
 frontend/src/index.ts             entry: applies the theme, greeting, servers page, server routes, console hooks, login
                                   preview route, admin route
 frontend/src/lib/theme.ts         the theme model, presets, normalizeTheme(), buildCss(), themeAttributes()
@@ -384,6 +385,18 @@ none and hiding the piece are the same thing.
   paints `withTerminalPrefs(base, prefs)`; `setTerminalPrefs` repaints and notifies, so xterm.ts recolours at once,
   and a `storage` event carries a pick to the other windows (the popout). The editor's preview frame ignores the
   visitor's pick (`inPreviewFrame`): drafts show the admin's choice, and the popover says so there.
+
+## Email templates
+
+`emailTemplates` ("Use Zoron email templates", Studio's Layout tab) is off by default: the panel sends its own emails.
+backend/src/mail.rs never changes a template's default; `sync_current()` (every boot, every theme save) stores the
+layout as the content of each of the ten core templates while it is on, and clears it while it is off. A template is
+Zoron's only while its stored content is exactly a layout Zoron wrote (`ours()`: the `MARKER` comment, the kind, one of
+`LAYOUTS`; 1.0.8's unmarked default counts), so one an operator edited or wrote is never touched. When the layout
+changes, put the new file first in `LAYOUTS` and keep the old ones. The `zoron_email_*` global variables (colours,
+radii, logo, footer) are always registered and synced from the theme while the templates and `emailSync` are on. A
+save that changes any email field also needs core's `email-templates.update` (routes.rs, `email_settings()`); Studio
+disables those controls without it.
 
 ## The editor
 

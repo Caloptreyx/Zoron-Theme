@@ -155,12 +155,14 @@ export function ToggleField({
   label,
   description,
   checked,
+  disabled,
   onChange,
 }: {
   field: keyof ZoronTheme;
   label: string;
   description?: string;
   checked: boolean;
+  disabled?: boolean;
   onChange: (checked: boolean) => void;
 }) {
   return (
@@ -169,6 +171,7 @@ export function ToggleField({
         label={label}
         description={description}
         checked={checked}
+        disabled={disabled}
         onChange={(e) => onChange(e.currentTarget.checked)}
       />
     </Setting>

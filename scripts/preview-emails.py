@@ -15,7 +15,7 @@ env = Environment(autoescape=True)
 template = env.from_string((root / "backend/mails/carbon.html").read_text())
 source = (root / "backend/src/mail.rs").read_text()
 defaults = dict(re.findall(r'\("(zoron_email_\w+)", "([^"]*)"\)', source))
-identifiers = re.findall(r'"(\w+)"', source.split("layouts!(", 1)[1].split(");", 1)[0])
+identifiers = re.findall(r'"(\w+)"', source.split("const KINDS", 1)[1].split("];", 1)[0])
 wording = json.loads(Path(sys.argv[1]).read_text())
 
 context = {

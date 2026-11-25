@@ -211,6 +211,12 @@ mod put {
         let mut settings = state.settings.get_mut().await?;
         let stored =
             settings.find_mut_extension_settings::<crate::settings::ExtensionSettingsData>()?;
+        // the email fields restyle every panel email, which core's mail templates permission guards
+        if crate::mail::email_settings(super::parse(&stored.theme).as_ref())
+            != crate::mail::email_settings(theme.as_ref())
+        {
+            permissions.has_admin_permission("email-templates.update")?;
+        }
         let version = match super::store_theme(stored, theme, data.base.as_deref()) {
             Ok(version) => version,
             Err(super::StoreError::Bad(message)) => {

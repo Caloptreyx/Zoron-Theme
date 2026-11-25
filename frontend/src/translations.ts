@@ -258,10 +258,15 @@ const translations = defineTranslations({
       loginUrlInvalid: 'Use an http(s) address or a path starting with /, without spaces or quotes.',
       loginRemove: 'Remove this link',
       loginAdd: 'Add a link',
-      email: 'Email branding',
+      email: 'Email templates',
+      emailHint: 'The ten emails the panel sends: sign in codes, password resets, account and server notices.',
+      emailTemplates: 'Use Zoron email templates',
+      emailTemplatesHint:
+        "Off, the panel sends its own emails. On, saving the theme gives them Zoron's layout, except templates edited in Admin → Settings → Mail Templates. Turning it off again restores the panel's own.",
+      emailTemplatesLocked: 'Changing the email templates needs the email templates update permission.',
       emailSync: 'Sync emails with the saved theme',
       emailSyncHint:
-        'Updates the default email palette and branding. Saved mail template overrides still take precedence.',
+        "The emails' colours, corners, logo and footer follow the saved theme. Off, Zoron leaves their zoron_email variables in Mail Templates as they are.",
       emailLogo: 'Email logo URL',
       emailFooter: 'Email footer note',
     },

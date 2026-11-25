@@ -2,6 +2,7 @@ import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { SectionProps } from './types.ts';
 import { ActionIcon, Button, Menu, SegmentedControl, TextInput } from '../../../lib/core.ts';
+import { useCanEditEmails } from '../../../lib/permissions.ts';
 import {
   BUTTON_STYLES,
   DENSITIES,
@@ -36,6 +37,7 @@ const HOME_LAYOUT_LABEL = {
 
 export function LayoutSection({ draft, valid, set }: SectionProps) {
   const { t } = useExtTranslations();
+  const canEditEmails = useCanEditEmails();
   return (
     <div className='flex flex-col gap-7'>
       <Group title={t('layout.sidebar', {})}>
@@ -150,31 +152,46 @@ export function LayoutSection({ draft, valid, set }: SectionProps) {
       <Group title={t('layout.login', {})} hint={t('layout.loginHint', {})}>
         <LoginLinksField draft={draft} set={set} />
       </Group>
-      <Group title={t('layout.email', {})}>
+      <Group title={t('layout.email', {})} hint={t('layout.emailHint', {})}>
         <ToggleField
-          field='emailSync'
-          label={t('layout.emailSync', {})}
-          description={t('layout.emailSyncHint', {})}
-          checked={draft.emailSync}
-          onChange={(emailSync) => set({ emailSync })}
+          field='emailTemplates'
+          label={t('layout.emailTemplates', {})}
+          description={canEditEmails ? t('layout.emailTemplatesHint', {}) : t('layout.emailTemplatesLocked', {})}
+          checked={valid.emailTemplates}
+          disabled={!canEditEmails}
+          onChange={(emailTemplates) => set({ emailTemplates })}
         />
-        <Setting field='emailLogo'>
-          <TextInput
-            label={t('layout.emailLogo', {})}
-            value={draft.emailLogo}
-            maxLength={2048}
-            error={draft.emailLogo.trim() !== valid.emailLogo ? t('layout.loginUrlInvalid', {}) : undefined}
-            onChange={(event) => set({ emailLogo: event.currentTarget.value })}
-          />
-        </Setting>
-        <Setting field='emailFooter'>
-          <TextInput
-            label={t('layout.emailFooter', {})}
-            value={draft.emailFooter}
-            maxLength={200}
-            onChange={(event) => set({ emailFooter: event.currentTarget.value })}
-          />
-        </Setting>
+        {valid.emailTemplates && (
+          <>
+            <ToggleField
+              field='emailSync'
+              label={t('layout.emailSync', {})}
+              description={t('layout.emailSyncHint', {})}
+              checked={draft.emailSync}
+              disabled={!canEditEmails}
+              onChange={(emailSync) => set({ emailSync })}
+            />
+            <Setting field='emailLogo'>
+              <TextInput
+                label={t('layout.emailLogo', {})}
+                value={draft.emailLogo}
+                maxLength={2048}
+                disabled={!canEditEmails}
+                error={draft.emailLogo.trim() !== valid.emailLogo ? t('layout.loginUrlInvalid', {}) : undefined}
+                onChange={(event) => set({ emailLogo: event.currentTarget.value })}
+              />
+            </Setting>
+            <Setting field='emailFooter'>
+              <TextInput
+                label={t('layout.emailFooter', {})}
+                value={draft.emailFooter}
+                maxLength={200}
+                disabled={!canEditEmails}
+                onChange={(event) => set({ emailFooter: event.currentTarget.value })}
+              />
+            </Setting>
+          </>
+        )}
       </Group>
     </div>
   );
