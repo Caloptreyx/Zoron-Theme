@@ -1057,9 +1057,7 @@ export function normalizeTheme(raw: unknown, d: ZoronTheme = DEFAULT_THEME): Zor
           : ''
         : d.emailLogo,
     emailFooter:
-      typeof r.emailFooter === 'string'
-        ? Array.from(r.emailFooter.trim()).slice(0, 200).join('')
-        : d.emailFooter,
+      typeof r.emailFooter === 'string' ? Array.from(r.emailFooter.trim()).slice(0, 200).join('') : d.emailFooter,
     customPresets: customPresets(r.customPresets, d.customPresets),
   };
 }

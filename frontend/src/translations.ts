@@ -260,7 +260,8 @@ const translations = defineTranslations({
       loginAdd: 'Add a link',
       email: 'Email branding',
       emailSync: 'Sync emails with the saved theme',
-      emailSyncHint: 'Updates the default email palette and branding. Saved mail template overrides still take precedence.',
+      emailSyncHint:
+        'Updates the default email palette and branding. Saved mail template overrides still take precedence.',
       emailLogo: 'Email logo URL',
       emailFooter: 'Email footer note',
     },
